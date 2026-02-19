@@ -4,5 +4,5 @@ import { defineConfig } from 'astro/config';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://cahuichg17.github.io',
-  base: '/happy-dent',
+  base: '/happy-dent/',
 });

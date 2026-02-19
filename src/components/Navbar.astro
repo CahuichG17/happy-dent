@@ -1,10 +1,11 @@
 ---
+const base = import.meta.env.BASE_URL;
 ---
 
 <nav class="navbar" id="navbar">
   <div class="container nav-container">
     <a href="#inicio" class="nav-logo">
-      <img src="/happy-dent-icon.svg" alt="Happy Dent" class="logo-icon" />
+      <img src={`${base}happy-dent-icon.svg`} alt="Happy Dent" class="logo-icon" />
       <div class="logo-text">
         <span class="logo-name">Happy Dent</span>
         <span class="logo-tagline">ODONTOLOGÍA</span>

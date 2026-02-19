@@ -1,0 +1,206 @@
+---
+const testimonials = [
+  {
+    name: "María García López",
+    role: "Paciente desde 2020",
+    text: "Increíble experiencia. El equipo de Happy Dent me hizo sentir como en casa desde el primer momento. Mi sonrisa nunca se había visto tan bien. ¡100% recomendado!",
+    rating: 5,
+    avatar: "MG"
+  },
+  {
+    name: "Carlos Rodríguez",
+    role: "Paciente desde 2019",
+    text: "Después de años con miedo al dentista, en Happy Dent encontré un lugar donde me siento seguro y tranquilo. El tratamiento de ortodoncia cambió mi vida completamente.",
+    rating: 5,
+    avatar: "CR"
+  },
+  {
+    name: "Ana Martínez Ruiz",
+    role: "Paciente desde 2021",
+    text: "Llevé a mis hijos y fue una experiencia maravillosa. El área de odontopediatría es fantástica, mis niños ahora piden ir al dentista. ¡Gracias Happy Dent!",
+    rating: 5,
+    avatar: "AM"
+  },
+  {
+    name: "Roberto Sánchez",
+    role: "Paciente desde 2018",
+    text: "Los implantes que me colocaron se ven y se sienten completamente naturales. La tecnología que utilizan es de primer nivel. No podría estar más satisfecho.",
+    rating: 5,
+    avatar: "RS"
+  },
+  {
+    name: "Laura Fernández",
+    role: "Paciente desde 2022",
+    text: "El blanqueamiento dental superó todas mis expectativas. El resultado es simplemente espectacular y el proceso fue muy cómodo. ¡Mi nueva sonrisa me encanta!",
+    rating: 5,
+    avatar: "LF"
+  },
+  {
+    name: "Diego Hernández",
+    role: "Paciente desde 2021",
+    text: "Profesionalismo, calidez humana y resultados excepcionales. Happy Dent se ha convertido en mi clínica dental de confianza. Siempre los recomiendo a todos.",
+    rating: 5,
+    avatar: "DH"
+  },
+];
+---
+
+<section class="testimonials" id="testimonios">
+  <div class="container">
+    <div class="testimonials-header">
+      <span class="section-tag">Testimonios</span>
+      <h2 class="section-title">Lo que dicen nuestros<br/>pacientes felices</h2>
+      <p class="section-subtitle">
+        Miles de sonrisas transformadas nos respaldan. Conoce las experiencias 
+        de quienes ya confían en nosotros.
+      </p>
+    </div>
+
+    <div class="testimonials-grid" data-animate="fade-up">
+      {testimonials.map((testimonial, index) => (
+        <div class="testimonial-card" data-delay={index * 0.1}>
+          <div class="testimonial-rating">
+            {Array.from({length: testimonial.rating}).map(() => (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFB1D7" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ))}
+          </div>
+          <p class="testimonial-text">"{testimonial.text}"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">{testimonial.avatar}</div>
+            <div>
+              <strong class="testimonial-name">{testimonial.name}</strong>
+              <span class="testimonial-role">{testimonial.role}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    padding: var(--section-padding) 0;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonials::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--pink-light), var(--lavender-light), transparent);
+  }
+
+  .testimonials-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .testimonials-header .section-subtitle {
+    margin-inline: auto;
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+
+  .testimonial-card {
+    padding: 2.25rem;
+    background: var(--gradient-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 177, 215, 0.1);
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8rem;
+    line-height: 1;
+    color: rgba(255, 177, 215, 0.08);
+    pointer-events: none;
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(255, 177, 215, 0.25);
+  }
+
+  .testimonial-rating {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .testimonial-text {
+    font-size: 0.98rem;
+    color: var(--text-medium);
+    line-height: 1.8;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 177, 215, 0.12);
+  }
+
+  .testimonial-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .testimonial-name {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .testimonial-role {
+    font-size: 0.82rem;
+    color: var(--text-light);
+  }
+
+  @media (max-width: 1024px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .testimonials-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

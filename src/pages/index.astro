@@ -1,0 +1,278 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Services from '../components/Services.astro';
+import About from '../components/About.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+---
+
+<Layout title="Happy Dent">
+  <Navbar />
+  <main>
+    <Hero />
+    <Services />
+    <About />
+    <Testimonials />
+    <Contact />
+  </main>
+  <Footer />
+  <WhatsAppFloat />
+
+  <script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero animations timeline
+    const heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    heroTl
+      .from('.hero-badge', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        delay: 0.3
+      })
+      .from('.hero-title', {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+      }, '-=0.4')
+      .from('.hero-description', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+      }, '-=0.6')
+      .from('.hero-ctas', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+      }, '-=0.5')
+      .from('.hero-stats', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+      }, '-=0.4')
+      .from('.hero-visual', {
+        opacity: 0,
+        x: 60,
+        duration: 1.2,
+      }, '-=1.2')
+      .from('.floating-card', {
+        opacity: 0,
+        scale: 0.8,
+        stagger: 0.15,
+        duration: 0.6,
+      }, '-=0.6')
+      .from('.scroll-indicator', {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+      }, '-=0.3');
+
+    // Animate stat numbers
+    const statNumbers = document.querySelectorAll('.stat-number[data-count]');
+    statNumbers.forEach(el => {
+      const element = el as HTMLElement;
+      const target = parseInt(element.dataset.count || '0');
+      gsap.to(element, {
+        scrollTrigger: {
+          trigger: element,
+          start: 'top 80%',
+        },
+        innerText: target,
+        duration: 2,
+        snap: { innerText: 1 },
+        ease: 'power2.out',
+      });
+    });
+
+    // Services section
+    gsap.from('.services-header .section-tag', {
+      scrollTrigger: { trigger: '.services-header', start: 'top 80%' },
+      opacity: 0, y: 20, duration: 0.6,
+    });
+
+    gsap.from('.services-header .section-title', {
+      scrollTrigger: { trigger: '.services-header', start: 'top 80%' },
+      opacity: 0, y: 30, duration: 0.8, delay: 0.15,
+    });
+
+    gsap.from('.services-header .section-subtitle', {
+      scrollTrigger: { trigger: '.services-header', start: 'top 80%' },
+      opacity: 0, y: 20, duration: 0.7, delay: 0.3,
+    });
+
+    gsap.utils.toArray('.service-card').forEach((card: any, i: number) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        },
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        delay: i * 0.1,
+        ease: 'power3.out',
+      });
+    });
+
+    // About section
+    gsap.from('.about-visual', {
+      scrollTrigger: { trigger: '.about-grid', start: 'top 75%' },
+      opacity: 0, x: -60, duration: 1, ease: 'power3.out',
+    });
+
+    gsap.from('.about-content .section-tag', {
+      scrollTrigger: { trigger: '.about-content', start: 'top 80%' },
+      opacity: 0, y: 20, duration: 0.6,
+    });
+
+    gsap.from('.about-content .section-title', {
+      scrollTrigger: { trigger: '.about-content', start: 'top 80%' },
+      opacity: 0, y: 30, duration: 0.8, delay: 0.1,
+    });
+
+    gsap.from('.about-text', {
+      scrollTrigger: { trigger: '.about-content', start: 'top 75%' },
+      opacity: 0, y: 20, stagger: 0.15, duration: 0.7, delay: 0.2,
+    });
+
+    gsap.utils.toArray('.about-feature').forEach((feature: any, i: number) => {
+      gsap.from(feature, {
+        scrollTrigger: {
+          trigger: feature,
+          start: 'top 90%',
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        delay: i * 0.1,
+        ease: 'power3.out',
+      });
+    });
+
+    gsap.from('.about-badge', {
+      scrollTrigger: { trigger: '.about-badge', start: 'top 90%' },
+      opacity: 0, scale: 0.5, duration: 0.8, ease: 'back.out(1.7)',
+    });
+
+    // Testimonials section
+    gsap.from('.testimonials-header .section-tag', {
+      scrollTrigger: { trigger: '.testimonials-header', start: 'top 80%' },
+      opacity: 0, y: 20, duration: 0.6,
+    });
+
+    gsap.from('.testimonials-header .section-title', {
+      scrollTrigger: { trigger: '.testimonials-header', start: 'top 80%' },
+      opacity: 0, y: 30, duration: 0.8, delay: 0.15,
+    });
+
+    gsap.from('.testimonials-header .section-subtitle', {
+      scrollTrigger: { trigger: '.testimonials-header', start: 'top 80%' },
+      opacity: 0, y: 20, duration: 0.7, delay: 0.3,
+    });
+
+    gsap.utils.toArray('.testimonial-card').forEach((card: any, i: number) => {
+      gsap.from(card, {
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+        },
+        opacity: 0,
+        y: 50,
+        rotation: 2,
+        duration: 0.8,
+        delay: i * 0.08,
+        ease: 'power3.out',
+      });
+    });
+
+    // Contact section
+    gsap.from('.contact-info', {
+      scrollTrigger: { trigger: '.contact-grid', start: 'top 75%' },
+      opacity: 0, x: -40, duration: 1, ease: 'power3.out',
+    });
+
+    gsap.from('.cta-card', {
+      scrollTrigger: { trigger: '.cta-card', start: 'top 80%' },
+      opacity: 0, x: 40, duration: 1, ease: 'power3.out',
+    });
+
+    gsap.utils.toArray('.contact-method').forEach((method: any, i: number) => {
+      gsap.from(method, {
+        scrollTrigger: {
+          trigger: method,
+          start: 'top 90%',
+        },
+        opacity: 0,
+        x: -30,
+        duration: 0.6,
+        delay: i * 0.1,
+        ease: 'power3.out',
+      });
+    });
+
+    // Footer
+    gsap.from('.footer-grid > *', {
+      scrollTrigger: { trigger: '.footer', start: 'top 85%' },
+      opacity: 0, y: 30, stagger: 0.1, duration: 0.7, ease: 'power3.out',
+    });
+
+    // Parallax for hero shapes
+    gsap.utils.toArray('.shape').forEach((shape: any) => {
+      gsap.to(shape, {
+        scrollTrigger: {
+          trigger: '.hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        y: -100,
+        ease: 'none',
+      });
+    });
+
+    // Navbar animation on entry
+    gsap.from('.navbar', {
+      opacity: 0,
+      y: -20,
+      duration: 0.8,
+      delay: 0.1,
+      ease: 'power3.out',
+    });
+
+    // WhatsApp float entrance
+    gsap.from('#whatsappFloat', {
+      opacity: 0,
+      scale: 0,
+      duration: 0.6,
+      delay: 2,
+      ease: 'back.out(1.7)',
+    });
+
+    // Smooth hover effects for service cards
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        gsap.to(card.querySelector('.service-icon'), {
+          scale: 1.1,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card.querySelector('.service-icon'), {
+          scale: 1,
+          duration: 0.3,
+          ease: 'power2.out',
+        });
+      });
+    });
+  </script>
+</Layout>

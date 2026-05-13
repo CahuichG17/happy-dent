@@ -1,0 +1,153 @@
+---
+// Torre Métropoli, Cancún
+const lat = 21.1584143;
+const lng = -86.8280065;
+const placeUrl = "https://maps.app.goo.gl/PLHfqtEJPAjz6AH87";
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+const embedSrc = "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.848809453995!2d-86.8280065!3d21.158414300000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4c2bf8bee7c053%3A0x397242433f0bac11!2sTorre%20Metropoli!5e0!3m2!1ses-419!2smx!4v1778707654021!5m2!1ses-419!2smx";
+---
+
+<section class="map-section" id="ubicacion">
+  <div class="container">
+    <div class="map-header">
+      <span class="section-tag">
+        <span data-es>Visítanos</span><span data-en>Visit us</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>En Torre Métropoli,<br/>corazón de Cancún</span>
+        <span data-en>In Torre Métropoli,<br/>heart of Cancún</span>
+      </h2>
+    </div>
+
+    <div class="map-grid">
+      <div class="map-info glass" data-hover>
+        <div class="map-info-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <div>
+            <strong data-es>Dirección</strong><strong data-en>Address</strong>
+            <span>Torre Métropoli, Cancún, Quintana Roo</span>
+          </div>
+        </div>
+        <div class="map-info-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.36 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <div>
+            <strong data-es>Teléfono</strong><strong data-en>Phone</strong>
+            <a href="tel:+529983229592">+52 998 322 9592</a>
+          </div>
+        </div>
+        <div class="map-info-item">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <div>
+            <strong data-es>Horarios</strong><strong data-en>Hours</strong>
+            <span data-es>Lun-Vie 9:00-18:00 · Sáb 9:00-14:00</span>
+            <span data-en>Mon-Fri 9-18 · Sat 9-14</span>
+          </div>
+        </div>
+        <div class="map-actions">
+          <a href={directions} target="_blank" rel="noopener" class="btn btn-primary" data-hover>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            <span data-es>Cómo llegar</span><span data-en>Get directions</span>
+          </a>
+          <a href={placeUrl} target="_blank" rel="noopener" class="btn btn-secondary" data-hover>
+            <span data-es>Ver en Google</span><span data-en>Open in Google</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="map-frame">
+        <iframe
+          title="Happy Dent — Torre Métropoli, Cancún"
+          src={embedSrc}
+          width="600"
+          height="450"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .map-section {
+    padding: var(--section-padding) 0;
+    background: var(--white);
+  }
+  .map-header { text-align: center; margin-bottom: 3rem; }
+
+  .map-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .map-info {
+    padding: 2.25rem;
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .map-info-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .map-info-item svg {
+    color: var(--pink-dark);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .map-info-item strong {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+  }
+  .map-info-item span, .map-info-item a {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    line-height: 1.55;
+  }
+  .map-info-item a {
+    color: var(--pink-dark);
+    font-weight: 600;
+    transition: color var(--transition-fast);
+  }
+  .map-info-item a:hover { color: var(--pink-medium); }
+
+  .map-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+  }
+
+  .map-frame {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 177, 215, 0.15);
+    min-height: 460px;
+  }
+  .map-frame iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 460px;
+    border: 0;
+    display: block;
+  }
+
+  @media (max-width: 900px) {
+    .map-grid { grid-template-columns: 1fr; }
+    .map-frame, .map-frame iframe { min-height: 360px; }
+  }
+</style>

@@ -1,0 +1,246 @@
+---
+const intlReviews = [
+  { name: "Jennifer R.", from: "Austin, TX · USA", text: "I flew to Cancún for veneers and the result was breathtaking. The English-speaking team is excellent and the clinic feels world-class.", rating: 5 },
+  { name: "Michael K.", from: "Toronto · Canada", text: "Got 3 implants done in two visits while staying at the hotel zone. Top-notch quality and a truly relaxing experience.", rating: 5 },
+  { name: "Sarah L.", from: "London · United Kingdom", text: "Combined my smile makeover with a Riviera Maya holiday. Best decision — same quality I would expect from top European clinics.", rating: 5 },
+];
+---
+
+<section class="tourism-section" id="tourism">
+  <div class="container">
+    <div class="tourism-header">
+      <span class="section-tag">
+        <span data-es>Turismo dental</span><span data-en>Dental Tourism</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Tu sonrisa nueva +<br/>el Caribe Mexicano</span>
+        <span data-en>A new smile +<br/>the Mexican Caribbean</span>
+      </h2>
+      <p class="section-subtitle">
+        <span data-es>Combina tratamiento de clase mundial con vacaciones inolvidables. Atención bilingüe, traslado del hotel y agenda flexible para visitantes.</span>
+        <span data-en>Combine world-class dental work with an unforgettable vacation. Bilingual care, hotel pickup and flexible scheduling for travelers.</span>
+      </p>
+    </div>
+
+    <!-- Includes grid -->
+    <div class="tourism-includes">
+      <div class="include-card glass" data-hover>
+        <div class="include-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z"/></svg>
+        </div>
+        <strong data-es>Recogida en hotel</strong><strong data-en>Hotel pickup</strong>
+        <span data-es>Cancún, Playa del Carmen y Tulum</span>
+        <span data-en>Cancún, Playa del Carmen & Tulum</span>
+      </div>
+      <div class="include-card glass" data-hover>
+        <div class="include-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.74-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <strong data-es>Cotización en 24h</strong><strong data-en>24h quote</strong>
+        <span data-es>Envíanos tu rayografía y obtén plan completo.</span>
+        <span data-en>Send us your X-ray for a full treatment plan.</span>
+      </div>
+      <div class="include-card glass" data-hover>
+        <div class="include-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <strong data-es>Bilingüe</strong><strong data-en>Fully bilingual</strong>
+        <span data-es>Español e inglés fluido.</span>
+        <span data-en>Spanish & fluent English.</span>
+      </div>
+      <div class="include-card glass" data-hover>
+        <div class="include-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16l7-3 7 3z"/></svg>
+        </div>
+        <strong data-es>Hoteles aliados</strong><strong data-en>Partner hotels</strong>
+        <span data-es>Tarifas especiales en hoteles boutique.</span>
+        <span data-en>Special rates at boutique hotels.</span>
+      </div>
+    </div>
+
+    <!-- International reviews -->
+    <div class="intl-reviews">
+      <h3 data-es>Lo que dicen pacientes internacionales</h3>
+      <h3 data-en>What international patients say</h3>
+      <div class="intl-grid">
+        {intlReviews.map(r => (
+          <div class="intl-card" data-hover>
+            <div class="intl-stars">
+              {Array.from({length: r.rating}).map(() => (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              ))}
+            </div>
+            <p class="intl-text">"{r.text}"</p>
+            <div class="intl-meta">
+              <strong>{r.name}</strong>
+              <span>{r.from}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="tourism-cta">
+      <a href="https://wa.me/529983229592?text=Hi%20Happy%20Dent%2C%20I%27m%20interested%20in%20dental%20tourism%20in%20Canc%C3%BAn." target="_blank" rel="noopener" class="btn btn-primary" data-hover>
+        <span data-es>Pedir cotización internacional</span>
+        <span data-en>Get my international quote</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .tourism-section {
+    padding: var(--section-padding) 0;
+    background: var(--white);
+    position: relative;
+  }
+  .tourism-header { text-align: center; margin-bottom: 4rem; }
+  .tourism-header .section-subtitle { margin-inline: auto; }
+
+  .tourism-includes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 4rem;
+  }
+
+  .include-card {
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: transform var(--transition-slow);
+  }
+  .include-card:hover { transform: translateY(-6px); }
+  .include-icon {
+    width: 52px; height: 52px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1rem;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
+    color: var(--white);
+  }
+  .include-card strong {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 0.35rem;
+  }
+  .include-card span {
+    font-size: 0.82rem;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  .compare-card {
+    background: var(--gradient-soft);
+    border-radius: var(--radius-xl);
+    padding: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 4rem;
+    border: 1px solid rgba(255, 177, 215, 0.15);
+  }
+  .compare-card h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  .compare-sub {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  .compare-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1.4fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.9rem 1.25rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+  }
+  .compare-row.compare-head {
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .compare-tx { color: var(--text-dark); font-weight: 500; }
+  .compare-us {
+    color: var(--text-light);
+    text-decoration: line-through;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+  }
+  .compare-mx {
+    color: var(--pink-dark);
+    font-weight: 700;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+  }
+  .compare-save {
+    color: #10B981;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .intl-reviews { margin-bottom: 3rem; }
+  .intl-reviews h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .intl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .intl-card {
+    padding: 1.75rem;
+    background: var(--gradient-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 177, 215, 0.12);
+    transition: all var(--transition-slow);
+  }
+  .intl-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md);
+  }
+  .intl-stars { display: flex; gap: 2px; margin-bottom: 0.85rem; }
+  .intl-text {
+    font-size: 0.92rem;
+    color: var(--text-medium);
+    line-height: 1.7;
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
+  .intl-meta strong {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+  }
+  .intl-meta span {
+    font-size: 0.82rem;
+    color: var(--text-light);
+  }
+
+  .tourism-cta { text-align: center; }
+
+  @media (max-width: 720px) {
+    .compare-row { grid-template-columns: 1.4fr 1fr 1fr 0.8fr; font-size: 0.8rem; padding: 0.7rem 0.85rem; }
+    .compare-mx { font-size: 1rem; }
+  }
+</style>

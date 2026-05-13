@@ -1,115 +1,137 @@
 ---
+const base = import.meta.env.BASE_URL;
+const doctors = [
+  {
+    name: "Dra. Dafne Mondragón",
+    spec_es: "Odontología Estética · Ortodoncia",
+    spec_en: "Cosmetic Dentistry · Orthodontics",
+    bio_es: "Cirujana Dentista enfocada en diseño de sonrisa, carillas y ortodoncia invisible. Atención meticulosa, cálida y orientada a resultados naturales.",
+    bio_en: "DDS focused on smile design, veneers and clear aligners. Meticulous, warm and results-driven care.",
+    initials: "DM",
+    photo: "dra-dafne-ruby.jpeg",
+  },
+  {
+    name: "Dra. Cynthia Dzul",
+    spec_es: "Endodoncia · Odontopediatría",
+    spec_en: "Endodontics · Pediatric Dentistry",
+    bio_es: "Especialista en tratamientos de conducto con microscopía y atención dental infantil libre de miedo. Precisión clínica con trato humano.",
+    bio_en: "Specialist in microscope-assisted root canals and fear-free pediatric care. Clinical precision with a human touch.",
+    initials: "CD",
+    photo: "Dra-Cynthia-Dzul.jpeg",
+  },
+];
 ---
 
 <section class="about" id="nosotros">
   <div class="container">
-    <div class="about-grid">
-      <div class="about-visual" data-animate="fade-right">
-        <div class="about-image-stack">
-          <div class="about-image-main">
-            <div class="about-illustration">
-              <!-- Professional dental illustration -->
-              <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                  <linearGradient id="aboutGrad1" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#FFB1D7" stop-opacity="0.2"/>
-                    <stop offset="100%" stop-color="#D8B9EB" stop-opacity="0.2"/>
-                  </linearGradient>
-                  <linearGradient id="aboutGrad2" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#FFB1D7"/>
-                    <stop offset="100%" stop-color="#D8B9EB"/>
-                  </linearGradient>
-                </defs>
-                
-                <!-- Background circle -->
-                <circle cx="200" cy="200" r="160" fill="url(#aboutGrad1)"/>
-                
-                <!-- Cross/Medical symbol -->
-                <rect x="175" y="120" width="50" height="160" rx="10" fill="url(#aboutGrad2)" opacity="0.3"/>
-                <rect x="120" y="175" width="160" height="50" rx="10" fill="url(#aboutGrad2)" opacity="0.3"/>
-                
-                <!-- Heart in center -->
-                <path d="M200 170c-5-15-25-20-35-10s-10 30 35 55c45-25 45-45 35-55s-30-5-35 10z" fill="#FFB1D7" opacity="0.6"/>
-                
-                <!-- Tooth outline -->
-                <path d="M200 100c-20 0-40 18-40 38s20 50 40 80c20-30 40-60 40-80s-20-38-40-38z" stroke="#D8B9EB" stroke-width="2" fill="none" opacity="0.5"/>
-                
-                <!-- Sparkles -->
-                <circle cx="280" cy="120" r="4" fill="#FFB1D7" opacity="0.5"/>
-                <circle cx="120" cy="280" r="6" fill="#D8B9EB" opacity="0.4"/>
-                <circle cx="310" cy="250" r="5" fill="#FFB1D7" opacity="0.3"/>
-                <circle cx="100" cy="140" r="3" fill="#D8B9EB" opacity="0.5"/>
-              </svg>
-            </div>
-          </div>
+    <div class="about-header">
+      <span class="section-tag">
+        <span data-es>Conoce al equipo</span><span data-en>Meet the team</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Las doctoras detrás<br/>de tu sonrisa</span>
+        <span data-en>The doctors behind<br/>your smile</span>
+      </h2>
+      <p class="section-subtitle about-intro">
+        <span data-es>Happy Dent es un consultorio boutique en Cancún donde dos especialistas combinan tecnología de punta, ética profesional y un trato cálido para entregarte resultados naturales.</span>
+        <span data-en>Happy Dent is a boutique clinic in Cancún where two specialists combine cutting-edge technology, professional ethics and a warm approach to deliver natural results.</span>
+      </p>
+    </div>
 
-          <!-- Experience badge -->
-          <div class="about-badge">
-            <span class="about-badge-number">15+</span>
-            <span class="about-badge-text">Años de<br/>Experiencia</span>
+    <div class="doctors-grid">
+      {doctors.map(d => (
+        <article class="doctor-card glass" data-hover>
+          <div class="doctor-portrait">
+            <img src={`${base}${d.photo}`} alt={d.name} loading="lazy" />
           </div>
+          <h3 class="doctor-name">{d.name}</h3>
+          <span class="doctor-spec">
+            <span data-es>{d.spec_es}</span><span data-en>{d.spec_en}</span>
+          </span>
+          <p class="doctor-bio">
+            <span data-es>{d.bio_es}</span><span data-en>{d.bio_en}</span>
+          </p>
+          <div class="doctor-credential">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            <span data-es>Cédula Profesional SEP registrada</span>
+            <span data-en>Licensed professional (SEP, Mexico)</span>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="about-features">
+      <div class="about-feature glass" data-hover>
+        <div class="about-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div>
+          <strong data-es>Escáner Itero 3D</strong><strong data-en>Itero 3D scanner</strong>
+          <span data-es>Sin moldes incómodos. Previsualizamos tu sonrisa.</span>
+          <span data-en>No uncomfortable molds. We preview your smile.</span>
         </div>
       </div>
-
-      <div class="about-content" data-animate="fade-left">
-        <span class="section-tag">Sobre Nosotros</span>
-        <h2 class="section-title">Cuidamos de tu sonrisa<br/>con amor y dedicación</h2>
-        <p class="about-text">
-          En <strong>Happy Dent Odontología</strong> somos un equipo de profesionales 
-          apasionados por la salud bucal. Desde nuestros inicios, nos hemos comprometido 
-          con brindar atención dental de la más alta calidad, utilizando tecnología de 
-          vanguardia y técnicas innovadoras.
-        </p>
-        <p class="about-text">
-          Nuestro consultorio ha sido diseñado pensando en tu comodidad. Creemos que 
-          la visita al dentista puede ser una experiencia positiva y agradable, y 
-          trabajamos cada día para demostrarlo.
-        </p>
-
-        <div class="about-features">
-          <div class="about-feature">
-            <div class="about-feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <div>
-              <strong>Tecnología Avanzada</strong>
-              <span>Equipos de última generación para diagnósticos precisos</span>
-            </div>
-          </div>
-          <div class="about-feature">
-            <div class="about-feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-            </div>
-            <div>
-              <strong>Atención Personalizada</strong>
-              <span>Cada paciente recibe un plan de tratamiento único</span>
-            </div>
-          </div>
-          <div class="about-feature">
-            <div class="about-feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
-            <div>
-              <strong>Horarios Flexibles</strong>
-              <span>Nos adaptamos a tu agenda para tu comodidad</span>
-            </div>
-          </div>
-          <div class="about-feature">
-            <div class="about-feature-icon">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <div>
-              <strong>Ambiente Seguro</strong>
-              <span>Protocolos de bioseguridad e higiene de primera</span>
-            </div>
-          </div>
+      <div class="about-feature glass" data-hover>
+        <div class="about-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
-
-        <a href="https://wa.me/521234567890?text=Hola%20Happy%20Dent%2C%20me%20gustaría%20conocer%20más%20sobre%20su%20consultorio" target="_blank" rel="noopener" class="btn btn-primary" style="margin-top: 0.5rem;">
-          Conócenos
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+        <div>
+          <strong data-es>Atención humana</strong><strong data-en>Human-first care</strong>
+          <span data-es>Plan personalizado para cada paciente.</span>
+          <span data-en>Personalized plan for every patient.</span>
+        </div>
       </div>
+      <div class="about-feature glass" data-hover>
+        <div class="about-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <strong data-es>Horarios flexibles</strong><strong data-en>Flexible hours</strong>
+          <span data-es>Lun-Vie 9-18 · Sáb 9-14</span>
+          <span data-en>Mon-Fri 9-18 · Sat 9-14</span>
+        </div>
+      </div>
+      <div class="about-feature glass" data-hover>
+        <div class="about-feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <strong data-es>Bioseguridad</strong><strong data-en>Biosafety</strong>
+          <span data-es>Esterilización autoclave clase B.</span>
+          <span data-en>Class B autoclave sterilization.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certifications row -->
+    <div class="certifications">
+      <span class="cert-label" data-es>Certificaciones &amp; alianzas</span>
+      <span class="cert-label" data-en>Certifications &amp; partners</span>
+      <div class="cert-row">
+        <div class="cert-chip" data-hover>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L20 6 V13 C20 17.5 16.5 21 12 22 C7.5 21 4 17.5 4 13 V6 Z"/></svg>
+          <div><strong>ADM</strong><span data-es>Asociación Dental Mexicana</span><span data-en>Mexican Dental Association</span></div>
+        </div>
+        <div class="cert-chip" data-hover>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M9 10v6M15 9v8M12 11v4"/></svg>
+          <div><strong>Invisalign</strong><span data-es>Provider certificado</span><span data-en>Certified provider</span></div>
+        </div>
+        <div class="cert-chip" data-hover>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3"/><path d="M12 12v10M9 22h6"/></svg>
+          <div><strong>Straumann</strong><span data-es>Implantes certificados</span><span data-en>Certified implants</span></div>
+        </div>
+        <div class="cert-chip" data-hover>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          <div><strong>ITI</strong><span>International Team for Implantology</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-cta-row">
+      <a href="#agenda" class="btn btn-primary" data-hover>
+        <span data-es>Agenda una valoración</span><span data-en>Book a consultation</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </section>
@@ -121,146 +143,192 @@
     position: relative;
     overflow: hidden;
   }
+  .about-header { text-align: center; margin-bottom: 3.5rem; }
+  .about-header .about-intro { margin-inline: auto; max-width: 680px; }
 
-  .about-grid {
+  /* === Doctors === */
+  .doctors-grid {
     display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 5rem;
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 4rem;
   }
-
-  .about-visual {
-    position: relative;
-  }
-
-  .about-image-stack {
-    position: relative;
-  }
-
-  .about-image-main {
+  .doctor-card {
+    padding: 2.25rem 1.75rem;
     border-radius: var(--radius-xl);
-    overflow: hidden;
-    background: linear-gradient(135deg, rgba(255, 177, 215, 0.08), rgba(216, 185, 235, 0.08));
-    border: 1px solid rgba(255, 177, 215, 0.15);
+    text-align: center;
+    transition: all var(--transition-slow);
+    border: 1px solid rgba(255, 177, 215, 0.18);
+  }
+  .doctor-card:hover {
+    transform: translateY(-6px);
     box-shadow: var(--shadow-lg);
+    border-color: rgba(255, 177, 215, 0.4);
   }
-
-  .about-illustration {
-    padding: 2rem;
+  .doctor-portrait {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(255, 177, 215, 0.35);
+    border: 3px solid rgba(255, 177, 215, 0.35);
+    flex-shrink: 0;
   }
-
-  .about-illustration svg {
+  .doctor-portrait img {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
   }
-
-  .about-badge {
+  .doctor-initials {
     position: absolute;
-    bottom: -1.5rem;
-    right: -1.5rem;
+    inset: 0;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1.25rem 1.75rem;
-    background: var(--gradient-primary);
-    color: var(--white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xl);
-    z-index: 2;
-  }
-
-  .about-badge-number {
+    justify-content: center;
     font-family: 'Cormorant Garamond', serif;
     font-size: 2.25rem;
     font-weight: 700;
-    line-height: 1;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
-
-  .about-badge-text {
+  .doctor-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.4rem, 2.6vw, 1.75rem);
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+    color: var(--text-dark);
+  }
+  .doctor-spec {
+    display: block;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    line-height: 1.3;
-    opacity: 0.9;
-  }
-
-  .about-text {
-    font-size: 1.05rem;
-    color: var(--text-medium);
-    margin-bottom: 1.25rem;
-    line-height: 1.8;
-  }
-
-  .about-text strong {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     color: var(--pink-dark);
+    margin-bottom: 1rem;
   }
+  .doctor-bio {
+    font-size: 0.95rem;
+    color: var(--text-medium);
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+  }
+  .doctor-credential {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(216, 185, 235, 0.35);
+    border-radius: var(--radius-full);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: var(--text-medium);
+  }
+  .doctor-credential svg { color: var(--pink-dark); }
 
+  /* === Features grid === */
   .about-features {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
   }
-
   .about-feature {
     display: flex;
     gap: 1rem;
     align-items: flex-start;
     padding: 1.25rem;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
     border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 177, 215, 0.1);
     transition: all var(--transition-base);
   }
-
   .about-feature:hover {
-    background: rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow-md);
     transform: translateY(-4px);
   }
-
   .about-feature-icon {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, rgba(255, 177, 215, 0.15), rgba(216, 185, 235, 0.15));
     border-radius: var(--radius-sm);
     color: var(--pink-dark);
     flex-shrink: 0;
   }
-
   .about-feature strong {
     display: block;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: var(--text-dark);
     margin-bottom: 0.2rem;
   }
-
   .about-feature span {
     font-size: 0.82rem;
     color: var(--text-light);
     line-height: 1.5;
   }
 
-  @media (max-width: 900px) {
-    .about-grid {
-      grid-template-columns: 1fr;
-      gap: 3rem;
-    }
+  /* === Certifications === */
+  .certifications {
+    padding-top: 1.5rem;
+    border-top: 1px dashed rgba(255, 177, 215, 0.3);
+    text-align: center;
+  }
+  .cert-label {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .cert-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    justify-content: center;
+  }
+  .cert-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.95rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(216, 185, 235, 0.3);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-fast);
+    text-align: left;
+  }
+  .cert-chip:hover {
+    transform: translateY(-2px);
+    border-color: var(--pink);
+    box-shadow: var(--shadow-sm);
+  }
+  .cert-chip strong {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--pink-dark);
+    line-height: 1;
+  }
+  .cert-chip span {
+    font-size: 0.7rem;
+    color: var(--text-light);
+    margin-top: 0.15rem;
+  }
 
-    .about-features {
-      grid-template-columns: 1fr;
-    }
-
-    .about-badge {
-      right: 1rem;
-      bottom: -1rem;
-    }
+  .about-cta-row {
+    margin-top: 2rem;
+    text-align: center;
   }
 </style>

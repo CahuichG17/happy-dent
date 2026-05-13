@@ -1,0 +1,302 @@
+---
+// Aseguradoras: SVG vectorial original (escudo + iniciales) — no se usan logos oficiales.
+const insurances = [
+  { name: "GNP",        accent: "#0033A0" },
+  { name: "AXA",        accent: "#00008F" },
+  { name: "MetLife",    accent: "#0090DA" },
+  { name: "Mapfre",     accent: "#E30613" },
+  { name: "Inbursa",    accent: "#1E4F8B" },
+  { name: "Plan Seguro",accent: "#D62828" },
+  { name: "Allianz",    accent: "#003781" },
+  { name: "Cigna",      accent: "#F58025" },
+];
+
+const msi = [3, 6, 9, 12];
+---
+
+<section class="insurance-section" id="seguros">
+  <div class="container">
+    <div class="insurance-header">
+      <span class="section-tag">
+        <span data-es>Pagos y convenios</span><span data-en>Payments &amp; insurance</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Aceptamos los<br/>principales seguros</span>
+        <span data-en>We accept major<br/>insurance plans</span>
+      </h2>
+      <p class="section-subtitle">
+        <span data-es>Facturamos directo a aseguradoras nacionales e internacionales. Solicita tu reembolso sin complicaciones.</span>
+        <span data-en>We bill national and international carriers directly. Hassle-free reimbursements.</span>
+      </p>
+    </div>
+
+    <!-- Aseguradoras -->
+    <div class="ins-grid">
+      {insurances.map(i => (
+        <article class="ins-card" data-hover>
+          <span class="ins-mark" style={`--accent:${i.accent}`}>
+            <svg viewBox="0 0 48 56" width="40" height="46" aria-hidden="true">
+              <path d="M24 2 L44 9 V26 C44 40 35 50 24 54 C13 50 4 40 4 26 V9 Z"
+                    fill="var(--accent)" opacity="0.12"/>
+              <path d="M24 2 L44 9 V26 C44 40 35 50 24 54 C13 50 4 40 4 26 V9 Z"
+                    fill="none" stroke="var(--accent)" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M16 26 L22 32 L34 20" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+          <span class="ins-name">{i.name}</span>
+        </article>
+      ))}
+    </div>
+
+    <!-- Tarjetas + MSI banner -->
+    <div class="pay-banner glass" data-hover>
+      <div class="pay-banner-left">
+        <span class="pay-icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="5" width="20" height="14" rx="2"/>
+            <line x1="2" y1="10" x2="22" y2="10"/>
+            <line x1="6" y1="15" x2="10" y2="15"/>
+          </svg>
+        </span>
+        <div>
+          <h3>
+            <span data-es>Terminal bancaria en consultorio</span>
+            <span data-en>In-clinic bank terminal</span>
+          </h3>
+          <p>
+            <span data-es>Tarjetas de crédito y débito + Meses Sin Intereses (MSI) con bancos participantes.</span>
+            <span data-en>Credit &amp; debit cards + Interest-Free Months (MSI) with participating banks.</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="msi-chips" aria-label="Meses sin intereses">
+        {msi.map(m => (
+          <span class="msi-chip">
+            <strong>{m}</strong>
+            <em>MSI</em>
+          </span>
+        ))}
+      </div>
+    </div>
+
+    <!-- Tarjetas aceptadas (SVG originales) -->
+    <div class="cards-row">
+      <!-- Visa-like wordmark -->
+      <article class="card-tile" data-hover>
+        <svg viewBox="0 0 60 24" width="58" height="24" aria-hidden="true">
+          <text x="30" y="18" text-anchor="middle"
+                font-family="'Plus Jakarta Sans', sans-serif"
+                font-size="14" font-weight="800" letter-spacing="2"
+                fill="#1A1F71">VISA</text>
+        </svg>
+        <span class="card-label">Crédito · Débito</span>
+      </article>
+
+      <!-- Mastercard-like dual circle -->
+      <article class="card-tile" data-hover>
+        <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
+          <circle cx="24" cy="14" r="10" fill="#EB001B" opacity="0.95"/>
+          <circle cx="36" cy="14" r="10" fill="#F79E1B" opacity="0.95"/>
+          <path d="M30 6 a10 10 0 0 1 0 16 a10 10 0 0 1 0 -16 z" fill="#FF5F00"/>
+        </svg>
+        <span class="card-label">Crédito · Débito</span>
+      </article>
+
+      <!-- Amex-like square -->
+      <article class="card-tile" data-hover>
+        <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
+          <rect x="2" y="2" width="56" height="24" rx="3" fill="#016FD0"/>
+          <text x="30" y="18" text-anchor="middle"
+                font-family="'Plus Jakarta Sans', sans-serif"
+                font-size="9" font-weight="800" letter-spacing="1.4"
+                fill="#FFFFFF">AMERICAN EXPRESS</text>
+        </svg>
+        <span class="card-label">Crédito</span>
+      </article>
+
+      <!-- SPEI -->
+      <article class="card-tile" data-hover>
+        <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
+          <rect x="2" y="2" width="56" height="24" rx="3" fill="none" stroke="#5A4A6A" stroke-width="1.5"/>
+          <path d="M14 14 H46 M40 9 L46 14 L40 19" fill="none" stroke="#5A4A6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="card-label">SPEI · Transferencia</span>
+      </article>
+
+      <!-- Cash -->
+      <article class="card-tile" data-hover>
+        <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
+          <rect x="2" y="6" width="56" height="16" rx="2" fill="#A8D5BA"/>
+          <circle cx="30" cy="14" r="5" fill="none" stroke="#1D4D2F" stroke-width="1.5"/>
+          <text x="30" y="17" text-anchor="middle" font-family="'Cormorant Garamond', serif"
+                font-size="9" font-weight="700" fill="#1D4D2F">$</text>
+        </svg>
+        <span class="card-label">Efectivo MXN · USD</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .insurance-section {
+    padding: var(--section-padding) 0;
+    background: var(--gradient-soft);
+  }
+  .insurance-header { text-align: center; margin-bottom: 3.5rem; }
+  .insurance-header .section-subtitle { margin-inline: auto; max-width: 620px; }
+
+  /* === Aseguradoras grid === */
+  .ins-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .ins-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.5rem 1rem;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 177, 215, 0.18);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    backdrop-filter: blur(10px);
+  }
+  .ins-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(255, 177, 215, 0.45);
+  }
+  .ins-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+  }
+  .ins-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: 0.01em;
+  }
+
+  /* === MSI banner === */
+  .pay-banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.75rem 2rem;
+    border-radius: var(--radius-xl);
+    margin-bottom: 2.5rem;
+    background: linear-gradient(135deg, rgba(255, 177, 215, 0.18), rgba(216, 185, 235, 0.18));
+    border: 1px solid rgba(255, 177, 215, 0.25);
+    backdrop-filter: blur(14px);
+  }
+  .pay-banner-left {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    flex: 1 1 320px;
+  }
+  .pay-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .pay-banner h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    line-height: 1.1;
+    margin-bottom: 0.35rem;
+    color: var(--text-dark);
+  }
+  .pay-banner p {
+    color: var(--text-medium);
+    font-size: 0.92rem;
+    line-height: 1.55;
+    max-width: 520px;
+  }
+
+  .msi-chips {
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+  .msi-chip {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    padding: 0.55rem 0.75rem;
+    background: var(--white);
+    border: 1px solid rgba(216, 185, 235, 0.35);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .msi-chip strong {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--pink-dark);
+    line-height: 1;
+  }
+  .msi-chip em {
+    font-style: normal;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  /* === Cards row === */
+  .cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.85rem;
+  }
+  .card-tile {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.9rem 1.1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 177, 215, 0.18);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+  }
+  .card-tile:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-sm);
+    border-color: rgba(255, 177, 215, 0.35);
+  }
+  .card-tile svg { flex-shrink: 0; }
+  .card-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    line-height: 1.3;
+  }
+
+  @media (max-width: 720px) {
+    .pay-banner { padding: 1.5rem; flex-direction: column; align-items: flex-start; }
+    .msi-chips { width: 100%; justify-content: center; }
+  }
+</style>

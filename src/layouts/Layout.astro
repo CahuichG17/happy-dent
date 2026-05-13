@@ -1,31 +1,173 @@
 ---
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
 }
 
-const { title, description = "Happy Dent Odontología - Tu sonrisa, nuestra pasión. Clínica dental profesional con los mejores tratamientos odontológicos." } = Astro.props;
+const {
+  title = "Happy Dent Cancún | Dentistas — Estética Dental, Implantes e Invisalign",
+  description = "Clínica dental boutique en Cancún. Diseño de sonrisa, implantes, ortodoncia invisible y odontología estética. Atención bilingüe — Dental Tourism. Agenda hoy.",
+} = Astro.props;
+
 const base = import.meta.env.BASE_URL;
+const siteUrl = "https://happy-dent.example.com";
+const ogImage = `${siteUrl}${base}happy-dent.svg`;
+
+// Analytics placeholders — reemplazar con IDs reales en producción
+const GA4_ID = "G-XXXXXXXXXX";
+const META_PIXEL_ID = "XXXXXXXXXXXXXXX";
+const CLARITY_ID = "XXXXXXXXXX";
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es" data-lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
+    <title>{title}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content="dentista Cancún, dentista en Cancún, odontólogo Cancún, implantes dentales Cancún, ortodoncia invisible Cancún, blanqueamiento dental Cancún, diseño de sonrisa, dental tourism Cancun, dentist Cancun Mexico" />
+    <meta name="author" content="Happy Dent — Cancún" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="geo.region" content="MX-ROO" />
+    <meta name="geo.placename" content="Cancún, Quintana Roo" />
+    <meta name="geo.position" content="21.1619;-86.8515" />
+    <meta name="ICBM" content="21.1619, -86.8515" />
+    <link rel="canonical" href={`${siteUrl}${base}`} />
     <meta name="theme-color" content="#FFB1D7" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:site_name" content="Happy Dent Cancún" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={`${siteUrl}${base}`} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Happy Dent — Dentista en Cancún" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <link rel="icon" type="image/svg+xml" href={`${base}happy-dent.svg`} />
+    <link rel="apple-touch-icon" href={`${base}happy-dent.svg`} />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <title>{title}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Schema.org JSON-LD: Dentist + LocalBusiness -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": ["Dentist", "LocalBusiness", "MedicalBusiness"],
+      "name": "Happy Dent Cancún",
+      "image": ogImage,
+      "logo": ogImage,
+      "url": `${siteUrl}${base}`,
+      "telephone": "+52-998-322-9592",
+      "email": "hola@happydent-cancun.mx",
+      "currenciesAccepted": "MXN, USD",
+      "paymentAccepted": "Cash, Credit Card, Debit Card, Bank Transfer",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Torre Métropoli",
+        "addressLocality": "Cancún",
+        "addressRegion": "Quintana Roo",
+        "postalCode": "77500",
+        "addressCountry": "MX"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 21.1584143,
+        "longitude": -86.8280065
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": "Saturday",
+          "opens": "09:00",
+          "closes": "14:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/happydentodontologia",
+        "https://www.instagram.com/happydentodontologia",
+        "https://wa.me/529983229592"
+      ],
+      "medicalSpecialty": ["Dentistry", "CosmeticDentistry", "Orthodontics", "DentalImplants"],
+      "areaServed": [
+        { "@type": "City", "name": "Cancún" },
+        { "@type": "AdministrativeArea", "name": "Riviera Maya" }
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "238",
+        "bestRating": "5"
+      },
+      "employee": [
+        {
+          "@type": "Person",
+          "name": "Dra. Dafne Mondragón",
+          "jobTitle": "Cirujana Dentista — Estética Dental y Ortodoncia"
+        },
+        {
+          "@type": "Person",
+          "name": "Dra. Cynthia Dzul",
+          "jobTitle": "Cirujana Dentista — Endodoncia y Odontopediatría"
+        }
+      ]
+    })} />
+
+    <!-- Google Analytics 4 (placeholder ID) -->
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
+    <script is:inline define:vars={{ GA4_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA4_ID, { anonymize_ip: true });
+      window.gtag = gtag;
+    </script>
+
+    <!-- Meta Pixel (placeholder ID) -->
+    <script is:inline define:vars={{ META_PIXEL_ID }}>
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', META_PIXEL_ID);
+      fbq('track', 'PageView');
+    </script>
+
+    <!-- Microsoft Clarity (placeholder ID) -->
+    <script is:inline define:vars={{ CLARITY_ID }}>
+      (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script", CLARITY_ID);
+    </script>
   </head>
   <body>
+    <!-- Custom cursor -->
+    <div class="cursor" id="cursor" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+    <!-- Progress bar -->
+    <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
     <slot />
+
     <style is:global>
       :root {
-        /* Color Palette from Logo — #ffb1d7 (pink) & #d8b9eb (lavender) */
         --pink-light: #FFF0F6;
         --pink: #FFB1D7;
         --pink-medium: #F08EBF;
@@ -42,40 +184,33 @@ const base = import.meta.env.BASE_URL;
         --text-light: #8B7A9E;
         --text-muted: #A99BBB;
 
-        /* Gradients */
         --gradient-primary: linear-gradient(135deg, var(--pink) 0%, var(--lavender) 100%);
         --gradient-soft: linear-gradient(135deg, var(--cream) 0%, var(--pink-light) 50%, var(--lavender-light) 100%);
         --gradient-hero: linear-gradient(160deg, var(--cream) 0%, var(--pink-light) 40%, var(--lavender-light) 70%, var(--cream) 100%);
         --gradient-card: linear-gradient(145deg, var(--white) 0%, var(--cream) 100%);
 
-        /* Shadows */
         --shadow-sm: 0 2px 8px rgba(255, 177, 215, 0.10);
         --shadow-md: 0 4px 20px rgba(255, 177, 215, 0.15);
         --shadow-lg: 0 8px 40px rgba(255, 177, 215, 0.18);
         --shadow-xl: 0 16px 60px rgba(255, 177, 215, 0.22);
         --shadow-glow: 0 0 30px rgba(255, 177, 215, 0.25);
 
-        /* Spacing */
-        --section-padding: clamp(4rem, 8vw, 8rem);
-        --container-max: 1280px;
+        --section-padding: clamp(5rem, 10vw, 10rem);
+        --container-max: 1320px;
         --container-padding: clamp(1.5rem, 4vw, 3rem);
 
-        /* Border Radius */
         --radius-sm: 8px;
         --radius-md: 16px;
         --radius-lg: 24px;
         --radius-xl: 32px;
         --radius-full: 9999px;
 
-        /* Transitions */
         --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       }
 
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -93,34 +228,20 @@ const base = import.meta.env.BASE_URL;
         background-color: var(--cream);
         overflow-x: hidden;
         line-height: 1.7;
+        font-feature-settings: "ss01", "kern";
       }
 
       h1, h2, h3, h4, h5, h6 {
         font-family: 'Cormorant Garamond', Georgia, serif;
-        line-height: 1.2;
+        line-height: 1.05;
         color: var(--text-dark);
+        letter-spacing: -0.02em;
       }
 
-      a {
-        text-decoration: none;
-        color: inherit;
-      }
-
-      img {
-        max-width: 100%;
-        height: auto;
-      }
-
-      ul, ol {
-        list-style: none;
-      }
-
-      button {
-        border: none;
-        cursor: pointer;
-        font-family: inherit;
-        background: none;
-      }
+      a { text-decoration: none; color: inherit; }
+      img { max-width: 100%; height: auto; }
+      ul, ol { list-style: none; }
+      button { border: none; cursor: pointer; font-family: inherit; background: none; }
 
       .container {
         max-width: var(--container-max);
@@ -133,15 +254,15 @@ const base = import.meta.env.BASE_URL;
         align-items: center;
         gap: 0.5rem;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.1em;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
         color: var(--pink-dark);
         background: linear-gradient(135deg, rgba(255, 177, 215, 0.15), rgba(216, 185, 235, 0.15));
         padding: 0.5rem 1.25rem;
         border-radius: var(--radius-full);
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
       }
 
       .section-tag::before {
@@ -153,9 +274,10 @@ const base = import.meta.env.BASE_URL;
       }
 
       .section-title {
-        font-size: clamp(2rem, 4vw, 3.25rem);
-        font-weight: 700;
-        margin-bottom: 1rem;
+        font-size: clamp(2.25rem, 5vw, 4rem);
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+        letter-spacing: -0.03em;
         background: linear-gradient(135deg, var(--text-dark) 0%, var(--lavender-dark) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -163,10 +285,10 @@ const base = import.meta.env.BASE_URL;
       }
 
       .section-subtitle {
-        font-size: clamp(1rem, 1.5vw, 1.2rem);
+        font-size: clamp(1.02rem, 1.4vw, 1.18rem);
         color: var(--text-light);
-        max-width: 600px;
-        line-height: 1.8;
+        max-width: 620px;
+        line-height: 1.75;
       }
 
       .btn {
@@ -181,6 +303,7 @@ const base = import.meta.env.BASE_URL;
         transition: all var(--transition-base);
         position: relative;
         overflow: hidden;
+        will-change: transform;
       }
 
       .btn-primary {
@@ -188,7 +311,6 @@ const base = import.meta.env.BASE_URL;
         color: var(--white);
         box-shadow: var(--shadow-md), 0 4px 15px rgba(255, 177, 215, 0.4);
       }
-
       .btn-primary:hover {
         transform: translateY(-3px);
         box-shadow: var(--shadow-lg), 0 8px 25px rgba(255, 177, 215, 0.5);
@@ -200,7 +322,6 @@ const base = import.meta.env.BASE_URL;
         border: 2px solid rgba(255, 177, 215, 0.3);
         box-shadow: var(--shadow-sm);
       }
-
       .btn-secondary:hover {
         border-color: var(--pink);
         background: var(--pink-light);
@@ -213,7 +334,6 @@ const base = import.meta.env.BASE_URL;
         color: var(--white);
         box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
       }
-
       .btn-whatsapp:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
@@ -224,31 +344,163 @@ const base = import.meta.env.BASE_URL;
         color: var(--white);
         box-shadow: 0 4px 15px rgba(24, 119, 242, 0.4);
       }
-
       .btn-facebook:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 25px rgba(24, 119, 242, 0.5);
       }
 
-      /* Scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
+      .glass {
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: var(--shadow-md);
       }
 
-      ::-webkit-scrollbar-track {
-        background: var(--cream);
-      }
-
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: var(--cream); }
       ::-webkit-scrollbar-thumb {
         background: var(--gradient-primary);
         border-radius: var(--radius-full);
       }
 
-      /* Selection */
       ::selection {
-        background: rgba(255, 177, 215, 0.3);
+        background: rgba(255, 177, 215, 0.35);
         color: var(--text-dark);
       }
+
+      /* === Custom cursor === */
+      .cursor, .cursor-dot {
+        position: fixed;
+        top: 0; left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        mix-blend-mode: multiply;
+        will-change: transform;
+      }
+      .cursor {
+        width: 32px;
+        height: 32px;
+        border: 1.5px solid var(--pink);
+        border-radius: 50%;
+        transition: width 0.25s ease, height 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+      }
+      .cursor-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--pink-dark);
+        border-radius: 50%;
+      }
+      .cursor.hover {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 177, 215, 0.18);
+        border-color: var(--pink-dark);
+      }
+      @media (hover: none), (max-width: 900px) {
+        .cursor, .cursor-dot { display: none; }
+      }
+      @media (hover: hover) and (min-width: 901px) {
+        body, a, button { cursor: none; }
+      }
+
+      .scroll-progress {
+        position: fixed;
+        top: 0; left: 0;
+        height: 3px;
+        width: 0%;
+        background: var(--gradient-primary);
+        z-index: 1001;
+        box-shadow: 0 0 10px rgba(255, 177, 215, 0.6);
+        transition: width 0.05s linear;
+      }
+
+      /* === i18n === */
+      html[data-lang="en"] [data-es] { display: none !important; }
+      html[data-lang="es"] [data-en] { display: none !important; }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
     </style>
+
+    <script>
+      // === Custom cursor (lerp) ===
+      const cursor = document.getElementById('cursor');
+      const dot = document.getElementById('cursorDot');
+      if (cursor && dot && matchMedia('(hover: hover)').matches) {
+        let mx = 0, my = 0, cx = 0, cy = 0;
+        window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+        const tick = () => {
+          cx += (mx - cx) * 0.18;
+          cy += (my - cy) * 0.18;
+          cursor.style.transform = `translate(${cx - 16}px, ${cy - 16}px)`;
+          dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
+          requestAnimationFrame(tick);
+        };
+        tick();
+        document.addEventListener('mouseover', (e) => {
+          const t = e.target as HTMLElement;
+          if (t.closest('a, button, .service-card, .testimonial-card, .faq-item, [data-hover]')) {
+            cursor.classList.add('hover');
+          }
+        });
+        document.addEventListener('mouseout', (e) => {
+          const t = e.target as HTMLElement;
+          if (t.closest('a, button, .service-card, .testimonial-card, .faq-item, [data-hover]')) {
+            cursor.classList.remove('hover');
+          }
+        });
+      }
+
+      // === Scroll progress ===
+      const progress = document.getElementById('scrollProgress');
+      if (progress) {
+        const onScroll = () => {
+          const h = document.documentElement;
+          const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+          progress.style.width = pct + '%';
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      // === i18n toggle ===
+      const setLang = (lang: string) => {
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('hd-lang', lang); } catch {}
+        document.querySelectorAll('[data-lang-toggle]').forEach(el => {
+          (el as HTMLElement).textContent = lang === 'es' ? 'EN' : 'ES';
+        });
+        document.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+      };
+      (window as any).hdSetLang = setLang;
+
+      // Priority: 1) user's explicit saved choice, 2) browser/device language
+      try {
+        const saved = localStorage.getItem('hd-lang');
+        if (saved === 'en' || saved === 'es') {
+          setLang(saved);
+        } else {
+          // Detect from navigator: any Spanish variant → 'es', everything else → 'en'
+          const browserLang = (navigator.language || navigator.languages?.[0] || 'es').toLowerCase();
+          setLang(browserLang.startsWith('es') ? 'es' : 'en');
+        }
+      } catch {
+        setLang('es');
+      }
+
+      document.addEventListener('click', (e) => {
+        const t = (e.target as HTMLElement).closest('[data-lang-toggle]');
+        if (t) {
+          const current = document.documentElement.getAttribute('data-lang') || 'es';
+          setLang(current === 'es' ? 'en' : 'es');
+        }
+      });
+    </script>
   </body>
 </html>

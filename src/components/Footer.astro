@@ -1,79 +1,91 @@
 ---
 const base = import.meta.env.BASE_URL;
+const year = new Date().getFullYear();
 ---
 
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="#inicio" class="footer-logo">
+        <a href="#inicio" class="footer-logo" data-hover>
           <img src={`${base}happy-dent-icon.svg`} alt="Happy Dent" class="footer-logo-icon" />
           <div>
             <span class="footer-name">Happy Dent</span>
-            <span class="footer-tagline">ODONTOLOGÍA</span>
+            <span class="footer-tagline" data-es>ODONTOLOGÍA · CANCÚN</span>
+            <span class="footer-tagline" data-en>DENTISTRY · CANCÚN</span>
           </div>
         </a>
-        <p class="footer-desc">
-          Tu sonrisa, nuestra pasión. Más de 15 años transformando sonrisas 
-          con amor, profesionalismo y la mejor tecnología dental.
-        </p>
+        <p class="footer-desc" data-es>Tu sonrisa, nuestra obsesión. Odontología de clase mundial en el corazón del Caribe Mexicano.</p>
+        <p class="footer-desc" data-en>Your smile, our obsession. World-class dentistry in the heart of the Mexican Caribbean.</p>
         <div class="footer-social">
-          <a href="https://www.facebook.com/happydentodontologia" target="_blank" rel="noopener" aria-label="Facebook">
+          <a href="https://www.facebook.com/happydentodontologia" target="_blank" rel="noopener" aria-label="Facebook" data-hover>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>
           </a>
-          <a href="https://www.instagram.com/happydentodontologia" target="_blank" rel="noopener" aria-label="Instagram">
+          <a href="https://www.instagram.com/happydentodontologia" target="_blank" rel="noopener" aria-label="Instagram" data-hover>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4a5.8 5.8 0 0 1-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 0 1 1.25 1.25A1.25 1.25 0 0 1 17.25 8 1.25 1.25 0 0 1 16 6.75a1.25 1.25 0 0 1 1.25-1.25M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
           </a>
-          <a href="https://wa.me/521234567890" target="_blank" rel="noopener" aria-label="WhatsApp">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          <a href="https://wa.me/529983229592" target="_blank" rel="noopener" aria-label="WhatsApp" data-hover>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@happydent" target="_blank" rel="noopener" aria-label="TikTok" data-hover>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.66a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.09z"/></svg>
           </a>
         </div>
       </div>
 
       <div class="footer-links-group">
-        <h4>Servicios</h4>
+        <h4 data-es>Servicios</h4><h4 data-en>Services</h4>
         <ul>
-          <li><a href="#servicios">Odontología General</a></li>
-          <li><a href="#servicios">Estética Dental</a></li>
-          <li><a href="#servicios">Ortodoncia</a></li>
-          <li><a href="#servicios">Implantes Dentales</a></li>
-          <li><a href="#servicios">Endodoncia</a></li>
-          <li><a href="#servicios">Odontopediatría</a></li>
+          <li><a href="#servicios" data-hover><span data-es>Odontología General</span><span data-en>General Dentistry</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>Estética &amp; Carillas</span><span data-en>Cosmetic &amp; Veneers</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>Ortodoncia &amp; Invisalign</span><span data-en>Ortho &amp; Invisalign</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>Implantes Dentales</span><span data-en>Dental Implants</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>Odontopediatría</span><span data-en>Pediatric Dentistry</span></a></li>
         </ul>
       </div>
 
       <div class="footer-links-group">
-        <h4>Clínica</h4>
+        <h4 data-es>Clínica</h4><h4 data-en>Clinic</h4>
         <ul>
-          <li><a href="#nosotros">Sobre Nosotros</a></li>
-          <li><a href="#testimonios">Testimonios</a></li>
-          <li><a href="#contacto">Contacto</a></li>
-          <li><a href="https://wa.me/521234567890" target="_blank" rel="noopener">Agendar Cita</a></li>
+          <li><a href="#nosotros" data-hover><span data-es>Nuestras doctoras</span><span data-en>Our doctors</span></a></li>
+          <li><a href="#tourism" data-hover>Dental Tourism</a></li>
+          <li><a href="#faq" data-hover>FAQ</a></li>
+          <li><a href="#seguros" data-hover><span data-es>Seguros aceptados</span><span data-en>Accepted insurance</span></a></li>
+          <li><a href="#agenda" data-hover><span data-es>Agendar cita</span><span data-en>Book appointment</span></a></li>
         </ul>
       </div>
 
       <div class="footer-links-group">
-        <h4>Contacto</h4>
+        <h4 data-es>Contacto</h4><h4 data-en>Contact</h4>
         <ul>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Av. Principal #123
+            Torre Métropoli, Cancún
           </li>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            (55) 1234-5678
+            <a href="tel:+529983229592" data-hover>+52 998 322 9592</a>
           </li>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            info@happydent.com
+            <a href="mailto:hola@happydent-cancun.mx" data-hover>hola@happydent-cancun.mx</a>
+          </li>
+          <li>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span data-es>Lun-Vie 9-18 · Sáb 9-14</span>
+            <span data-en>Mon-Fri 9-18 · Sat 9-14</span>
           </li>
         </ul>
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2026 Happy Dent Odontología. Todos los derechos reservados.</p>
-      <p class="footer-love">Hecho con <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7" stroke="none" style="display:inline;vertical-align:middle;margin:0 3px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> para tu sonrisa</p>
+      <p>&copy; {year} Happy Dent Odontología · <span data-es>Cédulas Profesionales SEP registradas</span><span data-en>Licensed by SEP México</span></p>
+      <p class="footer-love">
+        <span data-es>Hecho con</span><span data-en>Made with</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span data-es>para tu sonrisa</span><span data-en>for your smile</span>
+      </p>
     </div>
   </div>
 </footer>
@@ -81,161 +93,131 @@ const base = import.meta.env.BASE_URL;
 <style>
   .footer {
     background: var(--text-dark);
-    padding: 4rem 0 0;
+    padding: 4.5rem 0 0;
     position: relative;
     overflow: hidden;
   }
-
   .footer::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 3px;
     background: var(--gradient-primary);
   }
-
+  .footer::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 70%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255, 177, 215, 0.06), transparent 60%);
+    pointer-events: none;
+  }
   .footer-grid {
+    position: relative;
+    z-index: 1;
     display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
     gap: 3rem;
     padding-bottom: 3rem;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
-
   .footer-logo {
     display: flex;
     align-items: center;
     gap: 0.6rem;
     margin-bottom: 1.25rem;
   }
-
-  .footer-logo-icon {
-    height: 44px;
-    width: auto;
-    filter: brightness(1.15);
-  }
-
+  .footer-logo-icon { height: 44px; width: auto; filter: brightness(1.15); }
   .footer-name {
     display: block;
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 700;
     color: var(--pink);
     line-height: 1.1;
+    letter-spacing: -0.02em;
   }
-
   .footer-tagline {
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.6rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.25em;
     color: var(--lavender);
-    margin-top: 2px;
+    margin-top: 4px;
     display: block;
   }
-
   .footer-desc {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.5);
+    font-size: 0.92rem;
+    color: rgba(255, 255, 255, 0.55);
     line-height: 1.7;
     margin-bottom: 1.5rem;
     max-width: 300px;
   }
-
-  .footer-social {
-    display: flex;
-    gap: 0.75rem;
-  }
-
+  .footer-social { display: flex; gap: 0.7rem; }
   .footer-social a {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255,255,255,0.06);
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-sm);
-    color: rgba(255,255,255,0.5);
-    transition: all var(--transition-base);
+    color: rgba(255, 255, 255, 0.55);
+    transition: all var(--transition-slow);
   }
-
   .footer-social a:hover {
     background: var(--gradient-primary);
     color: var(--white);
     transform: translateY(-3px);
   }
-
   .footer-links-group h4 {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--pink);
     margin-bottom: 1.25rem;
   }
-
-  .footer-links-group ul {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-  }
-
+  .footer-links-group ul { display: flex; flex-direction: column; gap: 0.7rem; }
   .footer-links-group li {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: rgba(255,255,255,0.4);
+    gap: 0.55rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.92rem;
   }
-
-  .footer-links-group li svg {
-    flex-shrink: 0;
-  }
-
+  .footer-links-group li svg { flex-shrink: 0; }
   .footer-links-group a {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.45);
+    color: rgba(255, 255, 255, 0.5);
     transition: all var(--transition-fast);
   }
-
   .footer-links-group a:hover {
     color: var(--pink);
     padding-left: 4px;
   }
-
   .footer-bottom {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 0;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
-
   .footer-bottom p {
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.3);
+    font-size: 0.83rem;
+    color: rgba(255, 255, 255, 0.35);
   }
-
   .footer-love {
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 
   @media (max-width: 900px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-    }
-
-    .footer-bottom {
-      flex-direction: column;
-      gap: 0.5rem;
-      text-align: center;
-    }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; text-align: center; }
   }
-
   @media (max-width: 640px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-    }
+    .footer-grid { grid-template-columns: 1fr; }
   }
 </style>

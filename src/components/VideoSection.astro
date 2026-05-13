@@ -1,0 +1,112 @@
+---
+// Video section — placeholder ready for YouTube/Vimeo embed
+const YOUTUBE_ID = "dQw4w9WgXcQ"; // ← reemplazar con video real
+---
+
+<section class="video-section" id="video">
+  <div class="container">
+    <div class="video-header">
+      <span class="section-tag">
+        <span data-es>Conoce el consultorio</span><span data-en>Inside the clinic</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Un recorrido por<br/>Happy Dent</span>
+        <span data-en>Take a tour of<br/>Happy Dent</span>
+      </h2>
+    </div>
+
+    <div class="video-wrapper" id="videoWrapper" data-hover>
+      <div class="video-poster">
+        <img src={`https://i.ytimg.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`} alt="Recorrido por el consultorio Happy Dent en Cancún" loading="lazy" />
+        <button class="video-play" id="videoPlay" aria-label="Reproducir video">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .video-section {
+    padding: var(--section-padding) 0;
+    background: var(--gradient-soft);
+  }
+  .video-header { text-align: center; margin-bottom: 3rem; }
+
+  .video-wrapper {
+    position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+    cursor: pointer;
+  }
+  .video-poster {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--pink-light), var(--lavender-light));
+  }
+  .video-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .video-wrapper:hover .video-poster img { transform: scale(1.05); }
+  .video-poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(45, 34, 53, 0.5));
+  }
+  .video-play {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 40px rgba(255, 177, 215, 0.5);
+    transition: transform 0.3s;
+    z-index: 2;
+  }
+  .video-play::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 2px solid var(--pink);
+    opacity: 0.5;
+    animation: video-pulse 2s ease-out infinite;
+  }
+  @keyframes video-pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+  .video-wrapper:hover .video-play { transform: translate(-50%, -50%) scale(1.1); }
+
+  .video-wrapper.playing .video-poster { display: none; }
+</style>
+
+<script define:vars={{ YOUTUBE_ID }}>
+  const wrap = document.getElementById('videoWrapper');
+  const playBtn = document.getElementById('videoPlay');
+  const play = () => {
+    if (!wrap) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`;
+    iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = "position:absolute;inset:0;width:100%;height:100%;border:0;";
+    wrap.appendChild(iframe);
+    wrap.classList.add('playing');
+  };
+  wrap?.addEventListener('click', play);
+  playBtn?.addEventListener('click', (e) => { e.stopPropagation(); play(); });
+</script>

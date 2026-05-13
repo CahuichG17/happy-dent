@@ -1,0 +1,416 @@
+---
+const services = [
+  {
+    es: "Limpieza dental", en: "Cleaning",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 2 5 5 5 9c0 2 .5 3.5 1.5 5L9 20h6l2.5-6C18.5 12.5 19 11 19 9c0-4-3-7-7-7z"/></svg>`
+  },
+  {
+    es: "Blanqueamiento", en: "Whitening",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`
+  },
+  {
+    es: "Carillas / Diseño de sonrisa", en: "Veneers / Smile design",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="9" r="1" fill="currentColor"/><circle cx="12" cy="12" r="10"/></svg>`
+  },
+  {
+    es: "Ortodoncia / Invisalign", en: "Orthodontics / Invisalign",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>`
+  },
+  {
+    es: "Implante dental", en: "Dental implant",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v10M9 19h6"/></svg>`
+  },
+  {
+    es: "Endodoncia", en: "Root canal",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3C9 3 7 6 7 9c0 2 .8 3.8 2 5v7h6v-7c1.2-1.2 2-3 2-5 0-3-2-6-5-6z"/></svg>`
+  },
+  {
+    es: "Odontopediatría", en: "Pediatric",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`
+  },
+  {
+    es: "Otro", en: "Other",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
+  },
+];
+---
+
+<section class="agenda-section" id="agenda">
+  <div class="container">
+    <div class="agenda-header">
+      <span class="section-tag">
+        <span data-es>Agenda tu cita</span><span data-en>Book your visit</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Primera consulta<br/><span class="highlight">gratuita</span></span>
+        <span data-en>First consultation<br/><span class="highlight">on us</span></span>
+      </h2>
+      <p class="section-subtitle">
+        <span data-es>Compártenos algunos datos y abriremos WhatsApp con tu solicitud lista para enviar a la doctora.</span>
+        <span data-en>Share a few details and we'll open WhatsApp with your request pre-filled for the doctor.</span>
+      </p>
+    </div>
+
+    <form class="agenda-form glass" id="agendaForm" novalidate>
+      <div class="form-grid">
+        <label class="field">
+          <span data-es>Nombre completo</span><span data-en>Full name</span>
+          <input type="text" name="nombre" required placeholder="María García" autocomplete="name" />
+        </label>
+
+        <label class="field">
+          <span data-es>Teléfono / WhatsApp</span><span data-en>Phone / WhatsApp</span>
+          <input type="tel" name="telefono" required placeholder="+52 998 322 9592" autocomplete="tel" />
+        </label>
+
+        <div class="field field-full">
+          <span class="field-label" data-es>Tratamiento de interés</span>
+          <span class="field-label" data-en>Service of interest</span>
+          <!-- hidden input that JS fills when a chip is selected -->
+          <input type="hidden" name="servicio" id="servicioHidden" required />
+          <div class="service-chips" id="serviceChips" role="group" aria-label="Selecciona un tratamiento">
+            {services.map(s => (
+              <button type="button" class="svc-chip" data-es-val={s.es} data-en-val={s.en}>
+                <span class="svc-chip-icon" set:html={s.icon} />
+                <span class="svc-chip-label">
+                  <span data-es>{s.es}</span>
+                  <span data-en>{s.en}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+          <p class="chip-hint" id="chipHint" data-es>Selecciona una opción</p>
+          <p class="chip-hint" id="chipHintEn" data-en>Pick an option</p>
+        </div>
+
+        <label class="field">
+          <span data-es>Fecha preferida</span><span data-en>Preferred date</span>
+          <input type="date" name="fecha" required />
+        </label>
+
+        <label class="field field-full">
+          <span data-es>Comentarios (opcional)</span><span data-en>Notes (optional)</span>
+          <textarea name="notas" rows="3" placeholder="¿Algo que la doctora deba saber?"></textarea>
+        </label>
+      </div>
+
+      <div class="form-footer">
+        <p class="form-disclaimer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span data-es>Tus datos son confidenciales y solo se usan para contactarte.</span>
+          <span data-en>Your data is confidential and used only to contact you.</span>
+        </p>
+        <button type="submit" class="btn btn-primary" data-hover>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+          <span data-es>Enviar por WhatsApp</span><span data-en>Send via WhatsApp</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Success modal -->
+    <div class="agenda-success" id="agendaSuccess" aria-hidden="true">
+      <div class="agenda-success-card">
+        <div class="check-anim" id="checkAnim">
+          <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="25" fill="none" stroke="#FFB1D7" stroke-width="2"/>
+            <path fill="none" stroke="#D96DA5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14 27l8 8 16-18"/>
+          </svg>
+        </div>
+        <h3>
+          <span data-es>¡Listo! Solicitud enviada</span>
+          <span data-en>Done! Request sent</span>
+        </h3>
+        <p>
+          <span data-es>WhatsApp se abrió con tu mensaje. Te confirmaremos en breve.</span>
+          <span data-en>WhatsApp opened with your message. We'll confirm shortly.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .agenda-section {
+    padding: var(--section-padding) 0;
+    background: var(--gradient-soft);
+    position: relative;
+  }
+  .agenda-header { text-align: center; margin-bottom: 3rem; }
+  .agenda-header .section-subtitle { margin-inline: auto; }
+  .agenda-header .highlight {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-style: italic;
+  }
+
+  .agenda-form {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border-radius: var(--radius-xl);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 0.45rem; }
+  .field-full { grid-column: 1 / -1; }
+  .field > span {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-medium);
+  }
+  .field input, .field select, .field textarea {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid rgba(255, 177, 215, 0.2);
+    color: var(--text-dark);
+    transition: all var(--transition-fast);
+    width: 100%;
+    resize: vertical;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--pink);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(255, 177, 215, 0.15);
+  }
+
+  /* ===== Service chips ===== */
+  .field-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-medium);
+    margin-bottom: 0.2rem;
+    display: block;
+  }
+  .service-chips {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 0.65rem;
+  }
+  .svc-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 0.75rem 0.75rem;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1.5px solid rgba(255, 177, 215, 0.2);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+  }
+  .svc-chip:hover {
+    border-color: var(--pink);
+    background: rgba(255, 177, 215, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(255, 177, 215, 0.2);
+  }
+  .svc-chip.selected {
+    border-color: var(--pink-dark);
+    background: linear-gradient(135deg, rgba(255, 177, 215, 0.18), rgba(216, 185, 235, 0.18));
+    box-shadow: 0 0 0 3px rgba(255, 177, 215, 0.25);
+  }
+  .svc-chip.selected .svc-chip-icon svg {
+    stroke: var(--pink-dark);
+  }
+  .svc-chip-icon {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-medium);
+    transition: color var(--transition-fast);
+  }
+  .svc-chip-icon svg { width: 24px; height: 24px; }
+  .svc-chip-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.3;
+  }
+  /* Validation error state */
+  .service-chips.invalid .svc-chip {
+    border-color: rgba(239, 68, 68, 0.35);
+  }
+  .chip-hint {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+    display: none;
+  }
+  .chip-hint.visible { display: block; color: #EF4444; }
+
+  .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.75rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .form-disclaimer {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-light);
+  }
+  .form-disclaimer svg { color: var(--pink); flex-shrink: 0; }
+
+  /* Success modal */
+  .agenda-success {
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    background: rgba(45, 34, 53, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+  }
+  .agenda-success.active { opacity: 1; visibility: visible; }
+  .agenda-success-card {
+    background: var(--white);
+    border-radius: var(--radius-xl);
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 420px;
+    box-shadow: var(--shadow-xl);
+    transform: scale(0.85);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .agenda-success.active .agenda-success-card { transform: scale(1); }
+  .agenda-success-card h3 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+  }
+  .agenda-success-card p {
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+  .check-anim {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 1.25rem;
+  }
+  .check-anim svg { width: 100%; height: 100%; }
+
+  @media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('agendaForm') as HTMLFormElement | null;
+  const success = document.getElementById('agendaSuccess');
+  const servicioHidden = document.getElementById('servicioHidden') as HTMLInputElement | null;
+  const chips = document.querySelectorAll<HTMLButtonElement>('.svc-chip');
+  const chipsContainer = document.getElementById('serviceChips');
+  const hintEs = document.getElementById('chipHint');
+  const hintEn = document.getElementById('chipHintEn');
+
+  // Chip selection logic
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      chipsContainer?.classList.remove('invalid');
+      hintEs?.classList.remove('visible');
+      hintEn?.classList.remove('visible');
+      // Fill hidden input with current lang value
+      const lang = document.documentElement.getAttribute('data-lang') || 'es';
+      const val = lang === 'es' ? chip.dataset.esVal : chip.dataset.enVal;
+      if (servicioHidden) servicioHidden.value = val || chip.dataset.esVal || '';
+    });
+  });
+
+  // Update hidden value text when language changes (keep selection, update label)
+  document.addEventListener('langchange', () => {
+    const selected = document.querySelector<HTMLButtonElement>('.svc-chip.selected');
+    if (selected && servicioHidden) {
+      const lang = document.documentElement.getAttribute('data-lang') || 'es';
+      servicioHidden.value = lang === 'es' ? (selected.dataset.esVal || '') : (selected.dataset.enVal || '');
+    }
+  });
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Validate chip selection manually
+    if (!servicioHidden?.value) {
+      chipsContainer?.classList.add('invalid');
+      const lang = document.documentElement.getAttribute('data-lang') || 'es';
+      if (lang === 'es') hintEs?.classList.add('visible');
+      else hintEn?.classList.add('visible');
+      chipsContainer?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const data = new FormData(form);
+    const nombre = (data.get('nombre') || '').toString();
+    const tel = (data.get('telefono') || '').toString();
+    const servicio = (data.get('servicio') || '').toString();
+    const fecha = (data.get('fecha') || '').toString();
+    const notas = (data.get('notas') || '').toString();
+
+    const lang = document.documentElement.getAttribute('data-lang') || 'es';
+    const msg = lang === 'es'
+      ? `Hola Happy Dent, soy ${nombre}. Quisiera agendar una cita para *${servicio}* el día *${fecha}*. Mi teléfono es ${tel}.${notas ? '\n\nNotas: ' + notas : ''}`
+      : `Hi Happy Dent, I'm ${nombre}. I'd like to book an appointment for *${servicio}* on *${fecha}*. My phone is ${tel}.${notas ? '\n\nNotes: ' + notas : ''}`;
+
+    const url = `https://wa.me/529983229592?text=${encodeURIComponent(msg)}`;
+
+    // Track conversion
+    try { (window as any).gtag?.('event', 'appointment_request', { service: servicio }); } catch {}
+    try { (window as any).fbq?.('track', 'Lead', { content_name: servicio }); } catch {}
+
+    window.open(url, '_blank', 'noopener');
+
+    success?.classList.add('active');
+    // Animate check via GSAP if available
+    try {
+      const { gsap } = await import('gsap');
+      gsap.fromTo('#checkAnim svg circle',
+        { strokeDasharray: 160, strokeDashoffset: 160 },
+        { strokeDashoffset: 0, duration: 0.7, ease: 'power4.out' }
+      );
+      gsap.fromTo('#checkAnim svg path',
+        { strokeDasharray: 50, strokeDashoffset: 50 },
+        { strokeDashoffset: 0, duration: 0.5, ease: 'power4.out', delay: 0.4 }
+      );
+    } catch {}
+
+    setTimeout(() => {
+      success?.classList.remove('active');
+      form.reset();
+      chips.forEach(c => c.classList.remove('selected'));
+      if (servicioHidden) servicioHidden.value = '';
+    }, 3500);
+  });
+
+  // Close modal on click outside
+  success?.addEventListener('click', (e) => {
+    if (e.target === success) success.classList.remove('active');
+  });
+</script>

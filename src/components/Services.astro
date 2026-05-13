@@ -1,40 +1,58 @@
 ---
 const services = [
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v20M14 24h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    title: "Odontología General",
-    description: "Revisiones completas, limpiezas dentales profesionales y cuidado preventivo para mantener tu salud bucal en óptimas condiciones.",
-    features: ["Limpieza dental", "Diagnóstico completo", "Prevención"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/><path d="M24 14v20M14 24h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    title_es: "Odontología General",
+    title_en: "General Dentistry",
+    desc_es: "Revisiones, limpiezas y cuidado preventivo de alto estándar para mantener tu salud bucal en óptimas condiciones.",
+    desc_en: "Check-ups, professional cleanings and preventive care to keep your oral health at its best.",
+    features_es: ["Limpieza dental", "Diagnóstico digital", "Prevención"],
+    features_en: ["Cleaning", "Digital diagnosis", "Prevention"],
   },
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 6l4 12h12l-10 7 4 13-10-8-10 8 4-13-10-7h12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
-    title: "Estética Dental",
-    description: "Blanqueamiento profesional, carillas dentales y diseño de sonrisa para que luzcas una sonrisa deslumbrante y natural.",
-    features: ["Blanqueamiento", "Carillas", "Diseño de sonrisa"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 6l4 12h12l-10 7 4 13-10-8-10 8 4-13-10-7h12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>`,
+    title_es: "Estética Dental",
+    title_en: "Cosmetic Dentistry",
+    desc_es: "Blanqueamiento profesional, carillas de porcelana y diseño digital de sonrisa para resultados naturales y deslumbrantes.",
+    desc_en: "Professional whitening, porcelain veneers and digital smile design for natural, jaw-dropping results.",
+    features_es: ["Blanqueamiento", "Carillas", "Diseño digital"],
+    features_en: ["Whitening", "Veneers", "Digital design"],
   },
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="12" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/><path d="M16 20v8M24 18v12M32 22v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    title: "Ortodoncia",
-    description: "Tratamientos con brackets metálicos, estéticos e invisalign para alinear tus dientes y mejorar tu mordida.",
-    features: ["Brackets", "Invisalign", "Retenedores"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><rect x="8" y="12" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/><path d="M16 20v8M24 18v12M32 22v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    title_es: "Ortodoncia · Invisalign",
+    title_en: "Orthodontics · Invisalign",
+    desc_es: "Brackets estéticos e Invisalign con planeación 3D Itero para alinear tus dientes sin que nadie lo note.",
+    desc_en: "Aesthetic braces and Invisalign with 3D Itero planning — straighten your teeth invisibly.",
+    features_es: ["Brackets", "Invisalign", "Retenedores"],
+    features_en: ["Braces", "Invisalign", "Retainers"],
   },
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="8" stroke="currentColor" stroke-width="2"/><path d="M24 8v6M24 34v6M8 24h6M34 24h6M13 13l4.2 4.2M30.8 30.8l4.2 4.2M13 35l4.2-4.2M30.8 17.2L35 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    title: "Implantes Dentales",
-    description: "Implantes de titanio de última generación para reemplazar dientes perdidos con resultados permanentes y naturales.",
-    features: ["Implantes", "Prótesis fijas", "Rehabilitación"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="8" stroke="currentColor" stroke-width="2"/><path d="M24 8v6M24 34v6M8 24h6M34 24h6M13 13l4.2 4.2M30.8 30.8l4.2 4.2M13 35l4.2-4.2M30.8 17.2L35 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    title_es: "Implantes Dentales",
+    title_en: "Dental Implants",
+    desc_es: "Implantes de titanio Straumann® con coronas de zirconio. Resultados permanentes que se ven y sienten naturales.",
+    desc_en: "Straumann® titanium implants with zirconia crowns. Permanent results that look and feel natural.",
+    features_es: ["Implante + corona", "Carga inmediata", "Garantía"],
+    features_en: ["Implant + crown", "Same-day load", "Warranty"],
   },
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 10C18 10 14 16 14 22s6 14 10 18c4-4 10-12 10-18s-4-12-10-12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-    title: "Endodoncia",
-    description: "Tratamientos de conducto con tecnología avanzada para salvar dientes dañados y eliminar el dolor de forma efectiva.",
-    features: ["Tratamiento de conducto", "Sin dolor", "Tecnología avanzada"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 10C18 10 14 16 14 22s6 14 10 18c4-4 10-12 10-18s-4-12-10-12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    title_es: "Endodoncia",
+    title_en: "Endodontics",
+    desc_es: "Tratamientos de conducto con microscopía y rotatorios de última generación. Sin dolor, sin miedo.",
+    desc_en: "Root canal therapy with microscopy and latest-gen rotary tools. Painless, fear-free.",
+    features_es: ["Microscopio", "Sin dolor", "1 sola sesión"],
+    features_en: ["Microscope", "Painless", "Single visit"],
   },
   {
-    icon: `<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 8c-4 0-8 4-8 8s4 10 8 16c4-6 8-12 8-16s-4-8-8-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 26c-2-2-5 0-3 6s9 10 11 10 11-4 11-10-1-8-3-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
-    title: "Odontopediatría",
-    description: "Cuidado dental especializado para los más pequeños del hogar, en un ambiente divertido y libre de miedos.",
-    features: ["Niños y bebés", "Prevención infantil", "Selladores"]
+    icon: `<svg viewBox="0 0 48 48" fill="none"><path d="M24 8c-4 0-8 4-8 8s4 10 8 16c4-6 8-12 8-16s-4-8-8-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 26c-2-2-5 0-3 6s9 10 11 10 11-4 11-10-1-8-3-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    title_es: "Odontopediatría",
+    title_en: "Pediatric Dentistry",
+    desc_es: "Cuidado dental especializado para los más pequeños, en un ambiente divertido y libre de miedos.",
+    desc_en: "Specialized dental care for kids in a fun, fear-free environment.",
+    features_es: ["Niños y bebés", "Prevención", "Selladores"],
+    features_en: ["Kids & babies", "Prevention", "Sealants"],
   },
 ];
 ---
@@ -42,36 +60,50 @@ const services = [
 <section class="services" id="servicios">
   <div class="container">
     <div class="services-header">
-      <span class="section-tag">Nuestros Servicios</span>
-      <h2 class="section-title">Tratamientos de<br/>excelencia dental</h2>
+      <span class="section-tag">
+        <span data-es>Nuestros Servicios</span><span data-en>Our Services</span>
+      </span>
+      <h2 class="section-title">
+        <span data-es>Tratamientos de<br/>excelencia dental</span>
+        <span data-en>Treatments crafted<br/>with precision</span>
+      </h2>
       <p class="section-subtitle">
-        Contamos con tecnología de punta y un equipo de especialistas comprometidos 
-        con tu bienestar y la salud de tu sonrisa.
+        <span data-es>Tecnología de punta, especialistas certificados y un consultorio diseñado para que vuelvas siempre con una sonrisa.</span>
+        <span data-en>Cutting-edge technology, board-certified specialists and a clinic designed to make you smile every visit.</span>
       </p>
     </div>
 
     <div class="services-grid">
-      {services.map((service, index) => (
-        <div class="service-card" data-animate="fade-up" data-delay={index * 0.1}>
+      {services.map((service) => (
+        <article class="service-card" data-hover>
           <div class="service-card-inner">
             <div class="service-icon" set:html={service.icon} />
-            <h3 class="service-title">{service.title}</h3>
-            <p class="service-description">{service.description}</p>
+            <h3 class="service-title">
+              <span data-es>{service.title_es}</span>
+              <span data-en>{service.title_en}</span>
+            </h3>
+            <p class="service-description">
+              <span data-es>{service.desc_es}</span>
+              <span data-en>{service.desc_en}</span>
+            </p>
             <ul class="service-features">
-              {service.features.map(feature => (
+              {service.features_es.map((feature, i) => (
                 <li>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                  {feature}
+                  <span data-es>{feature}</span>
+                  <span data-en>{service.features_en[i]}</span>
                 </li>
               ))}
             </ul>
-            <a href="https://wa.me/521234567890?text=Hola%20Happy%20Dent%2C%20me%20interesa%20el%20servicio%20de%20{encodeURIComponent(service.title)}" target="_blank" rel="noopener" class="service-cta">
-              Más información
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
+            <div class="service-footer">
+              <a href={`https://wa.me/529983229592?text=${encodeURIComponent('Hola Happy Dent, quisiera información sobre ' + service.title_es)}`} target="_blank" rel="noopener" class="service-cta" data-hover>
+                <span data-es>Solicitar información</span><span data-en>Request info</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
           </div>
           <div class="service-card-glow"></div>
-        </div>
+        </article>
       ))}
     </div>
   </div>
@@ -88,21 +120,16 @@ const services = [
   .services::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--pink-light), var(--lavender-light), transparent);
   }
 
   .services-header {
     text-align: center;
-    margin-bottom: 4rem;
+    margin-bottom: 5rem;
   }
-
-  .services-header .section-subtitle {
-    margin-inline: auto;
-  }
+  .services-header .section-subtitle { margin-inline: auto; }
 
   .services-grid {
     display: grid;
@@ -114,11 +141,8 @@ const services = [
     position: relative;
     border-radius: var(--radius-xl);
     overflow: hidden;
-    transition: all var(--transition-base);
-  }
-
-  .service-card:hover {
-    transform: translateY(-8px);
+    transition: transform var(--transition-slow);
+    will-change: transform;
   }
 
   .service-card-inner {
@@ -131,12 +155,14 @@ const services = [
     height: 100%;
     display: flex;
     flex-direction: column;
-    transition: all var(--transition-base);
+    transition: all var(--transition-slow);
+    backdrop-filter: blur(10px);
   }
 
   .service-card:hover .service-card-inner {
-    border-color: rgba(255, 177, 215, 0.3);
+    border-color: rgba(255, 177, 215, 0.35);
     box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
   }
 
   .service-card-glow {
@@ -145,44 +171,35 @@ const services = [
     border-radius: var(--radius-xl);
     background: var(--gradient-primary);
     opacity: 0;
-    transition: opacity var(--transition-base);
+    transition: opacity var(--transition-slow);
     z-index: 1;
   }
-
-  .service-card:hover .service-card-glow {
-    opacity: 0.08;
-  }
+  .service-card:hover .service-card-glow { opacity: 0.1; }
 
   .service-icon {
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
     background: linear-gradient(135deg, rgba(255, 177, 215, 0.12), rgba(216, 185, 235, 0.12));
     border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
     color: var(--pink-dark);
-    transition: all var(--transition-base);
+    transition: all var(--transition-slow);
   }
-
-  .service-icon :global(svg) {
-    width: 28px;
-    height: 28px;
-  }
+  .service-icon :global(svg) { width: 28px; height: 28px; }
 
   .service-card:hover .service-icon {
     background: var(--gradient-primary);
     color: var(--white);
-    transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 177, 215, 0.3);
+    transform: scale(1.08) rotate(-4deg);
+    box-shadow: 0 4px 15px rgba(255, 177, 215, 0.35);
   }
 
   .service-title {
-    font-size: 1.35rem;
+    font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 0.75rem;
     color: var(--text-dark);
+    letter-spacing: -0.02em;
   }
 
   .service-description {
@@ -205,40 +222,60 @@ const services = [
     align-items: center;
     gap: 0.35rem;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-medium);
     background: rgba(255, 177, 215, 0.08);
-    padding: 0.35rem 0.85rem;
+    padding: 0.35rem 0.8rem;
     border-radius: var(--radius-full);
   }
+  .service-features li svg { color: var(--pink); flex-shrink: 0; }
 
-  .service-features li svg {
-    color: var(--pink);
-    flex-shrink: 0;
+  .service-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 177, 215, 0.12);
+    gap: 1rem;
+  }
+
+  .service-price { display: flex; flex-direction: column; }
+  .price-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .price-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--pink-dark);
   }
 
   .service-cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--pink-dark);
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 177, 215, 0.12);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-full);
+    background: rgba(255, 177, 215, 0.1);
     transition: all var(--transition-fast);
   }
-
   .service-cta:hover {
-    gap: 0.85rem;
-    color: var(--pink-medium);
+    background: var(--gradient-primary);
+    color: var(--white);
+    transform: translateX(3px);
   }
 
   @media (max-width: 768px) {
-    .services-grid {
-      grid-template-columns: 1fr;
-    }
+    .services-grid { grid-template-columns: 1fr; }
   }
 </style>

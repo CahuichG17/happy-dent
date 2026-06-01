@@ -62,21 +62,21 @@ const STATUS_CLASS: Record<string, string> = {
       <tbody>
         {rows.map((a) => (
           <tr>
-            <td><strong>{a.patientName}</strong></td>
-            <td>
+            <td data-label="Paciente"><strong>{a.patientName}</strong></td>
+            <td data-label="Contacto">
               <div class="cita-contact">
                 <span>{a.phone}</span>
                 {a.email && <small>{a.email}</small>}
               </div>
             </td>
-            <td>{a.date} · {a.time?.slice(0, 5)}</td>
-            <td>
+            <td data-label="Fecha">{a.date} · {a.time?.slice(0, 5)}</td>
+            <td data-label="Doctora">
               <div class="cita-contact">
                 <span>{a.doctorName ?? '—'}</span>
                 {a.serviceTitle && <small>{a.serviceTitle}</small>}
               </div>
             </td>
-            <td><span class={`admin-badge ${STATUS_CLASS[a.status] ?? 'off'}`}>{STATUS_LABEL[a.status] ?? a.status}</span></td>
+            <td data-label="Estado"><span class={`admin-badge ${STATUS_CLASS[a.status] ?? 'off'}`}>{STATUS_LABEL[a.status] ?? a.status}</span></td>
             <td>
               <div class="admin-actions">
                 <a

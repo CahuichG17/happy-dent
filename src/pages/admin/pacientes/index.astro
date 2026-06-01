@@ -59,15 +59,15 @@ const rows = q
       <tbody>
         {rows.map((p) => (
           <tr>
-            <td><strong>{p.name}</strong></td>
-            <td>
+            <td data-label="Paciente"><strong>{p.name}</strong></td>
+            <td data-label="Contacto">
               <div class="pac-contact">
                 <span>{p.phone || '—'}</span>
                 {p.email && <small>{p.email}</small>}
               </div>
             </td>
-            <td>{p.doctorName ?? '—'}</td>
-            <td><span class="admin-badge off">{p.cases}</span></td>
+            <td data-label="Doctora">{p.doctorName ?? '—'}</td>
+            <td data-label="Casos"><span class="admin-badge off">{p.cases}</span></td>
             <td><a href={`/admin/pacientes/${p.id}`} class="admin-btn admin-btn-ghost">Abrir expediente</a></td>
           </tr>
         ))}

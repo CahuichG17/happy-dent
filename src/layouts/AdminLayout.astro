@@ -278,6 +278,30 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
         .admin-form-actions { flex-direction: column; }
         .admin-form-actions .admin-btn { width: 100%; justify-content: center; }
       }
+      /* ─── Responsive card tables (≤580px) ─── */
+      @media (max-width: 580px) {
+        .admin-table-wrap { overflow: visible; border-radius: 0; }
+        .admin-table { border: none; background: transparent; border-radius: 0; overflow: visible; }
+        .admin-table thead { display: none; }
+        .admin-table tbody { display: flex; flex-direction: column; gap: 0.65rem; }
+        .admin-table tr { display: block; background: #fff; border: 1px solid var(--a-line); border-radius: 10px; overflow: hidden; }
+        .admin-table tr:last-child td { border-bottom: 1px solid var(--a-line); }
+        .admin-table td { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--a-line); font-size: 0.88rem; }
+        .admin-table td:last-child { border-bottom: none !important; }
+        .admin-table td[data-label]::before {
+          content: attr(data-label);
+          font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+          letter-spacing: 0.04em; color: var(--a-muted);
+          min-width: 5.5rem; flex-shrink: 0; padding-top: 0.12rem;
+        }
+        .admin-table td:not([data-label]) .admin-actions { gap: 0.35rem; width: 100%; }
+        .admin-table td:not([data-label]) .admin-actions a,
+        .admin-table td:not([data-label]) .admin-actions form { flex: 1 1 80px; }
+        .admin-table td:not([data-label]) .admin-actions form .admin-btn,
+        .admin-table td:not([data-label]) .admin-actions a.admin-btn { width: 100%; justify-content: center; }
+        .admin-table td:not([data-label]) > a.admin-btn { width: 100%; justify-content: center; }
+        .admin-actions { flex-wrap: wrap; }
+      }
     </style>
   </body>
 </html>

@@ -157,16 +157,16 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
               <tbody>
                 {c.sessions.map((s) => (
                   <tr>
-                    <td><strong>{s.seq}</strong></td>
-                    <td>{s.date ?? '—'}{s.time ? ` · ${s.time.slice(0, 5)}` : ''}</td>
-                    <td>
+                    <td data-label="#"><strong>{s.seq}</strong></td>
+                    <td data-label="Fecha">{s.date ?? '—'}{s.time ? ` · ${s.time.slice(0, 5)}` : ''}</td>
+                    <td data-label="Notas">
                       <div class="clin-sess-notes">
                         {s.procedure && <span>{s.procedure}</span>}
                         {s.notes && <small>{s.notes}</small>}
                         {!s.procedure && !s.notes && <span>—</span>}
                       </div>
                     </td>
-                    <td><span class={`admin-badge ${SESSION_STATUS_CLASS[s.status] ?? 'off'}`}>{SESSION_STATUS[s.status] ?? s.status}</span></td>
+                    <td data-label="Estado"><span class={`admin-badge ${SESSION_STATUS_CLASS[s.status] ?? 'off'}`}>{SESSION_STATUS[s.status] ?? s.status}</span></td>
                     <td>
                       <div class="admin-actions">
                         {s.status === 'planned' && (

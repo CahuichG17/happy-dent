@@ -4,7 +4,13 @@ import { db } from '../../db';
 
 function createAuth() {
   return betterAuth({
-    baseURL: import.meta.env?.BETTER_AUTH_URL || process.env.BETTER_AUTH_URL || 'http://localhost:4321',
+    baseURL: import.meta.env?.BETTER_AUTH_URL || process.env.BETTER_AUTH_URL ||
+      (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : 'http://localhost:4321'),
+    trustedOrigins: [
+      'http://localhost:4321',
+      ...(process.env.RAILWAY_PUBLIC_DOMAIN ? [`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`] : []),
+      ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
+    ],
     secret: import.meta.env?.BETTER_AUTH_SECRET || process.env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, { provider: 'pg' }),
     emailAndPassword: {

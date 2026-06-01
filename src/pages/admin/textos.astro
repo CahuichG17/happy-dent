@@ -80,6 +80,9 @@ const saved = Astro.url.searchParams.get('ok') === '1';
     .txt-hint { font-size: 0.74rem; color: var(--a-muted); }
     .txt-bar { position: sticky; bottom: 0; display: flex; gap: 0.6rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; box-shadow: 0 -4px 16px rgba(0,0,0,0.05); }
     .admin-flash { padding: 0.75rem 1rem; background: #e9f9ef; border: 1px solid #9ad8b3; border-radius: 10px; color: #1c6b3f; font-size: 0.88rem; margin-bottom: 1rem; }
+    @media (max-width: 900px) {
+      .txt-nav { top: 65px; }
+    }
     @media (max-width: 640px) {
       .txt-fields { grid-template-columns: 1fr; }
     }

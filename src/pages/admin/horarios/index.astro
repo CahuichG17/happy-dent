@@ -53,10 +53,10 @@ const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
             <tbody>
               {blocksByDoctor(d.id).map((b) => (
                 <tr>
-                  <td><strong>{WEEKDAYS[b.weekday]}</strong></td>
-                  <td>{b.startTime?.slice(0, 5)}</td>
-                  <td>{b.endTime?.slice(0, 5)}</td>
-                  <td>{b.slotMin} min</td>
+                  <td data-label="Día"><strong>{WEEKDAYS[b.weekday]}</strong></td>
+                  <td data-label="Inicio">{b.startTime?.slice(0, 5)}</td>
+                  <td data-label="Fin">{b.endTime?.slice(0, 5)}</td>
+                  <td data-label="Duración">{b.slotMin} min</td>
                   <td>
                     <form method="POST" action="/api/admin/horarios" onsubmit="return confirm('¿Eliminar este bloque?')">
                       <input type="hidden" name="_action" value="delete" />
@@ -109,5 +109,6 @@ const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
     .hor-add .admin-field { margin-bottom: 0; }
     .hor-add .admin-btn { height: fit-content; }
     @media (max-width: 820px) { .hor-add { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 480px) { .hor-add { grid-template-columns: 1fr; } }
   </style>
 </AdminLayout>

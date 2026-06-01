@@ -28,13 +28,13 @@ const fmt = (n: number, c: string) => new Intl.NumberFormat('es-MX', { style: 'c
       <tbody>
         {rows.map((s) => (
           <tr>
-            <td><strong>{s.titleEs}</strong></td>
-            <td>
+            <td data-label="Servicio"><strong>{s.titleEs}</strong></td>
+            <td data-label="Precio">
               {s.priceAmount != null
                 ? <span>{fmt(s.priceAmount, s.currency)} {s.showPrice ? '' : '(oculto)'}</span>
                 : <span class="admin-badge off">Sin precio</span>}
             </td>
-            <td>{s.active ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Oculto</span>}</td>
+            <td data-label="Estado">{s.active ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Oculto</span>}</td>
             <td>
               <div class="admin-actions">
                 <a href={`/admin/servicios/${s.id}`} class="admin-btn admin-btn-ghost">Editar</a>

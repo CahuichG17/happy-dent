@@ -83,11 +83,14 @@ const c = await getCopy();
 
     <div class="footer-bottom">
       <p>&copy; {year} Happy Dent Odontología · <span data-es>{c['footer.license'].es}</span><span data-en>{c['footer.license'].en}</span></p>
-      <p class="footer-love">
-        <span data-es>{c['footer.made1'].es}</span><span data-en>{c['footer.made1'].en}</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span data-es>{c['footer.made2'].es}</span><span data-en>{c['footer.made2'].en}</span>
-      </p>
+      <div class="footer-bottom-right">
+        <p class="footer-love">
+          <span data-es>{c['footer.made1'].es}</span><span data-en>{c['footer.made1'].en}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span data-es>{c['footer.made2'].es}</span><span data-en>{c['footer.made2'].en}</span>
+        </p>
+        <a href="/admin" class="footer-admin-link" aria-label="Panel de administración">Panel admin</a>
+      </div>
     </div>
   </div>
 </footer>
@@ -213,6 +216,26 @@ const c = await getCopy();
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+  }
+  .footer-bottom-right {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .footer-admin-link {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.22);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.65rem;
+    border-radius: 99px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .footer-admin-link:hover {
+    color: rgba(255, 255, 255, 0.55);
+    border-color: rgba(255, 255, 255, 0.28);
   }
 
   @media (max-width: 900px) {

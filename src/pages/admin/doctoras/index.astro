@@ -32,9 +32,9 @@ const rows = await db.select().from(doctors).orderBy(asc(doctors.order), asc(doc
       <tbody>
         {rows.map((d) => (
           <tr>
-            <td><strong>{d.name}</strong></td>
-            <td>{d.specEs}</td>
-            <td>
+            <td data-label="Nombre"><strong>{d.name}</strong></td>
+            <td data-label="Especialidad">{d.specEs}</td>
+            <td data-label="Estado">
               {d.active
                 ? <span class="admin-badge ok">Visible</span>
                 : <span class="admin-badge off">Oculta</span>}

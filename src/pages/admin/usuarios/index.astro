@@ -39,14 +39,14 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
       <tbody>
         {rows.map((u) => (
           <tr>
-            <td><strong>{u.name}</strong></td>
-            <td>{u.email}</td>
-            <td>
+            <td data-label="Nombre"><strong>{u.name}</strong></td>
+            <td data-label="Correo">{u.email}</td>
+            <td data-label="Rol">
               {u.role === 'super_admin'
                 ? <span class="admin-badge ok">{roleLabel(u.role)}</span>
                 : <span class="admin-badge off">{roleLabel(u.role)}</span>}
             </td>
-            <td>{docName(u.doctorId)}</td>
+            <td data-label="Doctora">{docName(u.doctorId)}</td>
             <td>
               <div class="admin-actions">
                 <a href={`/admin/usuarios/${u.id}`} class="admin-btn admin-btn-ghost">Editar</a>

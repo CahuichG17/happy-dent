@@ -96,5 +96,9 @@ const nextDay = shiftDate(dateStr, 1);
     .ag-label { color: var(--a-pink-dark); font-weight: 600; text-decoration: none; }
     .ag-label:hover { text-decoration: underline; }
     .ag-free { color: var(--a-muted); }
+    @media (max-width: 540px) {
+      .ag-nav input[type="date"] { flex: 1 1 100%; order: -1; }
+      .ag-nav .admin-btn { flex: 1; min-width: 80px; justify-content: center; }
+    }
   </style>
 </AdminLayout>

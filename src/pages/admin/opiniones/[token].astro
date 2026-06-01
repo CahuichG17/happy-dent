@@ -1,0 +1,108 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { reviewTokens, doctors } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
+
+const { token } = Astro.params;
+if (!token) return Astro.redirect('/admin/opiniones');
+
+const rows = await db
+  .select({ t: reviewTokens, doctorName: doctors.name })
+  .from(reviewTokens)
+  .leftJoin(doctors, eq(reviewTokens.doctorId, doctors.id))
+  .where(eq(reviewTokens.token, token))
+  .limit(1);
+
+const row = rows[0];
+if (!row) return Astro.redirect('/admin/opiniones');
+
+const baseUrl = Astro.url.origin;
+const reviewUrl = `${baseUrl}/opinar/${token}`;
+const waText = encodeURIComponent(
+  `Hola${row.t.patientName ? ` ${row.t.patientName}` : ''}! Gracias por visitarnos en Happy Dent. Nos encantaria conocer tu experiencia: ${reviewUrl}`
+);
+const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(reviewUrl)}&margin=10&color=1f2430`;
+const expired = new Date(row.t.expiresAt) < new Date();
+const expires = row.t.expiresAt.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<AdminLayout title="Enlace de opinion" active="opiniones">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Enlace de opinion generado</h1>
+      <p class="admin-sub">Muestra el codigo QR al paciente o envia el enlace por WhatsApp.</p>
+    </div>
+    <a href="/admin/opiniones" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  {row.t.usedAt && (
+    <div class="op-used-banner">
+      Este enlace ya fue utilizado el {row.t.usedAt.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })}.
+      El testimonio esta pendiente de aprobacion en <a href="/admin/testimonios">Testimonios</a>.
+    </div>
+  )}
+  {expired && !row.t.usedAt && (
+    <div class="op-exp-banner">Este enlace expiro el {expires} sin ser utilizado.</div>
+  )}
+
+  <div class="op-wrap">
+    <div class="op-qr-card">
+      <img src={qrUrl} alt="QR de opinion" width="240" height="240" class="op-qr" />
+      <p class="op-exp-label">{expired ? 'Expirado' : `Valido hasta: ${expires}`}</p>
+    </div>
+
+    <div class="op-detail">
+      {row.doctorName && (
+        <div class="op-row"><span class="op-key">Doctora</span><strong>{row.doctorName}</strong></div>
+      )}
+      {row.t.patientName && (
+        <div class="op-row"><span class="op-key">Paciente</span><strong>{row.t.patientName}</strong></div>
+      )}
+
+      <div class="op-url-box">
+        <input id="opUrl" type="text" readonly value={reviewUrl} />
+        <button
+          type="button"
+          class="admin-btn admin-btn-ghost"
+          id="copyBtn"
+          onclick="navigator.clipboard.writeText(document.getElementById('opUrl').value).then(()=>{this.textContent='Copiado';setTimeout(()=>this.textContent='Copiar',2000)})"
+        >Copiar</button>
+      </div>
+
+      {!expired && !row.t.usedAt && (
+        <a
+          href={`https://wa.me/?text=${waText}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="admin-btn op-wa-btn"
+        >Enviar por WhatsApp</a>
+      )}
+
+      <button type="button" class="admin-btn admin-btn-ghost" onclick="window.print()">Imprimir QR</button>
+    </div>
+  </div>
+
+  <style>
+    .op-used-banner { background: #e0e7ff; border: 1px solid #a5b4fc; color: #3730a3; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; }
+    .op-used-banner a { color: inherit; font-weight: 700; }
+    .op-exp-banner { background: #fef3c7; border: 1px solid #fde68a; color: #92400e; border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; }
+    .op-wrap { display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: start; }
+    .op-qr-card { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; background: #fff; border: 1px solid var(--a-line); border-radius: 16px; padding: 1.5rem; }
+    .op-qr { display: block; border-radius: 10px; }
+    .op-exp-label { font-size: 0.78rem; color: var(--a-muted); }
+    .op-detail { display: flex; flex-direction: column; gap: 1rem; }
+    .op-row { display: flex; align-items: baseline; gap: 0.5rem; font-size: 0.95rem; }
+    .op-key { color: var(--a-muted); min-width: 6rem; font-size: 0.82rem; }
+    .op-url-box { display: flex; gap: 0.5rem; }
+    .op-url-box input { flex: 1; border: 1px solid var(--a-line); border-radius: 9px; padding: 0.6rem 0.75rem; font: inherit; font-size: 0.82rem; background: var(--a-bg); color: var(--a-ink); min-width: 0; }
+    .op-wa-btn { background: #25d366; justify-content: center; }
+    .op-wa-btn:hover { background: #1ebe5a; }
+    @media (max-width: 620px) { .op-wrap { grid-template-columns: 1fr; } .op-qr-card { width: 100%; } }
+    @media print {
+      .admin-shell > header, .admin-shell > aside, .admin-toolbar, .op-detail { display: none !important; }
+      .op-qr-card { border: none; padding: 0; }
+    }
+  </style>
+</AdminLayout>

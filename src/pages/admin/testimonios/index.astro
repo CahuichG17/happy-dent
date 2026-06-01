@@ -29,9 +29,16 @@ const rows = await db.select().from(testimonials).orderBy(asc(testimonials.order
           <tr>
             <td data-label="Paciente"><strong>{t.name}</strong></td>
             <td data-label="Calif.">{'★'.repeat(t.rating)}</td>
-            <td data-label="Estado">{t.approved ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Oculto</span>}</td>
+            <td data-label="Estado">{t.approved ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Pendiente</span>}</td>
             <td>
               <div class="admin-actions">
+                {!t.approved && (
+                  <form method="POST" action="/api/admin/testimonios">
+                    <input type="hidden" name="_action" value="approve" />
+                    <input type="hidden" name="id" value={t.id} />
+                    <button type="submit" class="admin-btn">Aprobar</button>
+                  </form>
+                )}
                 <a href={`/admin/testimonios/${t.id}`} class="admin-btn admin-btn-ghost">Editar</a>
                 <form method="POST" action="/api/admin/testimonios" onsubmit="return confirm('¿Eliminar este testimonio?')">
                   <input type="hidden" name="_action" value="delete" />

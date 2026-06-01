@@ -264,6 +264,21 @@ export const clinicalSessions = pgTable('clinical_sessions', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
+// ─────────────────────────────────────────────────────────────
+// Tokens de opinión (QR de calificación post-consulta)
+// ─────────────────────────────────────────────────────────────
+export const reviewTokens = pgTable('review_tokens', {
+  id: serial('id').primaryKey(),
+  token: text('token').notNull().unique(),
+  doctorId: integer('doctor_id').references(() => doctors.id, { onDelete: 'set null' }),
+  patientName: text('patient_name').notNull().default(''),
+  patientId: integer('patient_id').references(() => patients.id, { onDelete: 'set null' }),
+  appointmentId: integer('appointment_id').references(() => appointments.id, { onDelete: 'set null' }),
+  usedAt: timestamp('used_at', { withTimezone: true }),
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
 // Adjuntos: radiografías, fotos clínicas, documentos
 // kind: xray | photo | doc
 export const attachments = pgTable('attachments', {

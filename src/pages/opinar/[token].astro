@@ -1,0 +1,241 @@
+---
+export const prerender = false;
+import { db } from '../../db';
+import { reviewTokens, doctors } from '../../db/schema';
+import { eq, asc } from 'drizzle-orm';
+
+const { token } = Astro.params;
+if (!token) return Astro.redirect('/');
+
+const rows = await db
+  .select({ t: reviewTokens, doctorName: doctors.name })
+  .from(reviewTokens)
+  .leftJoin(doctors, eq(reviewTokens.doctorId, doctors.id))
+  .where(eq(reviewTokens.token, token))
+  .limit(1);
+
+const row = rows[0];
+if (!row) return new Response('Enlace inválido', { status: 404 });
+
+const expired = new Date(row.t.expiresAt) < new Date();
+const used = !!row.t.usedAt;
+
+const error = Astro.url.searchParams.get('error');
+
+const docList = await db.select({ id: doctors.id, name: doctors.name }).from(doctors).where(eq(doctors.active, true)).orderBy(asc(doctors.order));
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Califica tu experiencia · Happy Dent</title>
+    <link rel="icon" type="image/svg+xml" href="/happy-dent.svg" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f7f3f8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem 4rem;
+        color: #1f2430;
+        -webkit-font-smoothing: antialiased;
+      }
+      .card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 2rem 1.75rem;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 8px 40px rgba(31,36,48,0.10);
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.75rem;
+        justify-content: center;
+      }
+      .brand img { width: 36px; height: 36px; }
+      .brand span { font-size: 1.15rem; font-weight: 800; color: #1f2430; }
+      h1 { font-size: 1.35rem; font-weight: 800; text-align: center; margin-bottom: 0.4rem; }
+      .subtitle { text-align: center; color: #6b7280; font-size: 0.92rem; margin-bottom: 1.75rem; }
+      .doc-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #fff0f7;
+        color: #be4d8f;
+        border: 1px solid #f9c8e0;
+        border-radius: 999px;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.84rem;
+        font-weight: 700;
+        margin: 0 auto 1.75rem;
+        display: block;
+        width: fit-content;
+        text-align: center;
+      }
+      .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+      .field label { font-weight: 600; font-size: 0.88rem; color: #374151; }
+      .field input, .field textarea, .field select {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 0.7rem 0.9rem;
+        font: inherit;
+        font-size: 0.95rem;
+        color: #1f2430;
+        background: #fff;
+        width: 100%;
+        transition: border-color 0.15s;
+      }
+      .field input:focus, .field textarea:focus, .field select:focus {
+        outline: none;
+        border-color: #e87fb4;
+        box-shadow: 0 0 0 3px rgba(232,127,180,0.15);
+      }
+      .field textarea { min-height: 110px; resize: vertical; }
+      /* Stars */
+      .stars-wrap { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+      .stars-wrap label { font-weight: 600; font-size: 0.88rem; color: #374151; }
+      .stars { display: flex; gap: 6px; justify-content: center; }
+      .star {
+        font-size: 2.6rem; background: none; border: none; cursor: pointer;
+        color: #d1d5db; transition: color 0.1s, transform 0.1s; padding: 0; line-height: 1;
+      }
+      .star.active { color: #fbbf24; }
+      .star:hover { transform: scale(1.1); }
+      .btn {
+        width: 100%;
+        background: #e87fb4;
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 0.9rem;
+        font: inherit;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background 0.15s;
+        margin-top: 0.5rem;
+      }
+      .btn:hover { background: #d06ea0; }
+      .alert-error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.88rem;
+        margin-bottom: 1.25rem;
+      }
+      .alert-warn {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+        border-radius: 10px;
+        padding: 1rem;
+        font-size: 0.95rem;
+        text-align: center;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="brand">
+        <img src="/happy-dent-icon.svg" alt="Happy Dent" />
+        <span>Happy Dent</span>
+      </div>
+
+      {used ? (
+        <div class="alert-warn">
+          <strong>Este enlace ya fue utilizado.</strong><br />
+          Muchas gracias por compartir tu experiencia.
+        </div>
+      ) : expired ? (
+        <div class="alert-warn">
+          <strong>Este enlace ha expirado.</strong><br />
+          Si deseas calificar tu visita, pide a tu doctora un nuevo enlace.
+        </div>
+      ) : (
+        <>
+          <h1>Califica tu experiencia</h1>
+          <p class="subtitle">Tu opinión nos ayuda a mejorar y a otros pacientes a tomar decisiones.</p>
+
+          {row.doctorName && (
+            <span class="doc-tag">Doctora: {row.doctorName}</span>
+          )}
+
+          {error === 'campos' && (
+            <div class="alert-error">Por favor completa todos los campos.</div>
+          )}
+          {error === 'expirado' && (
+            <div class="alert-error">Este enlace ha expirado. Pide uno nuevo a tu doctora.</div>
+          )}
+
+          <form method="POST" action="/api/opinar">
+            <input type="hidden" name="token" value={token} />
+
+            <div class="stars-wrap">
+              <label>Calificación</label>
+              <div class="stars" id="starsBox">
+                {[1,2,3,4,5].map((n) => (
+                  <button type="button" class="star" data-val={n} aria-label={`${n} estrella${n>1?'s':''}`}>★</button>
+                ))}
+              </div>
+              <input type="hidden" name="rating" id="ratingInput" value="5" />
+            </div>
+
+            <div class="field">
+              <label for="nameInput">Tu nombre</label>
+              <input id="nameInput" name="name" type="text" required placeholder="Nombre completo" value={row.t.patientName} />
+            </div>
+
+            {!row.t.doctorId && docList.length > 0 && (
+              <div class="field">
+                <label for="docSelect">Doctora que te atendio</label>
+                <select id="docSelect" name="doctorId">
+                  <option value="">Selecciona…</option>
+                  {docList.map((d) => (
+                    <option value={d.id}>{d.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {row.t.doctorId && (
+              <input type="hidden" name="doctorId" value={row.t.doctorId} />
+            )}
+
+            <div class="field">
+              <label for="commentInput">Tu comentario</label>
+              <textarea id="commentInput" name="comment" required placeholder="Cuéntanos sobre tu visita…" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn">Enviar calificacion</button>
+          </form>
+        </>
+      )}
+    </div>
+
+    <script>
+      const stars = document.querySelectorAll('.star');
+      const input = document.getElementById('ratingInput') as HTMLInputElement;
+      let current = 5;
+      function paint(n: number) {
+        stars.forEach((s, i) => s.classList.toggle('active', i < n));
+      }
+      paint(5);
+      stars.forEach((s, i) => {
+        s.addEventListener('mouseover', () => paint(i + 1));
+        s.addEventListener('mouseout', () => paint(current));
+        s.addEventListener('click', () => { current = i + 1; if (input) input.value = String(i + 1); paint(current); });
+      });
+    </script>
+  </body>
+</html>

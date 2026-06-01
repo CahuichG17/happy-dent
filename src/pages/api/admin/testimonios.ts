@@ -15,6 +15,11 @@ export const POST: APIRoute = async ({ request }) => {
     return new Response(null, { status: 303, headers: { Location: '/admin/testimonios' } });
   }
 
+  if (action === 'approve' && id) {
+    await db.update(testimonials).set({ approved: true }).where(eq(testimonials.id, id));
+    return new Response(null, { status: 303, headers: { Location: '/admin/testimonios' } });
+  }
+
   const name = String(form.get('name') || '').trim();
   if (!name) return new Response('Nombre requerido', { status: 400 });
 

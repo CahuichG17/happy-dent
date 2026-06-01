@@ -38,7 +38,7 @@ const fmt = (n: number, c: string) => new Intl.NumberFormat('es-MX', { style: 'c
             <td>
               <div class="admin-actions">
                 <a href={`/admin/servicios/${s.id}`} class="admin-btn admin-btn-ghost">Editar</a>
-                <form method="POST" action="/api/admin/servicios" onsubmit="return confirm('¿Eliminar este servicio?')">
+                <form method="POST" action="/api/admin/servicios" data-confirm="¿Eliminar este servicio?">
                   <input type="hidden" name="_action" value="delete" />
                   <input type="hidden" name="id" value={s.id} />
                   <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

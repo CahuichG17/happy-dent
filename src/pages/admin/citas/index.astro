@@ -99,7 +99,7 @@ const STATUS_CLASS: Record<string, string> = {
                   </form>
                 )}
                 {a.status !== 'cancelled' && (
-                  <form method="POST" action="/api/admin/citas" onsubmit="return confirm('¿Cancelar esta cita?')">
+                  <form method="POST" action="/api/admin/citas" data-confirm="¿Cancelar esta cita?">
                     <input type="hidden" name="id" value={a.id} />
                     <input type="hidden" name="status" value="cancelled" />
                     <button type="submit" class="admin-btn admin-btn-danger">Cancelar</button>

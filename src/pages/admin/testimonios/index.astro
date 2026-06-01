@@ -40,7 +40,7 @@ const rows = await db.select().from(testimonials).orderBy(asc(testimonials.order
                   </form>
                 )}
                 <a href={`/admin/testimonios/${t.id}`} class="admin-btn admin-btn-ghost">Editar</a>
-                <form method="POST" action="/api/admin/testimonios" onsubmit="return confirm('¿Eliminar este testimonio?')">
+                <form method="POST" action="/api/admin/testimonios" data-confirm="¿Eliminar este testimonio?">
                   <input type="hidden" name="_action" value="delete" />
                   <input type="hidden" name="id" value={t.id} />
                   <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

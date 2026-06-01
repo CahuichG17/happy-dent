@@ -33,7 +33,7 @@ const rows = await db.select().from(videos).orderBy(asc(videos.order), asc(video
             <td>
               <div class="admin-actions">
                 <a href={`/admin/videos/${v.id}`} class="admin-btn admin-btn-ghost">Editar</a>
-                <form method="POST" action="/api/admin/videos" onsubmit="return confirm('¿Eliminar este video?')">
+                <form method="POST" action="/api/admin/videos" data-confirm="¿Eliminar este video?">
                   <input type="hidden" name="_action" value="delete" />
                   <input type="hidden" name="id" value={v.id} />
                   <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

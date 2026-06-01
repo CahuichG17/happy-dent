@@ -53,7 +53,7 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
                 {me?.id === u.id ? (
                   <span class="admin-badge off">Tu cuenta</span>
                 ) : (
-                  <form method="POST" action="/api/admin/users" onsubmit="return confirm('¿Eliminar este usuario?')">
+                  <form method="POST" action="/api/admin/users" data-confirm="¿Eliminar este usuario?">
                     <input type="hidden" name="_action" value="delete" />
                     <input type="hidden" name="id" value={u.id} />
                     <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

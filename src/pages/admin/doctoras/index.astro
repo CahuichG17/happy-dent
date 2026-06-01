@@ -42,7 +42,7 @@ const rows = await db.select().from(doctors).orderBy(asc(doctors.order), asc(doc
             <td>
               <div class="admin-actions">
                 <a href={`/admin/doctoras/${d.id}`} class="admin-btn admin-btn-ghost">Editar</a>
-                <form method="POST" action="/api/admin/doctoras" onsubmit="return confirm('¿Eliminar esta doctora?')">
+                <form method="POST" action="/api/admin/doctoras" data-confirm="¿Eliminar esta doctora?">
                   <input type="hidden" name="_action" value="delete" />
                   <input type="hidden" name="id" value={d.id} />
                   <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

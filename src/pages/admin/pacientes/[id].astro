@@ -130,7 +130,7 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
     <div class="admin-form-actions">
       <button type="submit" class="admin-btn">{isNew ? 'Crear paciente' : 'Guardar datos'}</button>
       {!isNew && (
-        <form method="POST" action="/api/admin/pacientes" onsubmit="return confirm('¿Eliminar este paciente y todo su expediente?')" style="display:inline">
+        <form method="POST" action="/api/admin/pacientes" data-confirm="¿Eliminar este paciente y todo su expediente?" style="display:inline">
           <input type="hidden" name="_action" value="delete" />
           <input type="hidden" name="id" value={patient!.id} />
           <button type="submit" class="admin-btn admin-btn-danger">Eliminar paciente</button>
@@ -204,7 +204,7 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
                             {tokenBySession[s.id].usedAt ? 'Ver resena' : 'Ver QR'}
                           </a>
                         )}
-                        <form method="POST" action="/api/admin/sesiones" onsubmit="return confirm('\u00bfEliminar esta sesi\u00f3n?')">
+                        <form method="POST" action="/api/admin/sesiones" data-confirm="¿Eliminar esta sesión?">
                           <input type="hidden" name="_action" value="delete" />
                           <input type="hidden" name="id" value={s.id} />
                           <input type="hidden" name="patientId" value={patient!.id} />
@@ -269,7 +269,7 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
                 <button type="submit" class="admin-btn admin-btn-ghost">Completar caso</button>
               </form>
             )}
-            <form method="POST" action="/api/admin/casos" onsubmit="return confirm('¿Eliminar este caso y sus sesiones?')">
+            <form method="POST" action="/api/admin/casos" data-confirm="¿Eliminar este caso y sus sesiones?">
               <input type="hidden" name="_action" value="delete" />
               <input type="hidden" name="id" value={c.id} />
               <input type="hidden" name="patientId" value={patient!.id} />
@@ -343,7 +343,7 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
               <div class="clin-file-foot">
                 <span class="admin-badge off">{ATTACHMENT_KIND[f.kind] ?? f.kind}</span>
                 {f.label && <small>{f.label}</small>}
-                <form method="POST" action="/api/admin/adjuntos" onsubmit="return confirm('¿Eliminar este archivo?')">
+                <form method="POST" action="/api/admin/adjuntos" data-confirm="¿Eliminar este archivo?">
                   <input type="hidden" name="_action" value="delete" />
                   <input type="hidden" name="id" value={f.id} />
                   <input type="hidden" name="patientId" value={patient!.id} />

@@ -58,7 +58,7 @@ const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
                   <td data-label="Fin">{b.endTime?.slice(0, 5)}</td>
                   <td data-label="Duración">{b.slotMin} min</td>
                   <td>
-                    <form method="POST" action="/api/admin/horarios" onsubmit="return confirm('¿Eliminar este bloque?')">
+                    <form method="POST" action="/api/admin/horarios" data-confirm="¿Eliminar este bloque?">
                       <input type="hidden" name="_action" value="delete" />
                       <input type="hidden" name="id" value={b.id} />
                       <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>

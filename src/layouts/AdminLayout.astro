@@ -81,6 +81,17 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
       </main>
     </div>
 
+    <!-- Modal de confirmacion global (reemplaza confirm() nativo) -->
+    <div class="adm-modal-backdrop" id="admModalBackdrop" hidden aria-hidden="true">
+      <div class="adm-modal" role="dialog" aria-modal="true" aria-labelledby="admModalMsg">
+        <p class="adm-modal-msg" id="admModalMsg"></p>
+        <div class="adm-modal-actions">
+          <button type="button" class="admin-btn admin-btn-ghost" id="admModalCancel">Cancelar</button>
+          <button type="button" class="admin-btn admin-btn-danger" id="admModalConfirm">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       import { signOut } from '../lib/auth/client';
       document.getElementById('logoutBtn')?.addEventListener('click', async () => {
@@ -88,28 +99,81 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
         window.location.href = '/admin/login';
       });
 
-      // Menú móvil (drawer)
-      const sidebar = document.getElementById('adminSidebar');
+      // ── Modal de confirmacion ────────────────────────────────────────────
+      const modalBackdrop = document.getElementById('admModalBackdrop') as HTMLElement | null;
+      const modalMsg      = document.getElementById('admModalMsg') as HTMLElement | null;
+      const modalCancel   = document.getElementById('admModalCancel') as HTMLButtonElement | null;
+      const modalConfirm  = document.getElementById('admModalConfirm') as HTMLButtonElement | null;
+      let pendingForm: HTMLFormElement | null = null;
+
+      function showModal(msg: string, form: HTMLFormElement) {
+        if (!modalBackdrop || !modalMsg) return;
+        modalMsg.textContent = msg;
+        pendingForm = form;
+        modalBackdrop.hidden = false;
+        modalBackdrop.removeAttribute('aria-hidden');
+        modalConfirm?.focus();
+      }
+      function closeModal() {
+        if (modalBackdrop) { modalBackdrop.hidden = true; modalBackdrop.setAttribute('aria-hidden','true'); }
+        pendingForm = null;
+      }
+      modalCancel?.addEventListener('click', closeModal);
+      modalBackdrop?.addEventListener('click', (e) => { if (e.target === modalBackdrop) closeModal(); });
+      modalConfirm?.addEventListener('click', () => {
+        if (pendingForm) {
+          const f = pendingForm;
+          f.removeAttribute('data-confirm');
+          closeModal();
+          f.requestSubmit ? f.requestSubmit() : f.submit();
+        } else {
+          closeModal();
+        }
+      });
+      document.addEventListener('submit', (e) => {
+        const form = e.target as HTMLFormElement;
+        const msg = form.getAttribute('data-confirm');
+        if (msg) { e.preventDefault(); showModal(msg, form); }
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (modalBackdrop && !modalBackdrop.hidden) { closeModal(); return; }
+          closeMenu();
+        }
+      });
+
+      // ── Menú móvil (drawer) ──────────────────────────────────────────────
+      const sidebar  = document.getElementById('adminSidebar');
       const backdrop = document.getElementById('adminBackdrop');
-      const burger = document.getElementById('adminBurger');
+      const burger   = document.getElementById('adminBurger');
+      let _bodyScrollY = 0;
+
       function openMenu() {
+        _bodyScrollY = window.scrollY;
+        // iOS Safari: fix body para evitar que el fondo scrollee detras del drawer
+        document.body.style.position  = 'fixed';
+        document.body.style.top       = `-${_bodyScrollY}px`;
+        document.body.style.width     = '100%';
+        document.body.style.overflow  = 'hidden';
         sidebar?.classList.add('is-open');
         if (backdrop) backdrop.hidden = false;
         burger?.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('admin-no-scroll');
       }
       function closeMenu() {
+        document.body.style.position  = '';
+        document.body.style.top       = '';
+        document.body.style.width     = '';
+        document.body.style.overflow  = '';
+        window.scrollTo(0, _bodyScrollY);
         sidebar?.classList.remove('is-open');
         if (backdrop) backdrop.hidden = true;
         burger?.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('admin-no-scroll');
       }
       burger?.addEventListener('click', () => {
         sidebar?.classList.contains('is-open') ? closeMenu() : openMenu();
       });
       backdrop?.addEventListener('click', closeMenu);
       sidebar?.querySelectorAll('.admin-nav-link').forEach((a) => a.addEventListener('click', closeMenu));
-      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
       // Uploader genérico: cualquier <input type="file" data-upload-input>
       // sube la imagen a /api/admin/upload, guarda la URL en el campo data-target
@@ -180,6 +244,8 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
         top: 0;
         height: 100vh;
         overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
       }
       .admin-brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.1rem; padding: 0.5rem; margin-bottom: 1rem; }
       .admin-nav { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
@@ -268,6 +334,9 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
           transform: translateX(-100%);
           transition: transform 0.22s ease;
           box-shadow: 0 0 40px rgba(15, 18, 28, 0.18);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
         }
         .admin-sidebar.is-open { transform: translateX(0); }
         .admin-main { padding: 1.25rem 1rem; max-width: 100%; }
@@ -275,13 +344,17 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
         .admin-toolbar { flex-direction: column; align-items: stretch; }
         .admin-toolbar .admin-btn { width: 100%; justify-content: center; }
         .admin-h1 { font-size: 1.35rem; }
-        :global(body.admin-no-scroll) { overflow: hidden; }
       }
       @media (max-width: 540px) {
         .admin-main { padding: 1rem 0.85rem; }
         .admin-card { padding: 1rem; }
         .admin-form-actions { flex-direction: column; }
         .admin-form-actions .admin-btn { width: 100%; justify-content: center; }
+        /* Prevent iOS Safari zoom on input focus (font < 16px triggers zoom) */
+        .admin-field input, .admin-field textarea, .admin-field select { font-size: 1rem; }
+        /* Uploader stacks vertically on very small screens */
+        .uploader { flex-direction: column; align-items: flex-start; }
+        .uploader input[type="file"] { max-width: 100%; font-size: 0.9rem; }
       }
       /* ─── Responsive card tables (≤580px) ─── */
       @media (max-width: 580px) {
@@ -307,6 +380,29 @@ const navGroups = [...new Set(visibleNav.map((i) => i.group))];
         .admin-table td:not([data-label]) > a.admin-btn { width: 100%; justify-content: center; }
         .admin-actions { flex-wrap: wrap; }
       }
+      /* ─── Modal de confirmacion ─── */
+      .adm-modal-backdrop {
+        position: fixed; inset: 0; z-index: 300;
+        background: rgba(15, 18, 28, 0.5);
+        display: flex; align-items: center; justify-content: center;
+        padding: 1rem;
+      }
+      .adm-modal-backdrop[hidden] { display: none; }
+      .adm-modal {
+        background: #fff; border-radius: 16px; padding: 1.75rem 1.5rem 1.5rem;
+        max-width: 360px; width: 100%;
+        box-shadow: 0 24px 64px rgba(15, 18, 28, 0.22);
+        animation: adm-in 0.16s ease;
+      }
+      @keyframes adm-in {
+        from { transform: scale(0.95) translateY(8px); opacity: 0; }
+        to   { transform: scale(1) translateY(0); opacity: 1; }
+      }
+      .adm-modal-msg {
+        font-size: 1rem; font-weight: 600; color: var(--a-ink);
+        line-height: 1.55; margin-bottom: 1.4rem;
+      }
+      .adm-modal-actions { display: flex; gap: 0.6rem; justify-content: flex-end; }
     </style>
   </body>
 </html>

@@ -18,7 +18,9 @@ const rows = await db
 const row = rows[0];
 if (!row) return Astro.redirect('/admin/opiniones');
 
-const baseUrl = Astro.url.origin;
+const baseUrl =
+  (process.env.PUBLIC_SITE_URL) ||
+  (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : Astro.url.origin);
 const reviewUrl = `${baseUrl}/opinar/${token}`;
 const waText = encodeURIComponent(
   `Hola${row.t.patientName ? ` ${row.t.patientName}` : ''}! Gracias por visitarnos en Happy Dent. Nos encantaria conocer tu experiencia: ${reviewUrl}`

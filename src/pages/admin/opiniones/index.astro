@@ -2,47 +2,29 @@
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { db } from '../../../db';
-import { reviewTokens, doctors } from '../../../db/schema';
+import { reviewTokens, doctors, clinicalSessions } from '../../../db/schema';
 import { desc, eq, asc } from 'drizzle-orm';
-
-const docList = await db.select({ id: doctors.id, name: doctors.name }).from(doctors).where(eq(doctors.active, true)).orderBy(asc(doctors.order));
 
 const rows = await db
   .select({ t: reviewTokens, doctorName: doctors.name })
   .from(reviewTokens)
   .leftJoin(doctors, eq(reviewTokens.doctorId, doctors.id))
   .orderBy(desc(reviewTokens.createdAt))
-  .limit(50);
+  .limit(100);
 ---
 
 <AdminLayout title="Opiniones" active="opiniones">
   <div class="admin-toolbar">
     <div>
       <h1 class="admin-h1">Opiniones</h1>
-      <p class="admin-sub">Genera un enlace QR para que el paciente califique su consulta.</p>
+      <p class="admin-sub">Los enlaces de opinion se generan desde el expediente del paciente, al finalizar una consulta.</p>
     </div>
   </div>
 
-  <div class="admin-card op-gen">
-    <h2 class="op-gen-title">Generar nuevo enlace</h2>
-    <form method="POST" action="/api/admin/opiniones" class="op-form">
-      <div class="admin-field">
-        <label for="patientName">Nombre del paciente</label>
-        <input id="patientName" name="patientName" type="text" placeholder="Nombre completo" />
-      </div>
-      <div class="admin-field">
-        <label for="doctorId">Doctora que atendio</label>
-        <select id="doctorId" name="doctorId">
-          <option value="">Sin especificar</option>
-          {docList.map((d) => (
-            <option value={d.id}>{d.name}</option>
-          ))}
-        </select>
-      </div>
-      <div class="admin-form-actions">
-        <button type="submit" class="admin-btn">Generar enlace y QR</button>
-      </div>
-    </form>
+  <div class="admin-card op-info">
+    Para solicitar la opinion de un paciente, abre su expediente en
+    <a href="/admin/pacientes">Pacientes</a>, localiza la consulta con estado
+    <strong>Realizada</strong> y pulsa <strong>Solicitar opinion</strong>.
   </div>
 
   <h2 class="op-h2">Historico de enlaces</h2>
@@ -83,11 +65,8 @@ const rows = await db
   )}
 
   <style>
-    .op-gen-title { font-size: 1rem; font-weight: 800; margin-bottom: 1rem; }
-    .op-form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; }
-    .op-form .admin-field { margin-bottom: 0; }
-    .op-form .admin-form-actions { margin-top: 0; }
+    .op-info { color: #374151; font-size: 0.93rem; line-height: 1.6; }
+    .op-info a { color: #2563eb; text-decoration: underline; }
     .op-h2 { font-size: 1.1rem; font-weight: 800; margin: 1.5rem 0 0.85rem; }
-    @media (max-width: 680px) { .op-form { grid-template-columns: 1fr; } }
   </style>
 </AdminLayout>

@@ -12,6 +12,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const doctorId = form.get('doctorId') ? Number(form.get('doctorId')) : null;
   const patientName = (form.get('patientName') as string || '').trim();
   const patientId = form.get('patientId') ? Number(form.get('patientId')) : null;
+  const sessionId = form.get('sessionId') ? Number(form.get('sessionId')) : null;
   const appointmentId = form.get('appointmentId') ? Number(form.get('appointmentId')) : null;
 
   const token = randomBytes(24).toString('hex');
@@ -22,6 +23,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     doctorId: doctorId || null,
     patientName: patientName || '',
     patientId: patientId || null,
+    sessionId: sessionId || null,
     appointmentId: appointmentId || null,
     expiresAt,
   });

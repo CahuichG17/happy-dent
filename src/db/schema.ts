@@ -273,6 +273,7 @@ export const reviewTokens = pgTable('review_tokens', {
   doctorId: integer('doctor_id').references(() => doctors.id, { onDelete: 'set null' }),
   patientName: text('patient_name').notNull().default(''),
   patientId: integer('patient_id').references(() => patients.id, { onDelete: 'set null' }),
+  sessionId: integer('session_id').references(() => clinicalSessions.id, { onDelete: 'set null' }),
   appointmentId: integer('appointment_id').references(() => appointments.id, { onDelete: 'set null' }),
   usedAt: timestamp('used_at', { withTimezone: true }),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),

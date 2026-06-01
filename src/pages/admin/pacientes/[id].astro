@@ -9,8 +9,9 @@ import {
   treatmentCases,
   clinicalSessions,
   attachments,
+  reviewTokens,
 } from '../../../db/schema';
-import { eq, asc, desc } from 'drizzle-orm';
+import { eq, asc, desc, inArray } from 'drizzle-orm';
 import {
   CASE_STATUS,
   CASE_STATUS_CLASS,
@@ -36,6 +37,7 @@ const svcList = await db.select().from(services).where(eq(services.active, true)
 let patient: typeof patients.$inferSelect | null = null;
 let cases: (typeof treatmentCases.$inferSelect & { sessions: (typeof clinicalSessions.$inferSelect)[] })[] = [];
 let files: (typeof attachments.$inferSelect)[] = [];
+let tokenBySession: Record<number, { token: string; usedAt: Date | null }> = {};
 
 if (!isNew) {
   const numId = Number(id);
@@ -55,6 +57,16 @@ if (!isNew) {
     .where(eq(clinicalSessions.patientId, numId))
     .orderBy(asc(clinicalSessions.seq));
   cases = caseRows.map((c) => ({ ...c, sessions: sessionRows.filter((s) => s.caseId === c.id) }));
+
+  // Tokens de opinion ya generados para sesiones de este paciente
+  const sessionIds = sessionRows.map((s) => s.id);
+  const existingTokens = sessionIds.length
+    ? await db
+        .select({ sessionId: reviewTokens.sessionId, token: reviewTokens.token, usedAt: reviewTokens.usedAt })
+        .from(reviewTokens)
+        .where(inArray(reviewTokens.sessionId, sessionIds))
+    : [];
+  tokenBySession = Object.fromEntries(existingTokens.map((t) => [t.sessionId!, t]));
 
   files = await db
     .select()
@@ -178,11 +190,25 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
                             <button type="submit" class="admin-btn admin-btn-ghost">Marcar realizada</button>
                           </form>
                         )}
-                        <form method="POST" action="/api/admin/sesiones" onsubmit="return confirm('¿Eliminar esta sesión?')">
+                        {s.status === 'done' && !tokenBySession[s.id] && (
+                          <form method="POST" action="/api/admin/opiniones">
+                            <input type="hidden" name="sessionId" value={s.id} />
+                            <input type="hidden" name="patientId" value={patient!.id} />
+                            <input type="hidden" name="patientName" value={patient!.name} />
+                            {s.doctorId && <input type="hidden" name="doctorId" value={s.doctorId} />}
+                            <button type="submit" class="admin-btn op-btn">Solicitar opinion</button>
+                          </form>
+                        )}
+                        {s.status === 'done' && tokenBySession[s.id] && (
+                          <a href={`/admin/opiniones/${tokenBySession[s.id].token}`} class="admin-btn admin-btn-ghost op-btn-sent">
+                            {tokenBySession[s.id].usedAt ? 'Ver resena' : 'Ver QR'}
+                          </a>
+                        )}
+                        <form method="POST" action="/api/admin/sesiones" onsubmit="return confirm('\u00bfEliminar esta sesi\u00f3n?')">
                           <input type="hidden" name="_action" value="delete" />
                           <input type="hidden" name="id" value={s.id} />
                           <input type="hidden" name="patientId" value={patient!.id} />
-                          <button type="submit" class="admin-btn admin-btn-danger">×</button>
+                          <button type="submit" class="admin-btn admin-btn-danger">\u00d7</button>
                         </form>
                       </div>
                     </td>

@@ -1,5 +1,6 @@
 ---
-// Animated stat counters with milestones
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <section class="stats-section" id="stats">
@@ -7,23 +8,23 @@
     <div class="stats-grid">
       <div class="stat-item" data-hover>
         <span class="stat-num" data-count="500">0</span><span class="stat-suffix">+</span>
-        <span class="stat-name" data-es>Pacientes felices</span>
-        <span class="stat-name" data-en>Happy patients</span>
+        <span class="stat-name" data-es>{c['stats.s1'].es}</span>
+        <span class="stat-name" data-en>{c['stats.s1'].en}</span>
       </div>
       <div class="stat-item" data-hover>
         <span class="stat-num" data-count="8">0</span><span class="stat-suffix">+</span>
-        <span class="stat-name" data-es>Años de experiencia</span>
-        <span class="stat-name" data-en>Years of experience</span>
+        <span class="stat-name" data-es>{c['stats.s2'].es}</span>
+        <span class="stat-name" data-en>{c['stats.s2'].en}</span>
       </div>
       <div class="stat-item" data-hover>
         <span class="stat-num" data-count="49" data-decimal="1">0</span><span class="stat-suffix">★</span>
-        <span class="stat-name" data-es>en Google Reviews</span>
-        <span class="stat-name" data-en>on Google Reviews</span>
+        <span class="stat-name" data-es>{c['stats.s3'].es}</span>
+        <span class="stat-name" data-en>{c['stats.s3'].en}</span>
       </div>
       <div class="stat-item" data-hover>
         <span class="stat-num" data-count="20">0</span><span class="stat-suffix">+</span>
-        <span class="stat-name" data-es>Tratamientos disponibles</span>
-        <span class="stat-name" data-en>Treatments available</span>
+        <span class="stat-name" data-es>{c['stats.s4'].es}</span>
+        <span class="stat-name" data-en>{c['stats.s4'].en}</span>
       </div>
     </div>
   </div>

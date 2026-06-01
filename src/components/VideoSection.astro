@@ -2,19 +2,21 @@
 // Video section — toma el primer video activo desde la DB.
 // Si no hay videos cargados, mantiene el placeholder original.
 import { getVideos } from '../lib/content';
+import { getCopy } from '../lib/copy';
 const vids = await getVideos();
 const YOUTUBE_ID = vids[0]?.id || "dQw4w9WgXcQ";
+const c = await getCopy();
 ---
 
 <section class="video-section" id="video">
   <div class="container">
     <div class="video-header">
       <span class="section-tag">
-        <span data-es>Conoce el consultorio</span><span data-en>Inside the clinic</span>
+        <span data-es>{c['video.tag'].es}</span><span data-en>{c['video.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Un recorrido por<br/>Happy Dent</span>
-        <span data-en>Take a tour of<br/>Happy Dent</span>
+        <span data-es set:html={c['video.title'].es}></span>
+        <span data-en set:html={c['video.title'].en}></span>
       </h2>
     </div>
 

@@ -1,0 +1,87 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { COPY_SCHEMA, getCopy } from '../../lib/copy';
+
+const copy = await getCopy();
+const saved = Astro.url.searchParams.get('ok') === '1';
+---
+
+<AdminLayout title="Textos del sitio" active="textos">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Textos del sitio</h1>
+      <p class="admin-sub">Edita cualquier texto del landing en español e inglés. Los cambios se reflejan en la página principal al guardar.</p>
+    </div>
+  </div>
+
+  {saved && <div class="admin-flash">Textos guardados correctamente.</div>}
+
+  <form method="POST" action="/api/admin/textos" class="txt-form">
+    <nav class="txt-nav">
+      {COPY_SCHEMA.map((g) => (
+        <a href={`#g-${g.id}`} class="txt-nav-link">{g.title}</a>
+      ))}
+    </nav>
+
+    {COPY_SCHEMA.map((g) => (
+      <section class="admin-card txt-group" id={`g-${g.id}`}>
+        <h2 class="txt-group-title">{g.title}</h2>
+        <div class="txt-items">
+          {g.items.map((item) => (
+            <div class="txt-item">
+              <span class="txt-label">{item.label}</span>
+              <div class="txt-fields">
+                <label class="txt-field">
+                  <span class="txt-flag">ES</span>
+                  {item.multiline ? (
+                    <textarea name={`${item.key}__es`} rows="2">{copy[item.key].es}</textarea>
+                  ) : (
+                    <input type="text" name={`${item.key}__es`} value={copy[item.key].es} />
+                  )}
+                </label>
+                <label class="txt-field">
+                  <span class="txt-flag">EN</span>
+                  {item.multiline ? (
+                    <textarea name={`${item.key}__en`} rows="2">{copy[item.key].en}</textarea>
+                  ) : (
+                    <input type="text" name={`${item.key}__en`} value={copy[item.key].en} />
+                  )}
+                </label>
+              </div>
+              {item.html && <small class="txt-hint">Admite saltos de línea con &lt;br/&gt; y formato; edita el texto con cuidado.</small>}
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+
+    <div class="txt-bar">
+      <button type="submit" class="admin-btn">Guardar todos los textos</button>
+      <a href="/" target="_blank" class="admin-btn admin-btn-ghost">Ver el sitio ↗</a>
+    </div>
+  </form>
+
+  <style>
+    .txt-form { display: flex; flex-direction: column; gap: 1.1rem; }
+    .txt-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; position: sticky; top: 0; z-index: 5; }
+    .txt-nav-link { font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--a-bg); color: var(--a-text); text-decoration: none; border: 1px solid var(--a-line); }
+    .txt-nav-link:hover { border-color: var(--a-pink); color: var(--a-pink); }
+    .txt-group { scroll-margin-top: 4.5rem; }
+    .txt-group-title { font-size: 1.02rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--a-line); }
+    .txt-items { display: flex; flex-direction: column; gap: 1.1rem; }
+    .txt-item { display: flex; flex-direction: column; gap: 0.45rem; }
+    .txt-label { font-size: 0.82rem; font-weight: 600; color: var(--a-text); }
+    .txt-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+    .txt-field { display: flex; align-items: stretch; gap: 0.5rem; }
+    .txt-flag { flex-shrink: 0; width: 2rem; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; color: var(--a-muted); background: var(--a-bg); border: 1px solid var(--a-line); border-radius: 8px; }
+    .txt-field input, .txt-field textarea { flex: 1; width: 100%; padding: 0.55rem 0.7rem; border: 1px solid var(--a-line); border-radius: 8px; font: inherit; font-size: 0.86rem; resize: vertical; background: #fff; color: var(--a-text); }
+    .txt-field input:focus, .txt-field textarea:focus { outline: none; border-color: var(--a-pink); }
+    .txt-hint { font-size: 0.74rem; color: var(--a-muted); }
+    .txt-bar { position: sticky; bottom: 0; display: flex; gap: 0.6rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; box-shadow: 0 -4px 16px rgba(0,0,0,0.05); }
+    .admin-flash { padding: 0.75rem 1rem; background: #e9f9ef; border: 1px solid #9ad8b3; border-radius: 10px; color: #1c6b3f; font-size: 0.88rem; margin-bottom: 1rem; }
+    @media (max-width: 640px) {
+      .txt-fields { grid-template-columns: 1fr; }
+    }
+  </style>
+</AdminLayout>

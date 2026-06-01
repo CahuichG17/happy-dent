@@ -4,21 +4,23 @@ const intlReviews = [
   { name: "Michael K.", from: "Toronto · Canada", text: "Got 3 implants done in two visits while staying at the hotel zone. Top-notch quality and a truly relaxing experience.", rating: 5 },
   { name: "Sarah L.", from: "London · United Kingdom", text: "Combined my smile makeover with a Riviera Maya holiday. Best decision — same quality I would expect from top European clinics.", rating: 5 },
 ];
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <section class="tourism-section" id="tourism">
   <div class="container">
     <div class="tourism-header">
       <span class="section-tag">
-        <span data-es>Turismo dental</span><span data-en>Dental Tourism</span>
+        <span data-es>{c['tour.tag'].es}</span><span data-en>{c['tour.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Tu sonrisa nueva +<br/>el Caribe Mexicano</span>
-        <span data-en>A new smile +<br/>the Mexican Caribbean</span>
+        <span data-es set:html={c['tour.title'].es}></span>
+        <span data-en set:html={c['tour.title'].en}></span>
       </h2>
       <p class="section-subtitle">
-        <span data-es>Combina tratamiento de clase mundial con vacaciones inolvidables. Atención bilingüe, traslado del hotel y agenda flexible para visitantes.</span>
-        <span data-en>Combine world-class dental work with an unforgettable vacation. Bilingual care, hotel pickup and flexible scheduling for travelers.</span>
+        <span data-es>{c['tour.subtitle'].es}</span>
+        <span data-en>{c['tour.subtitle'].en}</span>
       </p>
     </div>
 
@@ -28,40 +30,40 @@ const intlReviews = [
         <div class="include-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.2.6-.6.5-1.1z"/></svg>
         </div>
-        <strong data-es>Recogida en hotel</strong><strong data-en>Hotel pickup</strong>
-        <span data-es>Cancún, Playa del Carmen y Tulum</span>
-        <span data-en>Cancún, Playa del Carmen & Tulum</span>
+        <strong data-es>{c['tour.i1_title'].es}</strong><strong data-en>{c['tour.i1_title'].en}</strong>
+        <span data-es>{c['tour.i1_sub'].es}</span>
+        <span data-en>{c['tour.i1_sub'].en}</span>
       </div>
       <div class="include-card glass" data-hover>
         <div class="include-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.74-3z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         </div>
-        <strong data-es>Cotización en 24h</strong><strong data-en>24h quote</strong>
-        <span data-es>Envíanos tu rayografía y obtén plan completo.</span>
-        <span data-en>Send us your X-ray for a full treatment plan.</span>
+        <strong data-es>{c['tour.i2_title'].es}</strong><strong data-en>{c['tour.i2_title'].en}</strong>
+        <span data-es>{c['tour.i2_sub'].es}</span>
+        <span data-en>{c['tour.i2_sub'].en}</span>
       </div>
       <div class="include-card glass" data-hover>
         <div class="include-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
-        <strong data-es>Bilingüe</strong><strong data-en>Fully bilingual</strong>
-        <span data-es>Español e inglés fluido.</span>
-        <span data-en>Spanish & fluent English.</span>
+        <strong data-es>{c['tour.i3_title'].es}</strong><strong data-en>{c['tour.i3_title'].en}</strong>
+        <span data-es>{c['tour.i3_sub'].es}</span>
+        <span data-en>{c['tour.i3_sub'].en}</span>
       </div>
       <div class="include-card glass" data-hover>
         <div class="include-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16l7-3 7 3z"/></svg>
         </div>
-        <strong data-es>Hoteles aliados</strong><strong data-en>Partner hotels</strong>
-        <span data-es>Tarifas especiales en hoteles boutique.</span>
-        <span data-en>Special rates at boutique hotels.</span>
+        <strong data-es>{c['tour.i4_title'].es}</strong><strong data-en>{c['tour.i4_title'].en}</strong>
+        <span data-es>{c['tour.i4_sub'].es}</span>
+        <span data-en>{c['tour.i4_sub'].en}</span>
       </div>
     </div>
 
     <!-- International reviews -->
     <div class="intl-reviews">
-      <h3 data-es>Lo que dicen pacientes internacionales</h3>
-      <h3 data-en>What international patients say</h3>
+      <h3 data-es>{c['tour.reviews_title'].es}</h3>
+      <h3 data-en>{c['tour.reviews_title'].en}</h3>
       <div class="intl-grid">
         {intlReviews.map(r => (
           <div class="intl-card" data-hover>
@@ -82,8 +84,8 @@ const intlReviews = [
 
     <div class="tourism-cta">
       <a href="https://wa.me/529983229592?text=Hi%20Happy%20Dent%2C%20I%27m%20interested%20in%20dental%20tourism%20in%20Canc%C3%BAn." target="_blank" rel="noopener" class="btn btn-primary" data-hover>
-        <span data-es>Pedir cotización internacional</span>
-        <span data-en>Get my international quote</span>
+        <span data-es>{c['tour.cta'].es}</span>
+        <span data-en>{c['tour.cta'].en}</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>

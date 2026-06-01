@@ -1,4 +1,6 @@
 ---
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <div class="whatsapp-float" id="whatsappFloat" data-hover>
@@ -8,8 +10,8 @@
     </svg>
   </a>
   <span class="whatsapp-tooltip">
-    <span data-es>¡Hablemos por WhatsApp!</span>
-    <span data-en>Let's chat on WhatsApp!</span>
+    <span data-es>{c['wa.tooltip'].es}</span>
+    <span data-en>{c['wa.tooltip'].en}</span>
   </span>
   <div class="whatsapp-pulse"></div>
 </div>

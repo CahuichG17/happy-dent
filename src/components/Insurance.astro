@@ -12,21 +12,23 @@ const insurances = [
 ];
 
 const msi = [3, 6, 9, 12];
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <section class="insurance-section" id="seguros">
   <div class="container">
     <div class="insurance-header">
       <span class="section-tag">
-        <span data-es>Pagos y convenios</span><span data-en>Payments &amp; insurance</span>
+        <span data-es set:html={c['ins.tag'].es}></span><span data-en set:html={c['ins.tag'].en}></span>
       </span>
       <h2 class="section-title">
-        <span data-es>Aceptamos los<br/>principales seguros</span>
-        <span data-en>We accept major<br/>insurance plans</span>
+        <span data-es set:html={c['ins.title'].es}></span>
+        <span data-en set:html={c['ins.title'].en}></span>
       </h2>
       <p class="section-subtitle">
-        <span data-es>Facturamos directo a aseguradoras nacionales e internacionales. Solicita tu reembolso sin complicaciones.</span>
-        <span data-en>We bill national and international carriers directly. Hassle-free reimbursements.</span>
+        <span data-es>{c['ins.subtitle'].es}</span>
+        <span data-en>{c['ins.subtitle'].en}</span>
       </p>
     </div>
 
@@ -60,12 +62,12 @@ const msi = [3, 6, 9, 12];
         </span>
         <div>
           <h3>
-            <span data-es>Terminal bancaria en consultorio</span>
-            <span data-en>In-clinic bank terminal</span>
+            <span data-es>{c['ins.banner_title'].es}</span>
+            <span data-en>{c['ins.banner_title'].en}</span>
           </h3>
           <p>
-            <span data-es>Tarjetas de crédito y débito + Meses Sin Intereses (MSI) con bancos participantes.</span>
-            <span data-en>Credit &amp; debit cards + Interest-Free Months (MSI) with participating banks.</span>
+            <span data-es set:html={c['ins.banner_text'].es}></span>
+            <span data-en set:html={c['ins.banner_text'].en}></span>
           </p>
         </div>
       </div>

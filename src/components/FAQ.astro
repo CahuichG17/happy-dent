@@ -1,17 +1,19 @@
 ---
 import { getFaqs } from '../lib/content';
+import { getCopy } from '../lib/copy';
 const faqs = await getFaqs();
+const c = await getCopy();
 ---
 
 <section class="faq-section" id="faq">
   <div class="container faq-container">
     <div class="faq-header">
       <span class="section-tag">
-        <span data-es>Preguntas frecuentes</span><span data-en>Frequently asked</span>
+        <span data-es>{c['faq.tag'].es}</span><span data-en>{c['faq.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Resolvemos<br/>tus dudas</span>
-        <span data-en>Answers to<br/>your questions</span>
+        <span data-es set:html={c['faq.title'].es}></span>
+        <span data-en set:html={c['faq.title'].en}></span>
       </h2>
     </div>
 

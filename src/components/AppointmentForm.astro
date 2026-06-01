@@ -33,21 +33,23 @@ const services = [
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
   },
 ];
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <section class="agenda-section" id="agenda">
   <div class="container">
     <div class="agenda-header">
       <span class="section-tag">
-        <span data-es>Agenda tu cita</span><span data-en>Book your visit</span>
+        <span data-es>{c['appt.tag'].es}</span><span data-en>{c['appt.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Primera consulta<br/><span class="highlight">gratuita</span></span>
-        <span data-en>First consultation<br/><span class="highlight">on us</span></span>
+        <span data-es set:html={c['appt.title'].es}></span>
+        <span data-en set:html={c['appt.title'].en}></span>
       </h2>
       <p class="section-subtitle">
-        <span data-es>Compártenos algunos datos y abriremos WhatsApp con tu solicitud lista para enviar a la doctora.</span>
-        <span data-en>Share a few details and we'll open WhatsApp with your request pre-filled for the doctor.</span>
+        <span data-es>{c['appt.subtitle'].es}</span>
+        <span data-en>{c['appt.subtitle'].en}</span>
       </p>
     </div>
 

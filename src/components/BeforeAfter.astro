@@ -1,20 +1,21 @@
 ---
-// Before / After slider — pure SVG placeholders, drag or button controlled
+import { getCopy } from '../lib/copy';
+const c = await getCopy();
 ---
 
 <section class="ba-section" id="resultados">
   <div class="container">
     <div class="ba-header">
       <span class="section-tag">
-        <span data-es>Resultados Reales</span><span data-en>Real Results</span>
+        <span data-es>{c['ba.tag'].es}</span><span data-en>{c['ba.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Antes &amp; después</span>
-        <span data-en>Before &amp; after</span>
+        <span data-es set:html={c['ba.title'].es}></span>
+        <span data-en set:html={c['ba.title'].en}></span>
       </h2>
       <p class="section-subtitle">
-        <span data-es>Casos reales documentados en consulta — desliza el control para ver la transformación.</span>
-        <span data-en>Real cases documented in our clinic — drag the slider to see the transformation.</span>
+        <span data-es>{c['ba.subtitle'].es}</span>
+        <span data-en>{c['ba.subtitle'].en}</span>
       </p>
     </div>
 

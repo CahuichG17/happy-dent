@@ -1,6 +1,8 @@
 ---
+import { getCopy } from '../lib/copy';
 const base = import.meta.env.BASE_URL;
 const year = new Date().getFullYear();
+const c = await getCopy();
 ---
 
 <footer class="footer">
@@ -11,12 +13,12 @@ const year = new Date().getFullYear();
           <img src={`${base}happy-dent-icon.svg`} alt="Happy Dent" class="footer-logo-icon" />
           <div>
             <span class="footer-name">Happy Dent</span>
-            <span class="footer-tagline" data-es>ODONTOLOGÍA · CANCÚN</span>
-            <span class="footer-tagline" data-en>DENTISTRY · CANCÚN</span>
+            <span class="footer-tagline" data-es>{c['footer.tagline'].es}</span>
+            <span class="footer-tagline" data-en>{c['footer.tagline'].en}</span>
           </div>
         </a>
-        <p class="footer-desc" data-es>Tu sonrisa, nuestra obsesión. Odontología de clase mundial en el corazón del Caribe Mexicano.</p>
-        <p class="footer-desc" data-en>Your smile, our obsession. World-class dentistry in the heart of the Mexican Caribbean.</p>
+        <p class="footer-desc" data-es>{c['footer.desc'].es}</p>
+        <p class="footer-desc" data-en>{c['footer.desc'].en}</p>
         <div class="footer-social">
           <a href="https://www.facebook.com/happydentodontologia" target="_blank" rel="noopener" aria-label="Facebook" data-hover>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>
@@ -34,29 +36,29 @@ const year = new Date().getFullYear();
       </div>
 
       <div class="footer-links-group">
-        <h4 data-es>Servicios</h4><h4 data-en>Services</h4>
+        <h4 data-es>{c['footer.col_services'].es}</h4><h4 data-en>{c['footer.col_services'].en}</h4>
         <ul>
-          <li><a href="#servicios" data-hover><span data-es>Odontología General</span><span data-en>General Dentistry</span></a></li>
-          <li><a href="#servicios" data-hover><span data-es>Estética &amp; Carillas</span><span data-en>Cosmetic &amp; Veneers</span></a></li>
-          <li><a href="#servicios" data-hover><span data-es>Ortodoncia &amp; Invisalign</span><span data-en>Ortho &amp; Invisalign</span></a></li>
-          <li><a href="#servicios" data-hover><span data-es>Implantes Dentales</span><span data-en>Dental Implants</span></a></li>
-          <li><a href="#servicios" data-hover><span data-es>Odontopediatría</span><span data-en>Pediatric Dentistry</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>{c['footer.s1'].es}</span><span data-en>{c['footer.s1'].en}</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es set:html={c['footer.s2'].es}></span><span data-en set:html={c['footer.s2'].en}></span></a></li>
+          <li><a href="#servicios" data-hover><span data-es set:html={c['footer.s3'].es}></span><span data-en set:html={c['footer.s3'].en}></span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>{c['footer.s4'].es}</span><span data-en>{c['footer.s4'].en}</span></a></li>
+          <li><a href="#servicios" data-hover><span data-es>{c['footer.s5'].es}</span><span data-en>{c['footer.s5'].en}</span></a></li>
         </ul>
       </div>
 
       <div class="footer-links-group">
-        <h4 data-es>Clínica</h4><h4 data-en>Clinic</h4>
+        <h4 data-es>{c['footer.col_clinic'].es}</h4><h4 data-en>{c['footer.col_clinic'].en}</h4>
         <ul>
-          <li><a href="#nosotros" data-hover><span data-es>Nuestras doctoras</span><span data-en>Our doctors</span></a></li>
+          <li><a href="#nosotros" data-hover><span data-es>{c['footer.c1'].es}</span><span data-en>{c['footer.c1'].en}</span></a></li>
           <li><a href="#tourism" data-hover>Dental Tourism</a></li>
           <li><a href="#faq" data-hover>FAQ</a></li>
-          <li><a href="#seguros" data-hover><span data-es>Seguros aceptados</span><span data-en>Accepted insurance</span></a></li>
-          <li><a href="/agendar" data-hover><span data-es>Agendar cita</span><span data-en>Book appointment</span></a></li>
+          <li><a href="#seguros" data-hover><span data-es>{c['footer.c4'].es}</span><span data-en>{c['footer.c4'].en}</span></a></li>
+          <li><a href="/agendar" data-hover><span data-es>{c['footer.c5'].es}</span><span data-en>{c['footer.c5'].en}</span></a></li>
         </ul>
       </div>
 
       <div class="footer-links-group">
-        <h4 data-es>Contacto</h4><h4 data-en>Contact</h4>
+        <h4 data-es>{c['footer.col_contact'].es}</h4><h4 data-en>{c['footer.col_contact'].en}</h4>
         <ul>
           <li>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -80,11 +82,11 @@ const year = new Date().getFullYear();
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {year} Happy Dent Odontología · <span data-es>Cédulas Profesionales SEP registradas</span><span data-en>Licensed by SEP México</span></p>
+      <p>&copy; {year} Happy Dent Odontología · <span data-es>{c['footer.license'].es}</span><span data-en>{c['footer.license'].en}</span></p>
       <p class="footer-love">
-        <span data-es>Hecho con</span><span data-en>Made with</span>
+        <span data-es>{c['footer.made1'].es}</span><span data-en>{c['footer.made1'].en}</span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span data-es>para tu sonrisa</span><span data-en>for your smile</span>
+        <span data-es>{c['footer.made2'].es}</span><span data-en>{c['footer.made2'].en}</span>
       </p>
     </div>
   </div>

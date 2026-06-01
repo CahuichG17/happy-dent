@@ -1,5 +1,7 @@
 ---
+import { getCopy } from '../lib/copy';
 const base = import.meta.env.BASE_URL;
+const c = await getCopy();
 ---
 
 <!--
@@ -33,37 +35,30 @@ const base = import.meta.env.BASE_URL;
     <div class="hero-content">
       <div class="hero-badge">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        <span data-es>Dra. Dafne Mondragón · Dra. Cyntia Dzul</span>
-        <span data-en>Dr. Dafne Mondragón · Dr. Cyntia Dzul</span>
+        <span data-es>{c['hero.badge'].es}</span>
+        <span data-en>{c['hero.badge'].en}</span>
       </div>
 
       <h1 class="hero-title">
         <span class="line">
-          <span data-es>Tu sonrisa,</span>
-          <span data-en>Your smile,</span>
+          <span data-es>{c['hero.title1'].es}</span>
+          <span data-en>{c['hero.title1'].en}</span>
         </span>
         <span class="line">
-          <span data-es>nuestra <span class="highlight">obsesión</span>.</span>
-          <span data-en>our <span class="highlight">obsession</span>.</span>
+          <span data-es set:html={c['hero.title2'].es}></span>
+          <span data-en set:html={c['hero.title2'].en}></span>
         </span>
       </h1>
 
       <p class="hero-description">
-        <span data-es>
-          Odontología estética premium en Cancún. Diseño de sonrisa, implantes de carga inmediata
-          e Invisalign — con la calidez de un consultorio boutique y la precisión de la tecnología
-          más avanzada del Caribe Mexicano.
-        </span>
-        <span data-en>
-          Premium cosmetic dentistry in Cancún. Smile design, same-day implants and Invisalign —
-          delivered in a boutique clinic with world-class technology.
-        </span>
+        <span data-es>{c['hero.description'].es}</span>
+        <span data-en>{c['hero.description'].en}</span>
       </p>
 
       <div class="hero-ctas">
         <a href="/agendar" class="btn btn-primary" data-hover>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          <span data-es>Agendar mi cita</span><span data-en>Book my visit</span>
+          <span data-es>{c['hero.cta'].es}</span><span data-en>{c['hero.cta'].en}</span>
         </a>
         <a href="tel:+529983229592" class="btn btn-secondary" data-hover>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.36 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -74,17 +69,17 @@ const base = import.meta.env.BASE_URL;
       <div class="hero-stats glass">
         <div class="hero-stat">
           <span class="stat-number" data-count="500">0</span><span class="stat-plus">+</span>
-          <span class="stat-label" data-es>Sonrisas felices</span><span class="stat-label" data-en>Happy smiles</span>
+          <span class="stat-label" data-es>{c['hero.stat1'].es}</span><span class="stat-label" data-en>{c['hero.stat1'].en}</span>
         </div>
         <div class="stat-divider"></div>
         <div class="hero-stat">
           <span class="stat-number" data-count="8">0</span><span class="stat-plus">+</span>
-          <span class="stat-label" data-es>Años de práctica</span><span class="stat-label" data-en>Years of practice</span>
+          <span class="stat-label" data-es>{c['hero.stat2'].es}</span><span class="stat-label" data-en>{c['hero.stat2'].en}</span>
         </div>
         <div class="stat-divider"></div>
         <div class="hero-stat">
           <span class="stat-number" data-count="49" data-decimal="1">0</span><span class="stat-plus">★</span>
-          <span class="stat-label" data-es>en Google</span><span class="stat-label" data-en>on Google</span>
+          <span class="stat-label" data-es>{c['hero.stat3'].es}</span><span class="stat-label" data-en>{c['hero.stat3'].en}</span>
         </div>
       </div>
     </div>
@@ -101,8 +96,8 @@ const base = import.meta.env.BASE_URL;
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFB1D7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
           </div>
           <div class="floating-card-text">
-            <strong data-es>Diseño de sonrisa</strong><strong data-en>Smile design</strong>
-            <span data-es>Tecnología 3D</span><span data-en>3D technology</span>
+            <strong data-es>{c['hero.card1_title'].es}</strong><strong data-en>{c['hero.card1_title'].en}</strong>
+            <span data-es>{c['hero.card1_sub'].es}</span><span data-en>{c['hero.card1_sub'].en}</span>
           </div>
         </div>
 
@@ -111,7 +106,7 @@ const base = import.meta.env.BASE_URL;
             <svg width="28" height="28" viewBox="0 0 24 24" fill="#FFB1D7"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           </div>
           <div class="floating-card-text">
-            <strong data-es>Calificación</strong><strong data-en>Rating</strong>
+            <strong data-es>{c['hero.card2_title'].es}</strong><strong data-en>{c['hero.card2_title'].en}</strong>
             <span>4.9 / 5.0 · Google</span>
           </div>
         </div>
@@ -121,8 +116,8 @@ const base = import.meta.env.BASE_URL;
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D8B9EB" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-2 0-4 2-4 4s2 6 4 10c2-4 4-8 4-10s-2-4-4-4z"/><path d="M8 12c-1-1-2.5 0-1.5 3s3.5 5 5.5 5 5-2 5.5-5 .5-4-1.5-3"/></svg>
           </div>
           <div class="floating-card-text">
-            <strong data-es>Tecnología</strong><strong data-en>Technology</strong>
-            <span data-es>Escáner 3D Itero</span><span data-en>3D Itero scanner</span>
+            <strong data-es>{c['hero.card3_title'].es}</strong><strong data-en>{c['hero.card3_title'].en}</strong>
+            <span data-es>{c['hero.card3_sub'].es}</span><span data-en>{c['hero.card3_sub'].en}</span>
           </div>
         </div>
       </div>
@@ -131,7 +126,7 @@ const base = import.meta.env.BASE_URL;
 
   <div class="scroll-indicator">
     <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
-    <span data-es>Comienza a explorar</span><span data-en>Start exploring</span>
+    <span data-es>{c['hero.scroll'].es}</span><span data-en>{c['hero.scroll'].en}</span>
   </div>
 </section>
 

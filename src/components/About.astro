@@ -1,22 +1,24 @@
 ---
 import { getDoctors } from '../lib/content';
+import { getCopy } from '../lib/copy';
 const base = import.meta.env.BASE_URL;
 const doctors = await getDoctors();
+const c = await getCopy();
 ---
 
 <section class="about" id="nosotros">
   <div class="container">
     <div class="about-header">
       <span class="section-tag">
-        <span data-es>Conoce al equipo</span><span data-en>Meet the team</span>
+        <span data-es>{c['about.tag'].es}</span><span data-en>{c['about.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Las doctoras detrás<br/>de tu sonrisa</span>
-        <span data-en>The doctors behind<br/>your smile</span>
+        <span data-es set:html={c['about.title'].es}></span>
+        <span data-en set:html={c['about.title'].en}></span>
       </h2>
       <p class="section-subtitle about-intro">
-        <span data-es>Happy Dent es un consultorio boutique en Cancún donde dos especialistas combinan tecnología de punta, ética profesional y un trato cálido para entregarte resultados naturales.</span>
-        <span data-en>Happy Dent is a boutique clinic in Cancún where two specialists combine cutting-edge technology, professional ethics and a warm approach to deliver natural results.</span>
+        <span data-es>{c['about.subtitle'].es}</span>
+        <span data-en>{c['about.subtitle'].en}</span>
       </p>
     </div>
 
@@ -35,8 +37,8 @@ const doctors = await getDoctors();
           </p>
           <div class="doctor-credential">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-            <span data-es>Cédula Profesional SEP registrada</span>
-            <span data-en>Licensed professional (SEP, Mexico)</span>
+            <span data-es>{c['about.credential'].es}</span>
+            <span data-en>{c['about.credential'].en}</span>
           </div>
         </article>
       ))}
@@ -48,9 +50,9 @@ const doctors = await getDoctors();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
         <div>
-          <strong data-es>Escáner Itero 3D</strong><strong data-en>Itero 3D scanner</strong>
-          <span data-es>Sin moldes incómodos. Previsualizamos tu sonrisa.</span>
-          <span data-en>No uncomfortable molds. We preview your smile.</span>
+          <strong data-es>{c['about.f1_title'].es}</strong><strong data-en>{c['about.f1_title'].en}</strong>
+          <span data-es>{c['about.f1_sub'].es}</span>
+          <span data-en>{c['about.f1_sub'].en}</span>
         </div>
       </div>
       <div class="about-feature glass" data-hover>
@@ -58,9 +60,9 @@ const doctors = await getDoctors();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
         <div>
-          <strong data-es>Atención humana</strong><strong data-en>Human-first care</strong>
-          <span data-es>Plan personalizado para cada paciente.</span>
-          <span data-en>Personalized plan for every patient.</span>
+          <strong data-es>{c['about.f2_title'].es}</strong><strong data-en>{c['about.f2_title'].en}</strong>
+          <span data-es>{c['about.f2_sub'].es}</span>
+          <span data-en>{c['about.f2_sub'].en}</span>
         </div>
       </div>
       <div class="about-feature glass" data-hover>
@@ -68,9 +70,9 @@ const doctors = await getDoctors();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <div>
-          <strong data-es>Horarios flexibles</strong><strong data-en>Flexible hours</strong>
-          <span data-es>Lun-Vie 9-18 · Sáb 9-14</span>
-          <span data-en>Mon-Fri 9-18 · Sat 9-14</span>
+          <strong data-es>{c['about.f3_title'].es}</strong><strong data-en>{c['about.f3_title'].en}</strong>
+          <span data-es>{c['about.f3_sub'].es}</span>
+          <span data-en>{c['about.f3_sub'].en}</span>
         </div>
       </div>
       <div class="about-feature glass" data-hover>
@@ -78,29 +80,29 @@ const doctors = await getDoctors();
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <div>
-          <strong data-es>Bioseguridad</strong><strong data-en>Biosafety</strong>
-          <span data-es>Esterilización autoclave clase B.</span>
-          <span data-en>Class B autoclave sterilization.</span>
+          <strong data-es>{c['about.f4_title'].es}</strong><strong data-en>{c['about.f4_title'].en}</strong>
+          <span data-es>{c['about.f4_sub'].es}</span>
+          <span data-en>{c['about.f4_sub'].en}</span>
         </div>
       </div>
     </div>
 
     <!-- Certifications row -->
     <div class="certifications">
-      <span class="cert-label" data-es>Certificaciones &amp; alianzas</span>
-      <span class="cert-label" data-en>Certifications &amp; partners</span>
+      <span class="cert-label" data-es set:html={c['about.cert_label'].es}></span>
+      <span class="cert-label" data-en set:html={c['about.cert_label'].en}></span>
       <div class="cert-row">
         <div class="cert-chip" data-hover>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 L20 6 V13 C20 17.5 16.5 21 12 22 C7.5 21 4 17.5 4 13 V6 Z"/></svg>
-          <div><strong>ADM</strong><span data-es>Asociación Dental Mexicana</span><span data-en>Mexican Dental Association</span></div>
+          <div><strong>ADM</strong><span data-es>{c['about.cert_adm'].es}</span><span data-en>{c['about.cert_adm'].en}</span></div>
         </div>
         <div class="cert-chip" data-hover>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M9 10v6M15 9v8M12 11v4"/></svg>
-          <div><strong>Invisalign</strong><span data-es>Provider certificado</span><span data-en>Certified provider</span></div>
+          <div><strong>Invisalign</strong><span data-es>{c['about.cert_invisalign'].es}</span><span data-en>{c['about.cert_invisalign'].en}</span></div>
         </div>
         <div class="cert-chip" data-hover>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="3"/><path d="M12 12v10M9 22h6"/></svg>
-          <div><strong>Straumann</strong><span data-es>Implantes certificados</span><span data-en>Certified implants</span></div>
+          <div><strong>Straumann</strong><span data-es>{c['about.cert_straumann'].es}</span><span data-en>{c['about.cert_straumann'].en}</span></div>
         </div>
         <div class="cert-chip" data-hover>
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D96DA5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
@@ -111,7 +113,7 @@ const doctors = await getDoctors();
 
     <div class="about-cta-row">
       <a href="/agendar" class="btn btn-primary" data-hover>
-        <span data-es>Agenda una valoración</span><span data-en>Book a consultation</span>
+        <span data-es>{c['about.cta'].es}</span><span data-en>{c['about.cta'].en}</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>

@@ -1,21 +1,23 @@
 ---
 import { getServices } from '../lib/content';
+import { getCopy } from '../lib/copy';
 const services = await getServices();
+const c = await getCopy();
 ---
 
 <section class="services" id="servicios">
   <div class="container">
     <div class="services-header">
       <span class="section-tag">
-        <span data-es>Nuestros Servicios</span><span data-en>Our Services</span>
+        <span data-es>{c['services.tag'].es}</span><span data-en>{c['services.tag'].en}</span>
       </span>
       <h2 class="section-title">
-        <span data-es>Tratamientos de<br/>excelencia dental</span>
-        <span data-en>Treatments crafted<br/>with precision</span>
+        <span data-es set:html={c['services.title'].es}></span>
+        <span data-en set:html={c['services.title'].en}></span>
       </h2>
       <p class="section-subtitle">
-        <span data-es>Tecnología de punta, especialistas certificados y un consultorio diseñado para que vuelvas siempre con una sonrisa.</span>
-        <span data-en>Cutting-edge technology, board-certified specialists and a clinic designed to make you smile every visit.</span>
+        <span data-es>{c['services.subtitle'].es}</span>
+        <span data-en>{c['services.subtitle'].en}</span>
       </p>
     </div>
 
@@ -43,7 +45,7 @@ const services = await getServices();
             </ul>
             <div class="service-footer">
               <a href={`https://wa.me/529983229592?text=${encodeURIComponent('Hola Happy Dent, quisiera información sobre ' + service.title_es)}`} target="_blank" rel="noopener" class="service-cta" data-hover>
-                <span data-es>Solicitar información</span><span data-en>Request info</span>
+                <span data-es>{c['services.cta'].es}</span><span data-en>{c['services.cta'].en}</span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
             </div>

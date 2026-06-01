@@ -18,11 +18,14 @@ const saved = Astro.url.searchParams.get('ok') === '1';
   {saved && <div class="admin-flash">Textos guardados correctamente.</div>}
 
   <form method="POST" action="/api/admin/textos" class="txt-form">
-    <nav class="txt-nav">
-      {COPY_SCHEMA.map((g) => (
-        <a href={`#g-${g.id}`} class="txt-nav-link">{g.title}</a>
-      ))}
-    </nav>
+    <div class="txt-nav-wrap">
+      <button type="button" id="txtNavToggle" class="admin-btn admin-btn-ghost txt-nav-toggle">Ir a sección ▾</button>
+      <nav class="txt-nav" id="txtNav" hidden>
+        {COPY_SCHEMA.map((g) => (
+          <a href={`#g-${g.id}`} class="txt-nav-link">{g.title}</a>
+        ))}
+      </nav>
+    </div>
 
     {COPY_SCHEMA.map((g) => (
       <details class="admin-card txt-group" id={`g-${g.id}`}>
@@ -64,7 +67,9 @@ const saved = Astro.url.searchParams.get('ok') === '1';
 
   <style>
     .txt-form { display: flex; flex-direction: column; gap: 1.1rem; }
-    .txt-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; position: sticky; top: 0; z-index: 5; }
+    .txt-nav-wrap { position: sticky; top: 0; z-index: 5; }
+    .txt-nav-toggle { font-size: 0.82rem; padding: 0.4rem 0.85rem; }
+    .txt-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 0 0 12px 12px; border-top: none; }
     .txt-nav-link { font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--a-bg); color: var(--a-text); text-decoration: none; border: 1px solid var(--a-line); }
     .txt-nav-link:hover { border-color: var(--a-pink); color: var(--a-pink); }
     /* Details / summary */
@@ -91,24 +96,35 @@ const saved = Astro.url.searchParams.get('ok') === '1';
     .txt-hint { font-size: 0.74rem; color: var(--a-muted); }
     .txt-bar { position: sticky; bottom: 0; display: flex; gap: 0.6rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; box-shadow: 0 -4px 16px rgba(0,0,0,0.05); }
     .admin-flash { padding: 0.75rem 1rem; background: #e9f9ef; border: 1px solid #9ad8b3; border-radius: 10px; color: #1c6b3f; font-size: 0.88rem; margin-bottom: 1rem; }
-    @media (max-width: 900px) {
-      .txt-nav { top: 65px; }
-    }
     @media (max-width: 640px) {
       .txt-fields { grid-template-columns: 1fr; }
     }
   </style>
 
   <script>
-    // Nav links: open the target <details> and scroll to it
+    const toggleBtn = document.getElementById('txtNavToggle');
+    const nav = document.getElementById('txtNav');
+
+    toggleBtn?.addEventListener('click', () => {
+      const isHidden = nav.hasAttribute('hidden');
+      if (isHidden) {
+        nav.removeAttribute('hidden');
+        toggleBtn.textContent = 'Ir a sección ▴';
+      } else {
+        nav.setAttribute('hidden', '');
+        toggleBtn.textContent = 'Ir a sección ▾';
+      }
+    });
+
+    // Nav links: open the target <details>, scroll to it, and close the nav
     document.querySelectorAll('.txt-nav-link').forEach((link) => {
-      link.addEventListener('click', (e) => {
+      link.addEventListener('click', () => {
         const href = link.getAttribute('href');
         if (!href || !href.startsWith('#')) return;
         const target = document.querySelector(href);
-        if (target && target.tagName === 'DETAILS') {
-          target.open = true;
-        }
+        if (target && target.tagName === 'DETAILS') target.open = true;
+        nav.setAttribute('hidden', '');
+        toggleBtn.textContent = 'Ir a sección ▾';
       });
     });
   </script>

@@ -15,6 +15,13 @@
       "when": 1780327514275,
       "tag": "0001_shiny_the_watchers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1780337500923,
+      "tag": "0002_big_praxagora",
+      "breakpoints": true
     }
   ]
 }

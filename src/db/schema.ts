@@ -201,3 +201,80 @@ export const siteSettings = pgTable('site_settings', {
   value: jsonb('value').notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// ─────────────────────────────────────────────────────────────
+// EXPEDIENTE CLÍNICO
+// ─────────────────────────────────────────────────────────────
+
+// Pacientes (ficha / expediente)
+export const patients = pgTable('patients', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  phone: text('phone').notNull().default(''),
+  email: text('email'),
+  birthdate: date('birthdate'),
+  // Antecedentes médicos / alergias / observaciones generales
+  medicalNotes: text('medical_notes'),
+  // Doctora principal (referencia rápida; no exclusiva)
+  doctorId: integer('doctor_id').references(() => doctors.id, { onDelete: 'set null' }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Casos / planes de tratamiento de un paciente
+// status: active | completed | paused | cancelled
+export const treatmentCases = pgTable('treatment_cases', {
+  id: serial('id').primaryKey(),
+  patientId: integer('patient_id')
+    .notNull()
+    .references(() => patients.id, { onDelete: 'cascade' }),
+  doctorId: integer('doctor_id').references(() => doctors.id, { onDelete: 'set null' }),
+  serviceId: integer('service_id').references(() => services.id, { onDelete: 'set null' }),
+  title: text('title').notNull(),
+  diagnosis: text('diagnosis'),
+  plan: text('plan'),
+  plannedSessions: integer('planned_sessions').notNull().default(1),
+  status: text('status').notNull().default('active'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Sesiones clínicas (seguimiento: sesión 1, 2, 3…)
+// status: planned | done | cancelled | no_show
+export const clinicalSessions = pgTable('clinical_sessions', {
+  id: serial('id').primaryKey(),
+  caseId: integer('case_id')
+    .notNull()
+    .references(() => treatmentCases.id, { onDelete: 'cascade' }),
+  patientId: integer('patient_id')
+    .notNull()
+    .references(() => patients.id, { onDelete: 'cascade' }),
+  doctorId: integer('doctor_id').references(() => doctors.id, { onDelete: 'set null' }),
+  // Cita pública vinculada (opcional)
+  appointmentId: integer('appointment_id').references(() => appointments.id, { onDelete: 'set null' }),
+  seq: integer('seq').notNull().default(1),
+  date: date('date'),
+  time: time('time'),
+  status: text('status').notNull().default('planned'),
+  // Procedimiento realizado + notas clínicas
+  procedure: text('procedure'),
+  notes: text('notes'),
+  nextSuggestedDate: date('next_suggested_date'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Adjuntos: radiografías, fotos clínicas, documentos
+// kind: xray | photo | doc
+export const attachments = pgTable('attachments', {
+  id: serial('id').primaryKey(),
+  patientId: integer('patient_id')
+    .notNull()
+    .references(() => patients.id, { onDelete: 'cascade' }),
+  caseId: integer('case_id').references(() => treatmentCases.id, { onDelete: 'set null' }),
+  sessionId: integer('session_id').references(() => clinicalSessions.id, { onDelete: 'set null' }),
+  url: text('url').notNull(),
+  kind: text('kind').notNull().default('photo'),
+  label: text('label'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});

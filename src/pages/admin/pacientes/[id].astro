@@ -1,0 +1,402 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import {
+  patients,
+  doctors,
+  services,
+  treatmentCases,
+  clinicalSessions,
+  attachments,
+} from '../../../db/schema';
+import { eq, asc, desc } from 'drizzle-orm';
+import {
+  CASE_STATUS,
+  CASE_STATUS_CLASS,
+  SESSION_STATUS,
+  SESSION_STATUS_CLASS,
+  ATTACHMENT_KIND,
+  todayStr,
+} from '../../../lib/clinical';
+
+const { id } = Astro.params;
+const isNew = id === 'nuevo';
+
+// Prefill al crear desde una cita
+const pre = {
+  name: Astro.url.searchParams.get('name') || '',
+  phone: Astro.url.searchParams.get('phone') || '',
+  email: Astro.url.searchParams.get('email') || '',
+};
+
+const docList = await db.select().from(doctors).orderBy(asc(doctors.order));
+const svcList = await db.select().from(services).where(eq(services.active, true)).orderBy(asc(services.order));
+
+let patient: typeof patients.$inferSelect | null = null;
+let cases: (typeof treatmentCases.$inferSelect & { sessions: (typeof clinicalSessions.$inferSelect)[] })[] = [];
+let files: (typeof attachments.$inferSelect)[] = [];
+
+if (!isNew) {
+  const numId = Number(id);
+  if (Number.isNaN(numId)) return Astro.redirect('/admin/pacientes');
+  const found = await db.select().from(patients).where(eq(patients.id, numId)).limit(1);
+  patient = found[0] ?? null;
+  if (!patient) return Astro.redirect('/admin/pacientes');
+
+  const caseRows = await db
+    .select()
+    .from(treatmentCases)
+    .where(eq(treatmentCases.patientId, numId))
+    .orderBy(desc(treatmentCases.createdAt));
+  const sessionRows = await db
+    .select()
+    .from(clinicalSessions)
+    .where(eq(clinicalSessions.patientId, numId))
+    .orderBy(asc(clinicalSessions.seq));
+  cases = caseRows.map((c) => ({ ...c, sessions: sessionRows.filter((s) => s.caseId === c.id) }));
+
+  files = await db
+    .select()
+    .from(attachments)
+    .where(eq(attachments.patientId, numId))
+    .orderBy(desc(attachments.createdAt));
+}
+
+function nextSeq(sessions: { seq: number }[]): number {
+  return sessions.length ? Math.max(...sessions.map((s) => s.seq)) + 1 : 1;
+}
+const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.name ?? '—';
+---
+
+<AdminLayout title={isNew ? 'Nuevo paciente' : patient!.name} active="pacientes">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nuevo paciente' : patient!.name}</h1>
+      <p class="admin-sub">{isNew ? 'Registra los datos del paciente.' : 'Expediente clínico completo.'}</p>
+    </div>
+    <a href="/admin/pacientes" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  <!-- Datos del paciente -->
+  <form method="POST" action="/api/admin/pacientes" class="admin-card">
+    <input type="hidden" name="_action" value="save" />
+    {!isNew && <input type="hidden" name="id" value={patient!.id} />}
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="name">Nombre completo</label>
+        <input id="name" name="name" type="text" required value={patient?.name ?? pre.name} />
+      </div>
+      <div class="admin-field">
+        <label for="phone">Teléfono</label>
+        <input id="phone" name="phone" type="tel" value={patient?.phone ?? pre.phone} />
+      </div>
+    </div>
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="email">Correo</label>
+        <input id="email" name="email" type="email" value={patient?.email ?? pre.email} />
+      </div>
+      <div class="admin-field">
+        <label for="birthdate">Fecha de nacimiento</label>
+        <input id="birthdate" name="birthdate" type="date" value={patient?.birthdate ?? ''} />
+      </div>
+    </div>
+    <div class="admin-field">
+      <label for="doctorId">Doctora principal</label>
+      <select id="doctorId" name="doctorId">
+        <option value="">Sin asignar</option>
+        {docList.map((d) => (
+          <option value={d.id} selected={patient?.doctorId === d.id}>{d.name}</option>
+        ))}
+      </select>
+    </div>
+    <div class="admin-field">
+      <label for="medicalNotes">Antecedentes / alergias / observaciones</label>
+      <textarea id="medicalNotes" name="medicalNotes" rows="3">{patient?.medicalNotes ?? ''}</textarea>
+    </div>
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear paciente' : 'Guardar datos'}</button>
+      {!isNew && (
+        <form method="POST" action="/api/admin/pacientes" onsubmit="return confirm('¿Eliminar este paciente y todo su expediente?')" style="display:inline">
+          <input type="hidden" name="_action" value="delete" />
+          <input type="hidden" name="id" value={patient!.id} />
+          <button type="submit" class="admin-btn admin-btn-danger">Eliminar paciente</button>
+        </form>
+      )}
+    </div>
+  </form>
+
+  {!isNew && (
+    <>
+      <!-- Casos / planes de tratamiento -->
+      <h2 class="clin-h2">Casos / planes de tratamiento</h2>
+
+      {cases.length === 0 && <div class="admin-card">Sin casos todavía. Crea el primer plan de tratamiento abajo.</div>}
+
+      {cases.map((c) => (
+        <div class="admin-card clin-case">
+          <div class="clin-case-head">
+            <div>
+              <h3 class="clin-case-title">{c.title}</h3>
+              <p class="clin-case-meta">
+                {doctorName(c.doctorId)} · Sesiones: {c.sessions.filter((s) => s.status === 'done').length}/{c.plannedSessions}
+              </p>
+            </div>
+            <span class={`admin-badge ${CASE_STATUS_CLASS[c.status] ?? 'off'}`}>{CASE_STATUS[c.status] ?? c.status}</span>
+          </div>
+
+          {c.diagnosis && <p class="clin-text"><strong>Diagnóstico:</strong> {c.diagnosis}</p>}
+          {c.plan && <p class="clin-text"><strong>Plan:</strong> {c.plan}</p>}
+
+          {c.sessions.length > 0 && (
+            <div class="admin-table-wrap"><table class="admin-table" style="margin:0.75rem 0;">
+              <thead>
+                <tr><th>#</th><th>Fecha</th><th>Procedimiento / notas</th><th>Estado</th><th></th></tr>
+              </thead>
+              <tbody>
+                {c.sessions.map((s) => (
+                  <tr>
+                    <td><strong>{s.seq}</strong></td>
+                    <td>{s.date ?? '—'}{s.time ? ` · ${s.time.slice(0, 5)}` : ''}</td>
+                    <td>
+                      <div class="clin-sess-notes">
+                        {s.procedure && <span>{s.procedure}</span>}
+                        {s.notes && <small>{s.notes}</small>}
+                        {!s.procedure && !s.notes && <span>—</span>}
+                      </div>
+                    </td>
+                    <td><span class={`admin-badge ${SESSION_STATUS_CLASS[s.status] ?? 'off'}`}>{SESSION_STATUS[s.status] ?? s.status}</span></td>
+                    <td>
+                      <div class="admin-actions">
+                        {s.status === 'planned' && (
+                          <form method="POST" action="/api/admin/sesiones">
+                            <input type="hidden" name="_action" value="status" />
+                            <input type="hidden" name="id" value={s.id} />
+                            <input type="hidden" name="status" value="done" />
+                            <input type="hidden" name="patientId" value={patient!.id} />
+                            <button type="submit" class="admin-btn admin-btn-ghost">Marcar realizada</button>
+                          </form>
+                        )}
+                        <form method="POST" action="/api/admin/sesiones" onsubmit="return confirm('¿Eliminar esta sesión?')">
+                          <input type="hidden" name="_action" value="delete" />
+                          <input type="hidden" name="id" value={s.id} />
+                          <input type="hidden" name="patientId" value={patient!.id} />
+                          <button type="submit" class="admin-btn admin-btn-danger">×</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table></div>
+          )}
+
+          <!-- Agregar / programar siguiente sesión -->
+          <details class="clin-details">
+            <summary>+ Programar siguiente sesión (Sesión {nextSeq(c.sessions)})</summary>
+            <form method="POST" action="/api/admin/sesiones" class="clin-subform">
+              <input type="hidden" name="_action" value="save" />
+              <input type="hidden" name="caseId" value={c.id} />
+              <input type="hidden" name="patientId" value={patient!.id} />
+              <input type="hidden" name="seq" value={nextSeq(c.sessions)} />
+              <div class="admin-row">
+                <div class="admin-field">
+                  <label>Fecha</label>
+                  <input name="date" type="date" value={todayStr()} />
+                </div>
+                <div class="admin-field">
+                  <label>Hora</label>
+                  <input name="time" type="time" />
+                </div>
+              </div>
+              <div class="admin-field">
+                <label>Doctora</label>
+                <select name="doctorId">
+                  <option value="">Sin asignar</option>
+                  {docList.map((d) => (
+                    <option value={d.id} selected={c.doctorId === d.id}>{d.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div class="admin-field">
+                <label>Procedimiento</label>
+                <input name="procedure" type="text" placeholder="Limpieza, ajuste, etc." />
+              </div>
+              <div class="admin-field">
+                <label>Notas clínicas</label>
+                <textarea name="notes" rows="2"></textarea>
+              </div>
+              <div class="admin-form-actions">
+                <button type="submit" class="admin-btn">Programar sesión</button>
+              </div>
+            </form>
+          </details>
+
+          <div class="clin-case-foot">
+            {c.status !== 'completed' && (
+              <form method="POST" action="/api/admin/casos">
+                <input type="hidden" name="_action" value="status" />
+                <input type="hidden" name="id" value={c.id} />
+                <input type="hidden" name="status" value="completed" />
+                <input type="hidden" name="patientId" value={patient!.id} />
+                <button type="submit" class="admin-btn admin-btn-ghost">Completar caso</button>
+              </form>
+            )}
+            <form method="POST" action="/api/admin/casos" onsubmit="return confirm('¿Eliminar este caso y sus sesiones?')">
+              <input type="hidden" name="_action" value="delete" />
+              <input type="hidden" name="id" value={c.id} />
+              <input type="hidden" name="patientId" value={patient!.id} />
+              <button type="submit" class="admin-btn admin-btn-danger">Eliminar caso</button>
+            </form>
+          </div>
+        </div>
+      ))}
+
+      <!-- Nuevo caso -->
+      <details class="admin-card clin-details">
+        <summary class="clin-new-summary">+ Nuevo caso / plan de tratamiento</summary>
+        <form method="POST" action="/api/admin/casos" class="clin-subform">
+          <input type="hidden" name="_action" value="save" />
+          <input type="hidden" name="patientId" value={patient!.id} />
+          <div class="admin-field">
+            <label>Título del caso</label>
+            <input name="title" type="text" required placeholder="Ortodoncia, Endodoncia molar, etc." />
+          </div>
+          <div class="admin-row">
+            <div class="admin-field">
+              <label>Doctora responsable</label>
+              <select name="doctorId">
+                <option value="">Sin asignar</option>
+                {docList.map((d) => (
+                  <option value={d.id} selected={patient!.doctorId === d.id}>{d.name}</option>
+                ))}
+              </select>
+            </div>
+            <div class="admin-field">
+              <label>Servicio relacionado</label>
+              <select name="serviceId">
+                <option value="">Ninguno</option>
+                {svcList.map((s) => (
+                  <option value={s.id}>{s.titleEs}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div class="admin-row">
+            <div class="admin-field">
+              <label>Sesiones planeadas</label>
+              <input name="plannedSessions" type="number" min="1" value="1" />
+            </div>
+            <div class="admin-field">
+              <label>Diagnóstico</label>
+              <input name="diagnosis" type="text" />
+            </div>
+          </div>
+          <div class="admin-field">
+            <label>Plan de tratamiento</label>
+            <textarea name="plan" rows="3"></textarea>
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="admin-btn">Crear caso</button>
+          </div>
+        </form>
+      </details>
+
+      <!-- Radiografías / fotos / documentos -->
+      <h2 class="clin-h2">Radiografías y fotos clínicas</h2>
+      {files.length > 0 && (
+        <div class="clin-files">
+          {files.map((f) => (
+            <div class="clin-file">
+              {f.kind === 'doc' ? (
+                <a href={f.url} target="_blank" rel="noopener" class="clin-file-doc">Documento</a>
+              ) : (
+                <a href={f.url} target="_blank" rel="noopener"><img src={f.url} alt={f.label ?? ''} loading="lazy" /></a>
+              )}
+              <div class="clin-file-foot">
+                <span class="admin-badge off">{ATTACHMENT_KIND[f.kind] ?? f.kind}</span>
+                {f.label && <small>{f.label}</small>}
+                <form method="POST" action="/api/admin/adjuntos" onsubmit="return confirm('¿Eliminar este archivo?')">
+                  <input type="hidden" name="_action" value="delete" />
+                  <input type="hidden" name="id" value={f.id} />
+                  <input type="hidden" name="patientId" value={patient!.id} />
+                  <button type="submit" class="clin-file-del">Eliminar</button>
+                </form>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <details class="admin-card clin-details">
+        <summary class="clin-new-summary">+ Subir radiografía / foto / documento</summary>
+        <form method="POST" action="/api/admin/adjuntos" class="clin-subform">
+          <input type="hidden" name="_action" value="save" />
+          <input type="hidden" name="patientId" value={patient!.id} />
+          <div class="admin-field">
+            <label>Archivo</label>
+            <div class="uploader">
+              <img id="attPreview" class="uploader-preview" src="" alt="" style="display:none" />
+              <div class="uploader-controls">
+                <input id="attFile" type="file" accept="image/*" data-upload-input data-target="attUrl" data-preview="attPreview" />
+                <span class="uploader-hint" data-upload-status>JPG, PNG o WebP · máx 6 MB</span>
+              </div>
+            </div>
+            <input id="attUrl" name="url" type="hidden" required />
+          </div>
+          <div class="admin-row">
+            <div class="admin-field">
+              <label>Tipo</label>
+              <select name="kind">
+                <option value="xray">Radiografía</option>
+                <option value="photo">Foto clínica</option>
+                <option value="doc">Documento</option>
+              </select>
+            </div>
+            <div class="admin-field">
+              <label>Caso relacionado</label>
+              <select name="caseId">
+                <option value="">Ninguno</option>
+                {cases.map((c) => (
+                  <option value={c.id}>{c.title}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div class="admin-field">
+            <label>Descripción</label>
+            <input name="label" type="text" placeholder="Panorámica inicial, etc." />
+          </div>
+          <div class="admin-form-actions">
+            <button type="submit" class="admin-btn">Guardar archivo</button>
+          </div>
+        </form>
+      </details>
+    </>
+  )}
+
+  <style>
+    .clin-h2 { font-size: 1.2rem; font-weight: 800; margin: 1.75rem 0 0.85rem; }
+    .clin-case-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .clin-case-title { font-size: 1.05rem; font-weight: 700; }
+    .clin-case-meta { color: var(--a-muted); font-size: 0.85rem; margin-top: 0.15rem; }
+    .clin-text { font-size: 0.9rem; margin-top: 0.5rem; line-height: 1.5; }
+    .clin-sess-notes { display: flex; flex-direction: column; line-height: 1.3; }
+    .clin-sess-notes small { color: var(--a-muted); font-size: 0.78rem; }
+    .clin-details { margin-top: 0.75rem; }
+    .clin-details > summary { cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--a-pink-dark); padding: 0.5rem 0; list-style: none; }
+    .clin-details > summary::-webkit-details-marker { display: none; }
+    .clin-new-summary { color: var(--a-ink); }
+    .clin-subform { margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px dashed var(--a-line); }
+    .clin-case-foot { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--a-line); }
+    .clin-case-foot form { display: inline; }
+    .clin-files { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.85rem; margin-bottom: 1rem; }
+    .clin-file { background: #fff; border: 1px solid var(--a-line); border-radius: 12px; overflow: hidden; }
+    .clin-file img { width: 100%; height: 130px; object-fit: cover; display: block; }
+    .clin-file-doc { display: flex; align-items: center; justify-content: center; height: 130px; background: var(--a-bg); color: var(--a-pink-dark); font-weight: 700; text-decoration: none; }
+    .clin-file-foot { padding: 0.6rem; display: flex; flex-direction: column; gap: 0.35rem; align-items: flex-start; }
+    .clin-file-foot small { color: var(--a-muted); font-size: 0.78rem; }
+    .clin-file-del { border: none; background: none; color: #b91c1c; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 0; }
+  </style>
+</AdminLayout>

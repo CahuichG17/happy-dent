@@ -1,0 +1,100 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { getDayAgenda, todayStr } from '../../../lib/clinical';
+
+const dateStr = (Astro.url.searchParams.get('date') || todayStr()).trim();
+const agenda = await getDayAgenda(dateStr);
+
+const totalBusy = agenda.reduce((a, d) => a + d.busy, 0);
+const totalFree = agenda.reduce((a, d) => a + d.free, 0);
+
+const d = new Date(`${dateStr}T00:00:00`);
+const dayLabel = Number.isNaN(d.getTime())
+  ? dateStr
+  : d.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+function shiftDate(base: string, days: number): string {
+  const dt = new Date(`${base}T00:00:00`);
+  dt.setDate(dt.getDate() + days);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+}
+const prevDay = shiftDate(dateStr, -1);
+const nextDay = shiftDate(dateStr, 1);
+---
+
+<AdminLayout title="Agenda" active="agenda">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Agenda del día</h1>
+      <p class="admin-sub" style="text-transform: capitalize;">{dayLabel}</p>
+    </div>
+  </div>
+
+  <form method="GET" class="ag-nav">
+    <a href={`/admin/agenda?date=${prevDay}`} class="admin-btn admin-btn-ghost">← Día anterior</a>
+    <input type="date" name="date" value={dateStr} onchange="this.form.submit()" />
+    <a href={`/admin/agenda?date=${nextDay}`} class="admin-btn admin-btn-ghost">Día siguiente →</a>
+    <a href={`/admin/agenda?date=${todayStr()}`} class="admin-btn admin-btn-ghost">Hoy</a>
+  </form>
+
+  <div class="ag-summary">
+    <div class="ag-stat"><span class="ag-stat-n">{totalBusy}</span><span class="ag-stat-l">Horas ocupadas</span></div>
+    <div class="ag-stat"><span class="ag-stat-n">{totalFree}</span><span class="ag-stat-l">Horas libres</span></div>
+  </div>
+
+  {agenda.length === 0 ? (
+    <div class="admin-card">No hay doctoras con horario configurado para este día. Revisa <a href="/admin/horarios">Horarios</a>.</div>
+  ) : (
+    <div class="ag-grid">
+      {agenda.map((doc) => (
+        <div class="ag-col">
+          <div class="ag-col-head">
+            <strong>{doc.doctorName}</strong>
+            <span class="admin-badge off">{doc.busy} ocupadas</span>
+          </div>
+          {doc.slots.length === 0 ? (
+            <p class="admin-sub" style="padding: 0.75rem;">Sin horario este día.</p>
+          ) : (
+            <ul class="ag-slots">
+              {doc.slots.map((s) => (
+                <li class={`ag-slot ${s.status}`}>
+                  <span class="ag-time">{s.time}</span>
+                  {s.status === 'busy' ? (
+                    s.kind === 'session' && s.patientId ? (
+                      <a href={`/admin/pacientes/${s.patientId}`} class="ag-label">{s.label}</a>
+                    ) : (
+                      <a href="/admin/citas" class="ag-label">{s.label}</a>
+                    )
+                  ) : (
+                    <span class="ag-free">Libre</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  )}
+
+  <style>
+    .ag-nav { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .ag-nav input { border: 1px solid var(--a-line); border-radius: 9px; padding: 0.55rem 0.7rem; font: inherit; font-size: 0.9rem; }
+    .ag-summary { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .ag-stat { background: #fff; border: 1px solid var(--a-line); border-radius: 12px; padding: 1rem 1.4rem; display: flex; flex-direction: column; min-width: 130px; }
+    .ag-stat-n { font-size: 1.8rem; font-weight: 800; color: var(--a-pink-dark); }
+    .ag-stat-l { color: var(--a-muted); font-size: 0.85rem; font-weight: 600; }
+    .ag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .ag-col { background: #fff; border: 1px solid var(--a-line); border-radius: 12px; overflow: hidden; }
+    .ag-col-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.85rem 1rem; border-bottom: 1px solid var(--a-line); background: var(--a-bg); }
+    .ag-slots { list-style: none; }
+    .ag-slot { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 1rem; border-bottom: 1px solid var(--a-line); font-size: 0.88rem; }
+    .ag-slot:last-child { border-bottom: none; }
+    .ag-slot.busy { background: #fff5fa; }
+    .ag-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 46px; color: var(--a-ink); }
+    .ag-label { color: var(--a-pink-dark); font-weight: 600; text-decoration: none; }
+    .ag-label:hover { text-decoration: underline; }
+    .ag-free { color: var(--a-muted); }
+  </style>
+</AdminLayout>

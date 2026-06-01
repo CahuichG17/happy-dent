@@ -48,7 +48,7 @@ const STATUS_CLASS: Record<string, string> = {
   {rows.length === 0 ? (
     <div class="admin-card">No hay citas registradas todavía.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr>
           <th>Paciente</th>
@@ -79,6 +79,10 @@ const STATUS_CLASS: Record<string, string> = {
             <td><span class={`admin-badge ${STATUS_CLASS[a.status] ?? 'off'}`}>{STATUS_LABEL[a.status] ?? a.status}</span></td>
             <td>
               <div class="admin-actions">
+                <a
+                  href={`/admin/pacientes/nuevo?name=${encodeURIComponent(a.patientName)}&phone=${encodeURIComponent(a.phone ?? '')}&email=${encodeURIComponent(a.email ?? '')}`}
+                  class="admin-btn admin-btn-ghost"
+                >Expediente</a>
                 {a.status !== 'confirmed' && (
                   <form method="POST" action="/api/admin/citas">
                     <input type="hidden" name="id" value={a.id} />
@@ -105,7 +109,7 @@ const STATUS_CLASS: Record<string, string> = {
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 
   <style>

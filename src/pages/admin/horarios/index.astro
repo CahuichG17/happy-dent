@@ -40,7 +40,7 @@ const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
         {blocksByDoctor(d.id).length === 0 ? (
           <p class="admin-sub" style="margin: 0 0 1rem;">Sin horarios definidos.</p>
         ) : (
-          <table class="admin-table" style="margin-bottom: 1rem;">
+          <div class="admin-table-wrap"><table class="admin-table" style="margin-bottom: 1rem;">
             <thead>
               <tr>
                 <th>Día</th>
@@ -67,7 +67,7 @@ const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
 
         <form method="POST" action="/api/admin/horarios" class="hor-add">

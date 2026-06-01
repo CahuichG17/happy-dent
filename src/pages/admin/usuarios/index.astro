@@ -26,7 +26,7 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
   {rows.length === 0 ? (
     <div class="admin-card">Aún no hay usuarios.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr>
           <th>Nombre</th>
@@ -64,6 +64,6 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 </AdminLayout>

@@ -2,32 +2,46 @@
 export const prerender = false;
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import { db } from '../../db';
-import { doctors, services, appointments, testimonials, videos } from '../../db/schema';
-import { sql, eq } from 'drizzle-orm';
+import { doctors, services, appointments, testimonials, videos, patients, clinicalSessions } from '../../db/schema';
+import { sql, eq, and, inArray } from 'drizzle-orm';
+import { getDayAgenda, todayStr } from '../../lib/clinical';
+
+const today = todayStr();
 
 const [docCount] = await db.select({ n: sql<number>`count(*)` }).from(doctors);
 const [svcCount] = await db.select({ n: sql<number>`count(*)` }).from(services);
 const [tstCount] = await db.select({ n: sql<number>`count(*)` }).from(testimonials);
 const [vidCount] = await db.select({ n: sql<number>`count(*)` }).from(videos);
+const [patCount] = await db.select({ n: sql<number>`count(*)` }).from(patients);
 const [pendingCount] = await db
   .select({ n: sql<number>`count(*)` })
   .from(appointments)
   .where(eq(appointments.status, 'pending'));
+const [todaySessions] = await db
+  .select({ n: sql<number>`count(*)` })
+  .from(clinicalSessions)
+  .where(and(eq(clinicalSessions.date, today), inArray(clinicalSessions.status, ['planned', 'done'])));
+
+const agenda = await getDayAgenda(today);
+const busyToday = agenda.reduce((a, d) => a + d.busy, 0);
 
 const user = Astro.locals.user;
 
 const cards = [
+  { label: 'Pacientes', value: patCount.n, href: '/admin/pacientes' },
+  { label: 'Citas pendientes', value: pendingCount.n, href: '/admin/citas' },
+  { label: 'Sesiones hoy', value: todaySessions.n, href: '/admin/agenda' },
+  { label: 'Horas ocupadas hoy', value: busyToday, href: '/admin/agenda' },
   { label: 'Doctoras', value: docCount.n, href: '/admin/doctoras' },
   { label: 'Servicios', value: svcCount.n, href: '/admin/servicios' },
   { label: 'Testimonios', value: tstCount.n, href: '/admin/testimonios' },
   { label: 'Videos', value: vidCount.n, href: '/admin/videos' },
-  { label: 'Citas pendientes', value: pendingCount.n, href: '/admin/citas' },
 ];
 ---
 
 <AdminLayout title="Inicio" active="home">
   <h1 class="admin-h1">Hola, {user?.name}</h1>
-  <p class="admin-sub">Este es el panel de Happy Dent. Desde aquí administras el contenido del sitio.</p>
+  <p class="admin-sub">Panel de Happy Dent. Agenda, expedientes y contenido del sitio.</p>
 
   <div class="dash-grid">
     {cards.map((c) => (
@@ -38,8 +52,32 @@ const cards = [
     ))}
   </div>
 
+  <div class="dash-today">
+    <div class="dash-today-head">
+      <h2 class="dash-today-title">Agenda de hoy</h2>
+      <a href="/admin/agenda" class="admin-btn admin-btn-ghost">Ver agenda completa</a>
+    </div>
+    {agenda.length === 0 || busyToday === 0 ? (
+      <div class="admin-card">No hay citas ni sesiones ocupadas para hoy.</div>
+    ) : (
+      <div class="dash-today-grid">
+        {agenda.map((doc) => (
+          <div class="dash-doc">
+            <strong>{doc.doctorName}</strong>
+            <ul>
+              {doc.slots.filter((s) => s.status === 'busy').map((s) => (
+                <li><span class="dash-time">{s.time}</span> {s.label}</li>
+              ))}
+              {doc.slots.filter((s) => s.status === 'busy').length === 0 && <li class="dash-empty">Sin citas hoy</li>}
+            </ul>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+
   <style>
-    .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; }
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
     .dash-card {
       background: #fff; border: 1px solid #e7e9ee; border-radius: 12px; padding: 1.4rem 1.25rem;
       display: flex; flex-direction: column; gap: 0.25rem; text-decoration: none; color: inherit;
@@ -48,5 +86,16 @@ const cards = [
     .dash-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(31,36,48,0.08); }
     .dash-value { font-size: 2rem; font-weight: 800; color: #e87fb4; }
     .dash-label { color: #6b7280; font-weight: 600; font-size: 0.9rem; }
+    .dash-today { margin-top: 2rem; }
+    .dash-today-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .dash-today-title { font-size: 1.2rem; font-weight: 800; }
+    .dash-today-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+    .dash-doc { background: #fff; border: 1px solid #e7e9ee; border-radius: 12px; padding: 1rem 1.2rem; }
+    .dash-doc strong { display: block; margin-bottom: 0.5rem; }
+    .dash-doc ul { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+    .dash-doc li { font-size: 0.88rem; color: var(--a-ink); }
+    .dash-time { font-weight: 700; font-variant-numeric: tabular-nums; color: #e87fb4; margin-right: 0.4rem; }
+    .dash-empty { color: var(--a-muted); }
   </style>
 </AdminLayout>
+

@@ -10,18 +10,22 @@ const user = Astro.locals.user;
 const isSuper = user?.role === 'super_admin';
 
 const nav = [
-  { href: '/admin', label: 'Inicio', key: 'home', super: false },
-  { href: '/admin/doctoras', label: 'Doctoras', key: 'doctoras', super: false },
-  { href: '/admin/servicios', label: 'Servicios', key: 'servicios', super: false },
-  { href: '/admin/testimonios', label: 'Testimonios', key: 'testimonios', super: false },
-  { href: '/admin/faq', label: 'Preguntas frecuentes', key: 'faq', super: false },
-  { href: '/admin/videos', label: 'Videos', key: 'videos', super: false },
-  { href: '/admin/secciones', label: 'Secciones del sitio', key: 'secciones', super: false },
-  { href: '/admin/citas', label: 'Citas', key: 'citas', super: false },
-  { href: '/admin/horarios', label: 'Horarios', key: 'horarios', super: false },
-  { href: '/admin/usuarios', label: 'Usuarios', key: 'usuarios', super: true },
-  { href: '/admin/configuracion', label: 'Configuración', key: 'configuracion', super: true },
+  { href: '/admin', label: 'Inicio', key: 'home', super: false, group: 'Clínica' },
+  { href: '/admin/agenda', label: 'Agenda', key: 'agenda', super: false, group: 'Clínica' },
+  { href: '/admin/pacientes', label: 'Pacientes', key: 'pacientes', super: false, group: 'Clínica' },
+  { href: '/admin/citas', label: 'Citas', key: 'citas', super: false, group: 'Clínica' },
+  { href: '/admin/horarios', label: 'Horarios', key: 'horarios', super: false, group: 'Clínica' },
+  { href: '/admin/doctoras', label: 'Doctoras', key: 'doctoras', super: false, group: 'Sitio web' },
+  { href: '/admin/servicios', label: 'Servicios', key: 'servicios', super: false, group: 'Sitio web' },
+  { href: '/admin/testimonios', label: 'Testimonios', key: 'testimonios', super: false, group: 'Sitio web' },
+  { href: '/admin/faq', label: 'Preguntas frecuentes', key: 'faq', super: false, group: 'Sitio web' },
+  { href: '/admin/videos', label: 'Videos', key: 'videos', super: false, group: 'Sitio web' },
+  { href: '/admin/secciones', label: 'Secciones del sitio', key: 'secciones', super: false, group: 'Sitio web' },
+  { href: '/admin/usuarios', label: 'Usuarios', key: 'usuarios', super: true, group: 'Sistema' },
+  { href: '/admin/configuracion', label: 'Configuración', key: 'configuracion', super: true, group: 'Sistema' },
 ];
+const visibleNav = nav.filter((i) => !i.super || isSuper);
+const navGroups = [...new Set(visibleNav.map((i) => i.group))];
 ---
 
 <!doctype html>
@@ -35,14 +39,31 @@ const nav = [
   </head>
   <body>
     <div class="admin-shell">
-      <aside class="admin-sidebar">
+      <header class="admin-topbar">
+        <button type="button" class="admin-burger" id="adminBurger" aria-label="Abrir menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
         <div class="admin-brand">
+          <img src="/happy-dent-icon.svg" alt="" width="24" height="24" />
+          <span>Happy Dent</span>
+        </div>
+      </header>
+
+      <div class="admin-backdrop" id="adminBackdrop" hidden></div>
+
+      <aside class="admin-sidebar" id="adminSidebar">
+        <div class="admin-brand admin-brand-desk">
           <img src="/happy-dent-icon.svg" alt="" width="28" height="28" />
           <span>Happy Dent</span>
         </div>
         <nav class="admin-nav">
-          {nav.filter((i) => !i.super || isSuper).map((i) => (
-            <a href={i.href} class={`admin-nav-link${active === i.key ? ' is-active' : ''}`}>{i.label}</a>
+          {navGroups.map((g) => (
+            <div class="admin-nav-group">
+              <p class="admin-nav-title">{g}</p>
+              {visibleNav.filter((i) => i.group === g).map((i) => (
+                <a href={i.href} class={`admin-nav-link${active === i.key ? ' is-active' : ''}`}>{i.label}</a>
+              ))}
+            </div>
           ))}
         </nav>
         <div class="admin-user">
@@ -64,6 +85,29 @@ const nav = [
         await signOut();
         window.location.href = '/admin/login';
       });
+
+      // Menú móvil (drawer)
+      const sidebar = document.getElementById('adminSidebar');
+      const backdrop = document.getElementById('adminBackdrop');
+      const burger = document.getElementById('adminBurger');
+      function openMenu() {
+        sidebar?.classList.add('is-open');
+        if (backdrop) backdrop.hidden = false;
+        burger?.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('admin-no-scroll');
+      }
+      function closeMenu() {
+        sidebar?.classList.remove('is-open');
+        if (backdrop) backdrop.hidden = true;
+        burger?.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('admin-no-scroll');
+      }
+      burger?.addEventListener('click', () => {
+        sidebar?.classList.contains('is-open') ? closeMenu() : openMenu();
+      });
+      backdrop?.addEventListener('click', closeMenu);
+      sidebar?.querySelectorAll('.admin-nav-link').forEach((a) => a.addEventListener('click', closeMenu));
+      window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
       // Uploader genérico: cualquier <input type="file" data-upload-input>
       // sube la imagen a /api/admin/upload, guarda la URL en el campo data-target
@@ -122,6 +166,8 @@ const nav = [
         -webkit-font-smoothing: antialiased;
       }
       .admin-shell { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+      .admin-topbar { display: none; }
+      .admin-backdrop { display: none; }
       .admin-sidebar {
         background: var(--a-card);
         border-right: 1px solid var(--a-line);
@@ -131,9 +177,12 @@ const nav = [
         position: sticky;
         top: 0;
         height: 100vh;
+        overflow-y: auto;
       }
       .admin-brand { display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.1rem; padding: 0.5rem; margin-bottom: 1rem; }
-      .admin-nav { display: flex; flex-direction: column; gap: 0.15rem; flex: 1; }
+      .admin-nav { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+      .admin-nav-group { display: flex; flex-direction: column; gap: 0.1rem; }
+      .admin-nav-title { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--a-muted); font-weight: 700; padding: 0.5rem 0.75rem 0.25rem; }
       .admin-nav-link {
         display: block; padding: 0.6rem 0.75rem; border-radius: 9px;
         color: var(--a-muted); text-decoration: none; font-weight: 600; font-size: 0.92rem;
@@ -169,6 +218,7 @@ const nav = [
       .admin-field textarea { min-height: 90px; resize: vertical; }
       .admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
       .admin-table { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--a-line); border-radius: var(--a-radius); overflow: hidden; }
+      .admin-table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--a-radius); }
       .admin-table th, .admin-table td { text-align: left; padding: 0.75rem 1rem; border-bottom: 1px solid var(--a-line); font-size: 0.9rem; }
       .admin-table th { background: var(--a-bg); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--a-muted); }
       .admin-table tr:last-child td { border-bottom: none; }
@@ -185,12 +235,47 @@ const nav = [
       .uploader-controls { display: flex; flex-direction: column; gap: 0.35rem; }
       .uploader-hint { font-size: 0.78rem; color: var(--a-muted); }
       .uploader input[type="file"] { font-size: 0.85rem; }
-      @media (max-width: 820px) {
+      @media (max-width: 900px) {
         .admin-shell { grid-template-columns: 1fr; }
-        .admin-sidebar { position: static; height: auto; flex-direction: row; flex-wrap: wrap; }
-        .admin-nav { flex-direction: row; flex-wrap: wrap; }
-        .admin-main { padding: 1.5rem 1.25rem; }
+        .admin-topbar {
+          display: flex; align-items: center; gap: 0.75rem;
+          position: sticky; top: 0; z-index: 40;
+          background: var(--a-card); border-bottom: 1px solid var(--a-line);
+          padding: 0.7rem 1rem;
+        }
+        .admin-topbar .admin-brand { margin: 0; padding: 0; font-size: 1rem; }
+        .admin-brand-desk { display: none; }
+        .admin-burger {
+          width: 42px; height: 42px; border: 1px solid var(--a-line); background: #fff;
+          border-radius: 10px; display: flex; flex-direction: column; align-items: center;
+          justify-content: center; gap: 4px; cursor: pointer; flex: 0 0 auto;
+        }
+        .admin-burger span { width: 18px; height: 2px; background: var(--a-ink); border-radius: 2px; }
+        .admin-backdrop {
+          display: block; position: fixed; inset: 0; z-index: 49;
+          background: rgba(15, 18, 28, 0.45);
+        }
+        .admin-backdrop[hidden] { display: none; }
+        .admin-sidebar {
+          position: fixed; top: 0; left: 0; z-index: 50;
+          width: 82%; max-width: 300px; height: 100vh;
+          transform: translateX(-100%);
+          transition: transform 0.22s ease;
+          box-shadow: 0 0 40px rgba(15, 18, 28, 0.18);
+        }
+        .admin-sidebar.is-open { transform: translateX(0); }
+        .admin-main { padding: 1.25rem 1rem; max-width: 100%; }
         .admin-row { grid-template-columns: 1fr; }
+        .admin-toolbar { flex-direction: column; align-items: stretch; }
+        .admin-toolbar .admin-btn { width: 100%; justify-content: center; }
+        .admin-h1 { font-size: 1.35rem; }
+        :global(body.admin-no-scroll) { overflow: hidden; }
+      }
+      @media (max-width: 540px) {
+        .admin-main { padding: 1rem 0.85rem; }
+        .admin-card { padding: 1rem; }
+        .admin-form-actions { flex-direction: column; }
+        .admin-form-actions .admin-btn { width: 100%; justify-content: center; }
       }
     </style>
   </body>

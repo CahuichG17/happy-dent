@@ -20,7 +20,7 @@ const rows = await db.select().from(testimonials).orderBy(asc(testimonials.order
   {rows.length === 0 ? (
     <div class="admin-card">Aún no hay testimonios.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr><th>Paciente</th><th>Calificación</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
@@ -43,6 +43,6 @@ const rows = await db.select().from(testimonials).orderBy(asc(testimonials.order
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 </AdminLayout>

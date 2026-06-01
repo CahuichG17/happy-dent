@@ -20,7 +20,7 @@ const rows = await db.select().from(faqs).orderBy(asc(faqs.order), asc(faqs.id))
   {rows.length === 0 ? (
     <div class="admin-card">Aún no hay preguntas.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr><th>Pregunta</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
@@ -42,6 +42,6 @@ const rows = await db.select().from(faqs).orderBy(asc(faqs.order), asc(faqs.id))
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 </AdminLayout>

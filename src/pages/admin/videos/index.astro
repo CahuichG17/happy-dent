@@ -20,7 +20,7 @@ const rows = await db.select().from(videos).orderBy(asc(videos.order), asc(video
   {rows.length === 0 ? (
     <div class="admin-card">Aún no hay videos. Agrega el primero.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr><th>Título</th><th>Plataforma</th><th>Estado</th><th>Acciones</th></tr>
       </thead>
@@ -43,6 +43,6 @@ const rows = await db.select().from(videos).orderBy(asc(videos.order), asc(video
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 </AdminLayout>

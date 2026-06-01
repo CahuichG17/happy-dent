@@ -1,0 +1,84 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { patients, doctors, treatmentCases } from '../../../db/schema';
+import { desc, eq, sql, ilike, or } from 'drizzle-orm';
+
+const q = (Astro.url.searchParams.get('q') || '').trim();
+
+const baseQuery = db
+  .select({
+    id: patients.id,
+    name: patients.name,
+    phone: patients.phone,
+    email: patients.email,
+    doctorName: doctors.name,
+    cases: sql<number>`count(${treatmentCases.id})`,
+    createdAt: patients.createdAt,
+  })
+  .from(patients)
+  .leftJoin(doctors, eq(patients.doctorId, doctors.id))
+  .leftJoin(treatmentCases, eq(treatmentCases.patientId, patients.id))
+  .groupBy(patients.id, doctors.name)
+  .orderBy(desc(patients.createdAt));
+
+const rows = q
+  ? await baseQuery.where(or(ilike(patients.name, `%${q}%`), ilike(patients.phone, `%${q}%`)))
+  : await baseQuery;
+---
+
+<AdminLayout title="Pacientes" active="pacientes">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Pacientes</h1>
+      <p class="admin-sub">Expedientes clínicos: historial, casos, sesiones y radiografías.</p>
+    </div>
+    <a href="/admin/pacientes/nuevo" class="admin-btn">+ Nuevo paciente</a>
+  </div>
+
+  <form method="GET" class="pac-search">
+    <input type="search" name="q" value={q} placeholder="Buscar por nombre o teléfono…" />
+    <button type="submit" class="admin-btn admin-btn-ghost">Buscar</button>
+    {q && <a href="/admin/pacientes" class="admin-btn admin-btn-ghost">Limpiar</a>}
+  </form>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">No hay pacientes{q ? ' que coincidan con la búsqueda' : ' todavía'}.</div>
+  ) : (
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Contacto</th>
+          <th>Doctora</th>
+          <th>Casos</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((p) => (
+          <tr>
+            <td><strong>{p.name}</strong></td>
+            <td>
+              <div class="pac-contact">
+                <span>{p.phone || '—'}</span>
+                {p.email && <small>{p.email}</small>}
+              </div>
+            </td>
+            <td>{p.doctorName ?? '—'}</td>
+            <td><span class="admin-badge off">{p.cases}</span></td>
+            <td><a href={`/admin/pacientes/${p.id}`} class="admin-btn admin-btn-ghost">Abrir expediente</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table></div>
+  )}
+
+  <style>
+    .pac-search { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+    .pac-search input { flex: 1; min-width: 200px; border: 1px solid var(--a-line); border-radius: 9px; padding: 0.6rem 0.75rem; font: inherit; font-size: 0.9rem; }
+    .pac-contact { display: flex; flex-direction: column; line-height: 1.3; }
+    .pac-contact small { color: var(--a-muted); font-size: 0.78rem; }
+  </style>
+</AdminLayout>

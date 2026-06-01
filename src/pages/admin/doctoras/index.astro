@@ -20,7 +20,7 @@ const rows = await db.select().from(doctors).orderBy(asc(doctors.order), asc(doc
   {rows.length === 0 ? (
     <div class="admin-card">Aún no hay doctoras. Crea la primera.</div>
   ) : (
-    <table class="admin-table">
+    <div class="admin-table-wrap"><table class="admin-table">
       <thead>
         <tr>
           <th>Nombre</th>
@@ -52,6 +52,6 @@ const rows = await db.select().from(doctors).orderBy(asc(doctors.order), asc(doc
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   )}
 </AdminLayout>

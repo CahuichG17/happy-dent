@@ -25,8 +25,8 @@ const saved = Astro.url.searchParams.get('ok') === '1';
     </nav>
 
     {COPY_SCHEMA.map((g) => (
-      <section class="admin-card txt-group" id={`g-${g.id}`}>
-        <h2 class="txt-group-title">{g.title}</h2>
+      <details class="admin-card txt-group" id={`g-${g.id}`}>
+        <summary class="txt-group-title">{g.title}</summary>
         <div class="txt-items">
           {g.items.map((item) => (
             <div class="txt-item">
@@ -53,7 +53,7 @@ const saved = Astro.url.searchParams.get('ok') === '1';
             </div>
           ))}
         </div>
-      </section>
+      </details>
     ))}
 
     <div class="txt-bar">
@@ -67,9 +67,20 @@ const saved = Astro.url.searchParams.get('ok') === '1';
     .txt-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 12px; position: sticky; top: 0; z-index: 5; }
     .txt-nav-link { font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--a-bg); color: var(--a-text); text-decoration: none; border: 1px solid var(--a-line); }
     .txt-nav-link:hover { border-color: var(--a-pink); color: var(--a-pink); }
-    .txt-group { scroll-margin-top: 4.5rem; }
-    .txt-group-title { font-size: 1.02rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--a-line); }
-    .txt-items { display: flex; flex-direction: column; gap: 1.1rem; }
+    /* Details / summary */
+    .txt-group { scroll-margin-top: 4.5rem; padding: 0; }
+    .txt-group-title {
+      list-style: none; display: flex; align-items: center; justify-content: space-between;
+      font-size: 1.02rem; font-weight: 700; cursor: pointer;
+      padding: 0.85rem 1.4rem; margin: 0;
+      border-radius: var(--a-radius);
+      user-select: none;
+    }
+    .txt-group-title::-webkit-details-marker { display: none; }
+    .txt-group-title::after { content: '›'; font-size: 1.2rem; color: var(--a-muted); transform: rotate(90deg); transition: transform 0.18s; }
+    details[open] > .txt-group-title::after { transform: rotate(270deg); }
+    details[open] > .txt-group-title { border-bottom: 1px solid var(--a-line); border-radius: var(--a-radius) var(--a-radius) 0 0; }
+    .txt-items { display: flex; flex-direction: column; gap: 1.1rem; padding: 1rem 1.4rem 1.25rem; }
     .txt-item { display: flex; flex-direction: column; gap: 0.45rem; }
     .txt-label { font-size: 0.82rem; font-weight: 600; color: var(--a-text); }
     .txt-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
@@ -87,4 +98,18 @@ const saved = Astro.url.searchParams.get('ok') === '1';
       .txt-fields { grid-template-columns: 1fr; }
     }
   </style>
+
+  <script>
+    // Nav links: open the target <details> and scroll to it
+    document.querySelectorAll('.txt-nav-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
+        const target = document.querySelector(href);
+        if (target && target.tagName === 'DETAILS') {
+          target.open = true;
+        }
+      });
+    });
+  </script>
 </AdminLayout>

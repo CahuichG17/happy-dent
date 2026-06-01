@@ -1,0 +1,70 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { faqs } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const isNew = id === 'nueva';
+
+let row: typeof faqs.$inferSelect | null = null;
+if (!isNew) {
+  const numId = Number(id);
+  if (Number.isNaN(numId)) return Astro.redirect('/admin/faq');
+  const found = await db.select().from(faqs).where(eq(faqs.id, numId)).limit(1);
+  row = found[0] ?? null;
+  if (!row) return Astro.redirect('/admin/faq');
+}
+---
+
+<AdminLayout title={isNew ? 'Nueva pregunta' : 'Editar pregunta'} active="faq">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nueva pregunta' : 'Editar pregunta'}</h1>
+      <p class="admin-sub">Los textos ES/EN se muestran según el idioma del sitio.</p>
+    </div>
+    <a href="/admin/faq" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  <form method="POST" action="/api/admin/faq" class="admin-card">
+    {!isNew && <input type="hidden" name="id" value={row!.id} />}
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="qEs">Pregunta (ES)</label>
+        <input id="qEs" name="qEs" type="text" required value={row?.qEs ?? ''} />
+      </div>
+      <div class="admin-field">
+        <label for="qEn">Pregunta (EN)</label>
+        <input id="qEn" name="qEn" type="text" value={row?.qEn ?? ''} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="aEs">Respuesta (ES)</label>
+        <textarea id="aEs" name="aEs" rows="4">{row?.aEs ?? ''}</textarea>
+      </div>
+      <div class="admin-field">
+        <label for="aEn">Respuesta (EN)</label>
+        <textarea id="aEn" name="aEn" rows="4">{row?.aEn ?? ''}</textarea>
+      </div>
+    </div>
+
+    <div class="admin-field">
+      <label for="order">Orden</label>
+      <input id="order" name="order" type="number" value={row?.order ?? 0} />
+    </div>
+
+    <label class="admin-check">
+      <input type="checkbox" name="active" checked={row ? row.active : true} />
+      <span>Visible en el sitio</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear pregunta' : 'Guardar cambios'}</button>
+      <a href="/admin/faq" class="admin-btn admin-btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

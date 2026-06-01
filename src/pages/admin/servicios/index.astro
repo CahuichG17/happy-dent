@@ -1,0 +1,53 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { services } from '../../../db/schema';
+import { asc } from 'drizzle-orm';
+
+const rows = await db.select().from(services).orderBy(asc(services.order), asc(services.id));
+const fmt = (n: number, c: string) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: c, maximumFractionDigits: 0 }).format(n);
+---
+
+<AdminLayout title="Servicios" active="servicios">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Servicios</h1>
+      <p class="admin-sub">Tratamientos que se muestran en el sitio y se usan para citas y cotizaciones.</p>
+    </div>
+    <a href="/admin/servicios/nuevo" class="admin-btn">+ Nuevo servicio</a>
+  </div>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">Aún no hay servicios.</div>
+  ) : (
+    <table class="admin-table">
+      <thead>
+        <tr><th>Servicio</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((s) => (
+          <tr>
+            <td><strong>{s.titleEs}</strong></td>
+            <td>
+              {s.priceAmount != null
+                ? <span>{fmt(s.priceAmount, s.currency)} {s.showPrice ? '' : '(oculto)'}</span>
+                : <span class="admin-badge off">Sin precio</span>}
+            </td>
+            <td>{s.active ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Oculto</span>}</td>
+            <td>
+              <div class="admin-actions">
+                <a href={`/admin/servicios/${s.id}`} class="admin-btn admin-btn-ghost">Editar</a>
+                <form method="POST" action="/api/admin/servicios" onsubmit="return confirm('¿Eliminar este servicio?')">
+                  <input type="hidden" name="_action" value="delete" />
+                  <input type="hidden" name="id" value={s.id} />
+                  <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</AdminLayout>

@@ -1,0 +1,57 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { doctors } from '../../../db/schema';
+import { asc } from 'drizzle-orm';
+
+const rows = await db.select().from(doctors).orderBy(asc(doctors.order), asc(doctors.id));
+---
+
+<AdminLayout title="Doctoras" active="doctoras">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Doctoras</h1>
+      <p class="admin-sub">Agrega, edita o elimina las doctoras del equipo.</p>
+    </div>
+    <a href="/admin/doctoras/nueva" class="admin-btn">+ Nueva doctora</a>
+  </div>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">Aún no hay doctoras. Crea la primera.</div>
+  ) : (
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Especialidad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((d) => (
+          <tr>
+            <td><strong>{d.name}</strong></td>
+            <td>{d.specEs}</td>
+            <td>
+              {d.active
+                ? <span class="admin-badge ok">Visible</span>
+                : <span class="admin-badge off">Oculta</span>}
+            </td>
+            <td>
+              <div class="admin-actions">
+                <a href={`/admin/doctoras/${d.id}`} class="admin-btn admin-btn-ghost">Editar</a>
+                <form method="POST" action="/api/admin/doctoras" onsubmit="return confirm('¿Eliminar esta doctora?')">
+                  <input type="hidden" name="_action" value="delete" />
+                  <input type="hidden" name="id" value={d.id} />
+                  <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</AdminLayout>

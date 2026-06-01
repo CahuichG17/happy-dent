@@ -1,0 +1,93 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { doctors } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const isNew = id === 'nueva';
+
+let doc: typeof doctors.$inferSelect | null = null;
+if (!isNew) {
+  const numId = Number(id);
+  if (Number.isNaN(numId)) return Astro.redirect('/admin/doctoras');
+  const found = await db.select().from(doctors).where(eq(doctors.id, numId)).limit(1);
+  doc = found[0] ?? null;
+  if (!doc) return Astro.redirect('/admin/doctoras');
+}
+---
+
+<AdminLayout title={isNew ? 'Nueva doctora' : 'Editar doctora'} active="doctoras">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nueva doctora' : 'Editar doctora'}</h1>
+      <p class="admin-sub">Los textos ES/EN se muestran según el idioma del sitio.</p>
+    </div>
+    <a href="/admin/doctoras" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  <form method="POST" action="/api/admin/doctoras" class="admin-card">
+    {!isNew && <input type="hidden" name="id" value={doc!.id} />}
+
+    <div class="admin-field">
+      <label for="name">Nombre completo</label>
+      <input id="name" name="name" type="text" required value={doc?.name ?? ''} placeholder="Dra. Nombre Apellido" />
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="initials">Iniciales</label>
+        <input id="initials" name="initials" type="text" maxlength="3" value={doc?.initials ?? ''} placeholder="DM" />
+      </div>
+      <div class="admin-field">
+        <label for="order">Orden</label>
+        <input id="order" name="order" type="number" value={doc?.order ?? 0} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="specEs">Especialidad (ES)</label>
+        <input id="specEs" name="specEs" type="text" value={doc?.specEs ?? ''} />
+      </div>
+      <div class="admin-field">
+        <label for="specEn">Especialidad (EN)</label>
+        <input id="specEn" name="specEn" type="text" value={doc?.specEn ?? ''} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="bioEs">Biografía (ES)</label>
+        <textarea id="bioEs" name="bioEs" rows="4">{doc?.bioEs ?? ''}</textarea>
+      </div>
+      <div class="admin-field">
+        <label for="bioEn">Biografía (EN)</label>
+        <textarea id="bioEn" name="bioEn" rows="4">{doc?.bioEn ?? ''}</textarea>
+      </div>
+    </div>
+
+    <div class="admin-field">
+      <label for="photoFile">Foto</label>
+      <div class="uploader">
+        <img id="photoPreview" class="uploader-preview" src={doc?.photoUrl ?? ''} alt="" style={doc?.photoUrl ? '' : 'display:none'} />
+        <div class="uploader-controls">
+          <input id="photoFile" type="file" accept="image/*" data-upload-input data-target="photoUrl" data-preview="photoPreview" />
+          <span class="uploader-hint" data-upload-status>JPG, PNG o WebP · máx 6 MB</span>
+        </div>
+      </div>
+      <input id="photoUrl" name="photoUrl" type="hidden" value={doc?.photoUrl ?? ''} />
+    </div>
+
+    <label class="admin-check">
+      <input type="checkbox" name="active" checked={doc ? doc.active : true} />
+      <span>Visible en el sitio</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear doctora' : 'Guardar cambios'}</button>
+      <a href="/admin/doctoras" class="admin-btn admin-btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

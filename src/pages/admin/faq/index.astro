@@ -1,0 +1,47 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { faqs } from '../../../db/schema';
+import { asc } from 'drizzle-orm';
+
+const rows = await db.select().from(faqs).orderBy(asc(faqs.order), asc(faqs.id));
+---
+
+<AdminLayout title="Preguntas frecuentes" active="faq">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Preguntas frecuentes</h1>
+      <p class="admin-sub">Preguntas y respuestas que se muestran en el sitio.</p>
+    </div>
+    <a href="/admin/faq/nueva" class="admin-btn">+ Nueva pregunta</a>
+  </div>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">Aún no hay preguntas.</div>
+  ) : (
+    <table class="admin-table">
+      <thead>
+        <tr><th>Pregunta</th><th>Estado</th><th>Acciones</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((f) => (
+          <tr>
+            <td><strong>{f.qEs}</strong></td>
+            <td>{f.active ? <span class="admin-badge ok">Visible</span> : <span class="admin-badge off">Oculta</span>}</td>
+            <td>
+              <div class="admin-actions">
+                <a href={`/admin/faq/${f.id}`} class="admin-btn admin-btn-ghost">Editar</a>
+                <form method="POST" action="/api/admin/faq" onsubmit="return confirm('¿Eliminar esta pregunta?')">
+                  <input type="hidden" name="_action" value="delete" />
+                  <input type="hidden" name="id" value={f.id} />
+                  <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</AdminLayout>

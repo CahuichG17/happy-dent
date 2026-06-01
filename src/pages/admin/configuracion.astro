@@ -1,0 +1,85 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { getConfig } from '../../lib/content';
+
+const c = await getConfig();
+---
+
+<AdminLayout title="Configuración" active="configuracion">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Configuración</h1>
+      <p class="admin-sub">Datos de contacto, redes sociales y herramientas de analítica del sitio.</p>
+    </div>
+  </div>
+
+  <form method="POST" action="/api/admin/configuracion">
+    <div class="admin-card">
+      <h2 class="cfg-h2">Contacto</h2>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label for="phone">Teléfono (con lada, ej. +529983229592)</label>
+          <input id="phone" name="phone" type="text" value={c.phone} />
+        </div>
+        <div class="admin-field">
+          <label for="whatsapp">WhatsApp (solo números, ej. 529983229592)</label>
+          <input id="whatsapp" name="whatsapp" type="text" value={c.whatsapp} />
+        </div>
+      </div>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label for="email">Correo</label>
+          <input id="email" name="email" type="email" value={c.email} />
+        </div>
+        <div class="admin-field">
+          <label for="address">Dirección</label>
+          <input id="address" name="address" type="text" value={c.address} />
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="cfg-h2">Redes sociales</h2>
+      <div class="admin-field">
+        <label for="facebook">Facebook (URL)</label>
+        <input id="facebook" name="facebook" type="url" value={c.facebook} placeholder="https://facebook.com/..." />
+      </div>
+      <div class="admin-field">
+        <label for="instagram">Instagram (URL)</label>
+        <input id="instagram" name="instagram" type="url" value={c.instagram} placeholder="https://instagram.com/..." />
+      </div>
+      <div class="admin-field">
+        <label for="tiktok">TikTok (URL)</label>
+        <input id="tiktok" name="tiktok" type="url" value={c.tiktok} placeholder="https://tiktok.com/@..." />
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h2 class="cfg-h2">Analítica</h2>
+      <p class="admin-sub" style="margin-bottom: 1rem;">Identificadores de seguimiento. Déjalos vacíos para no cargar ningún script.</p>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label for="ga4">Google Analytics 4 (ID, ej. G-XXXXXXXXXX)</label>
+          <input id="ga4" name="ga4" type="text" value={c.ga4} placeholder="G-XXXXXXXXXX" />
+        </div>
+        <div class="admin-field">
+          <label for="metaPixel">Meta Pixel (ID)</label>
+          <input id="metaPixel" name="metaPixel" type="text" value={c.metaPixel} />
+        </div>
+      </div>
+      <div class="admin-field">
+        <label for="clarity">Microsoft Clarity (ID)</label>
+        <input id="clarity" name="clarity" type="text" value={c.clarity} />
+      </div>
+    </div>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">Guardar configuración</button>
+    </div>
+  </form>
+
+  <style>
+    .cfg-h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem; }
+  </style>
+</AdminLayout>

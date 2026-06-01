@@ -1,0 +1,69 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { user } from '../../../db/auth-schema';
+import { doctors } from '../../../db/schema';
+import { asc } from 'drizzle-orm';
+
+const rows = await db.select().from(user).orderBy(asc(user.createdAt));
+const docs = await db.select({ id: doctors.id, name: doctors.name }).from(doctors).orderBy(asc(doctors.name));
+const docName = (id: number | null) => (id == null ? '—' : docs.find((d) => d.id === id)?.name ?? '—');
+
+const me = Astro.locals.user;
+const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora');
+---
+
+<AdminLayout title="Usuarios" active="usuarios">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Usuarios</h1>
+      <p class="admin-sub">Gestiona las cuentas que pueden entrar al panel. Solo el super admin ve esta sección.</p>
+    </div>
+    <a href="/admin/usuarios/nuevo" class="admin-btn">+ Nuevo usuario</a>
+  </div>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">Aún no hay usuarios.</div>
+  ) : (
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Rol</th>
+          <th>Doctora vinculada</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((u) => (
+          <tr>
+            <td><strong>{u.name}</strong></td>
+            <td>{u.email}</td>
+            <td>
+              {u.role === 'super_admin'
+                ? <span class="admin-badge ok">{roleLabel(u.role)}</span>
+                : <span class="admin-badge off">{roleLabel(u.role)}</span>}
+            </td>
+            <td>{docName(u.doctorId)}</td>
+            <td>
+              <div class="admin-actions">
+                <a href={`/admin/usuarios/${u.id}`} class="admin-btn admin-btn-ghost">Editar</a>
+                {me?.id === u.id ? (
+                  <span class="admin-badge off">Tu cuenta</span>
+                ) : (
+                  <form method="POST" action="/api/admin/users" onsubmit="return confirm('¿Eliminar este usuario?')">
+                    <input type="hidden" name="_action" value="delete" />
+                    <input type="hidden" name="id" value={u.id} />
+                    <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
+                  </form>
+                )}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</AdminLayout>

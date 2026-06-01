@@ -1,0 +1,79 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { user } from '../../../db/auth-schema';
+import { doctors } from '../../../db/schema';
+import { asc, eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const isNew = id === 'nuevo';
+
+let row = null;
+if (!isNew && id) {
+  [row] = await db.select().from(user).where(eq(user.id, id));
+  if (!row) return Astro.redirect('/admin/usuarios');
+}
+
+const docs = await db.select({ id: doctors.id, name: doctors.name }).from(doctors).orderBy(asc(doctors.name));
+---
+
+<AdminLayout title={isNew ? 'Nuevo usuario' : 'Editar usuario'} active="usuarios">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nuevo usuario' : 'Editar usuario'}</h1>
+      <p class="admin-sub">{isNew ? 'Crea una cuenta de acceso al panel.' : 'Actualiza el rol o la doctora vinculada.'}</p>
+    </div>
+    <a href="/admin/usuarios" class="admin-btn admin-btn-ghost">Volver</a>
+  </div>
+
+  <form method="POST" action="/api/admin/users" class="admin-card">
+    {!isNew && <input type="hidden" name="id" value={row?.id} />}
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="name">Nombre</label>
+        <input id="name" name="name" type="text" value={row?.name ?? ''} required />
+      </div>
+      <div class="admin-field">
+        <label for="email">Correo</label>
+        <input id="email" name="email" type="email" value={row?.email ?? ''} required readonly={!isNew} />
+      </div>
+    </div>
+
+    {isNew && (
+      <div class="admin-field">
+        <label for="password">Contraseña (mínimo 8 caracteres)</label>
+        <input id="password" name="password" type="password" minlength="8" required autocomplete="new-password" />
+      </div>
+    )}
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="role">Rol</label>
+        <select id="role" name="role">
+          <option value="doctor" selected={row?.role !== 'super_admin'}>Doctora</option>
+          <option value="super_admin" selected={row?.role === 'super_admin'}>Super admin</option>
+        </select>
+      </div>
+      <div class="admin-field">
+        <label for="doctorId">Doctora vinculada (opcional)</label>
+        <select id="doctorId" name="doctorId">
+          <option value="">— Ninguna —</option>
+          {docs.map((d) => (
+            <option value={d.id} selected={row?.doctorId === d.id}>{d.name}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    {!isNew && (
+      <p class="admin-sub" style="margin: 0 0 1rem;">El correo no se puede cambiar. Para cambiar la contraseña, el usuario debe restablecerla desde el inicio de sesión.</p>
+    )}
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear usuario' : 'Guardar cambios'}</button>
+      <a href="/admin/usuarios" class="admin-btn admin-btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

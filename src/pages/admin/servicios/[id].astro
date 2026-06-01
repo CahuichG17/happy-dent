@@ -1,0 +1,130 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { services } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const isNew = id === 'nuevo';
+
+let row: typeof services.$inferSelect | null = null;
+if (!isNew) {
+  const numId = Number(id);
+  if (Number.isNaN(numId)) return Astro.redirect('/admin/servicios');
+  const found = await db.select().from(services).where(eq(services.id, numId)).limit(1);
+  row = found[0] ?? null;
+  if (!row) return Astro.redirect('/admin/servicios');
+}
+const featuresEs = (row?.featuresEs ?? []).join('\n');
+const featuresEn = (row?.featuresEn ?? []).join('\n');
+const currencies = ['MXN', 'USD'];
+---
+
+<AdminLayout title={isNew ? 'Nuevo servicio' : 'Editar servicio'} active="servicios">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nuevo servicio' : 'Editar servicio'}</h1>
+      <p class="admin-sub">Los textos ES/EN se muestran según el idioma del sitio.</p>
+    </div>
+    <a href="/admin/servicios" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  <form method="POST" action="/api/admin/servicios" class="admin-card">
+    {!isNew && <input type="hidden" name="id" value={row!.id} />}
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="titleEs">Título (ES)</label>
+        <input id="titleEs" name="titleEs" type="text" required value={row?.titleEs ?? ''} />
+      </div>
+      <div class="admin-field">
+        <label for="titleEn">Título (EN)</label>
+        <input id="titleEn" name="titleEn" type="text" value={row?.titleEn ?? ''} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="descEs">Descripción (ES)</label>
+        <textarea id="descEs" name="descEs" rows="3">{row?.descEs ?? ''}</textarea>
+      </div>
+      <div class="admin-field">
+        <label for="descEn">Descripción (EN)</label>
+        <textarea id="descEn" name="descEn" rows="3">{row?.descEn ?? ''}</textarea>
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="featuresEs">Características (ES) — una por línea</label>
+        <textarea id="featuresEs" name="featuresEs" rows="4">{featuresEs}</textarea>
+      </div>
+      <div class="admin-field">
+        <label for="featuresEn">Características (EN) — una por línea</label>
+        <textarea id="featuresEn" name="featuresEn" rows="4">{featuresEn}</textarea>
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="priceAmount">Precio (vacío = sin precio)</label>
+        <input id="priceAmount" name="priceAmount" type="number" value={row?.priceAmount ?? ''} placeholder="Ej. 3500" />
+      </div>
+      <div class="admin-field">
+        <label for="currency">Moneda</label>
+        <select id="currency" name="currency">
+          {currencies.map((c) => <option value={c} selected={row?.currency === c}>{c}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="durationMin">Duración (min)</label>
+        <input id="durationMin" name="durationMin" type="number" value={row?.durationMin ?? 30} />
+      </div>
+      <div class="admin-field">
+        <label for="order">Orden</label>
+        <input id="order" name="order" type="number" value={row?.order ?? 0} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="category">Categoría (opcional)</label>
+        <input id="category" name="category" type="text" value={row?.category ?? ''} />
+      </div>
+      <div class="admin-field">
+        <label for="photoFile">Foto (opcional)</label>
+        <div class="uploader">
+          <img id="photoPreview" class="uploader-preview" src={row?.photoUrl ?? ''} alt="" style={row?.photoUrl ? '' : 'display:none'} />
+          <div class="uploader-controls">
+            <input id="photoFile" type="file" accept="image/*" data-upload-input data-target="photoUrl" data-preview="photoPreview" />
+            <span class="uploader-hint" data-upload-status>JPG, PNG o WebP · máx 6 MB</span>
+          </div>
+        </div>
+        <input id="photoUrl" name="photoUrl" type="hidden" value={row?.photoUrl ?? ''} />
+      </div>
+    </div>
+
+    <div class="admin-field">
+      <label for="icon">Icono SVG (opcional)</label>
+      <textarea id="icon" name="icon" rows="2">{row?.icon ?? ''}</textarea>
+    </div>
+
+    <label class="admin-check">
+      <input type="checkbox" name="showPrice" checked={row ? row.showPrice : false} />
+      <span>Mostrar precio en el sitio</span>
+    </label>
+    <label class="admin-check">
+      <input type="checkbox" name="active" checked={row ? row.active : true} />
+      <span>Visible en el sitio</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear servicio' : 'Guardar cambios'}</button>
+      <a href="/admin/servicios" class="admin-btn admin-btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

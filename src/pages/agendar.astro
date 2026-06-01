@@ -1,0 +1,240 @@
+---
+export const prerender = false;
+import { db } from '../db';
+import { services } from '../db/schema';
+import { asc, eq } from 'drizzle-orm';
+
+const svc = await db
+  .select({ id: services.id, title: services.titleEs })
+  .from(services)
+  .where(eq(services.active, true))
+  .orderBy(asc(services.order), asc(services.id));
+
+// Fecha mínima = hoy (no se agendan fechas pasadas).
+const today = new Date();
+const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agendar cita · Happy Dent Cancún</title>
+    <link rel="icon" type="image/svg+xml" href="/happy-dent-icon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <main class="wrap">
+      <a href="/" class="back">← Volver al sitio</a>
+
+      <header class="head">
+        <img src="/happy-dent-icon.svg" alt="" width="56" height="56" />
+        <h1>Agenda tu cita</h1>
+        <p>Elige el tratamiento y un horario disponible. Asignamos a la doctora con disponibilidad y te confirmamos en breve. Tu primera consulta es gratuita.</p>
+      </header>
+
+      <form id="bookForm" class="card">
+        <div class="row">
+          <div class="field">
+            <label for="patientName">Nombre completo</label>
+            <input id="patientName" name="patientName" type="text" required placeholder="María García" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="phone">Teléfono / WhatsApp</label>
+            <input id="phone" name="phone" type="tel" required placeholder="+52 998 322 9592" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="email">Correo (opcional)</label>
+            <input id="email" name="email" type="email" placeholder="tucorreo@ejemplo.com" autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="serviceId">Tratamiento</label>
+            <select id="serviceId" name="serviceId">
+              <option value="">Consulta general</option>
+              {svc.map((s) => <option value={s.id}>{s.title}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="date">Fecha</label>
+          <input id="date" name="date" type="date" required min={minDate} />
+        </div>
+
+        <div class="field">
+          <label>Horario disponible</label>
+          <div id="slots" class="slots" aria-live="polite">
+            <p class="slots-hint">Elige una fecha para ver los horarios disponibles.</p>
+          </div>
+          <input type="hidden" name="time" id="time" required />
+        </div>
+
+        <div class="field">
+          <label for="notes">Comentarios (opcional)</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="¿Algo que la doctora deba saber?"></textarea>
+        </div>
+
+        <p class="legal">Tus datos son confidenciales y solo se usan para contactarte. La cita queda como solicitud y la doctora la confirma manualmente.</p>
+
+        <button type="submit" id="submitBtn" class="btn" disabled>Solicitar cita</button>
+        <p id="formMsg" class="form-msg" role="alert"></p>
+      </form>
+
+      <div id="success" class="success" hidden>
+        <div class="success-card">
+          <div class="success-check">✓</div>
+          <h2>Solicitud enviada</h2>
+          <p>Recibimos tu solicitud de cita. Te contactaremos por WhatsApp para confirmarla. ¡Gracias!</p>
+          <a href="/" class="btn">Volver al inicio</a>
+        </div>
+      </div>
+    </main>
+
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --pink: #FFB1D7;
+        --pink-dark: #e87fb4;
+        --ink: #2b2230;
+        --muted: #7a6f80;
+        --line: #f0d9e6;
+        --bg: #fff5fa;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(160deg, #fff5fa 0%, #fdeaf3 100%);
+        color: var(--ink);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        padding: 2rem 1rem 4rem;
+      }
+      .wrap { max-width: 680px; margin: 0 auto; }
+      .back { display: inline-block; color: var(--pink-dark); text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-bottom: 1.5rem; }
+      .back:hover { text-decoration: underline; }
+      .head { text-align: center; margin-bottom: 2rem; }
+      .head img { margin-bottom: 0.75rem; }
+      .head h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 800; margin-bottom: 0.6rem; }
+      .head p { color: var(--muted); max-width: 30rem; margin: 0 auto; line-height: 1.6; }
+      .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: clamp(1.5rem, 4vw, 2.25rem); box-shadow: 0 20px 50px rgba(232, 127, 180, 0.12); }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
+      label { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; }
+      input, select, textarea {
+        font: inherit; font-size: 0.95rem; padding: 0.75rem 0.9rem; border-radius: 11px;
+        border: 1.5px solid var(--line); background: #fff; color: var(--ink); width: 100%; resize: vertical;
+      }
+      input:focus, select:focus, textarea:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255, 177, 215, 0.18); }
+      .slots { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 2.5rem; align-items: center; }
+      .slots-hint { color: var(--muted); font-size: 0.88rem; }
+      .slot-btn {
+        font: inherit; font-size: 0.9rem; font-weight: 600; padding: 0.55rem 0.95rem; border-radius: 999px;
+        border: 1.5px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; transition: all 0.15s;
+      }
+      .slot-btn:hover { border-color: var(--pink); background: var(--bg); }
+      .slot-btn.selected { background: var(--pink); border-color: var(--pink); color: #fff; }
+      .legal { color: var(--muted); font-size: 0.8rem; line-height: 1.5; margin-bottom: 1.25rem; }
+      .btn {
+        display: inline-block; background: var(--pink-dark); color: #fff; border: none;
+        padding: 0.85rem 1.6rem; border-radius: 11px; font: inherit; font-weight: 700; font-size: 0.98rem;
+        cursor: pointer; text-decoration: none; text-align: center; width: 100%; transition: background 0.15s, opacity 0.15s;
+      }
+      .btn:hover { background: #d96da5; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      .form-msg { margin-top: 0.85rem; font-size: 0.88rem; font-weight: 600; color: #b91c1c; min-height: 1.1rem; }
+      .success { position: fixed; inset: 0; background: rgba(43, 34, 48, 0.45); display: flex; align-items: center; justify-content: center; padding: 1.5rem; z-index: 50; }
+      .success-card { background: #fff; border-radius: 20px; padding: 2.5rem 2rem; text-align: center; max-width: 26rem; }
+      .success-check { width: 64px; height: 64px; border-radius: 50%; background: var(--pink); color: #fff; font-size: 2rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+      .success-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.6rem; }
+      .success-card p { color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; }
+      @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+    </style>
+
+    <script>
+      const form = document.getElementById('bookForm') as HTMLFormElement;
+      const dateInput = document.getElementById('date') as HTMLInputElement;
+      const serviceInput = document.getElementById('serviceId') as HTMLSelectElement;
+      const slotsEl = document.getElementById('slots') as HTMLElement;
+      const timeInput = document.getElementById('time') as HTMLInputElement;
+      const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+      const msg = document.getElementById('formMsg') as HTMLElement;
+      const success = document.getElementById('success') as HTMLElement;
+
+      function clearSlots(text: string) {
+        slotsEl.innerHTML = `<p class="slots-hint">${text}</p>`;
+        timeInput.value = '';
+        submitBtn.disabled = true;
+      }
+
+      async function loadSlots() {
+        const date = dateInput.value;
+        if (!date) { clearSlots('Elige una fecha para ver los horarios disponibles.'); return; }
+        clearSlots('Buscando horarios…');
+        const params = new URLSearchParams({ date });
+        if (serviceInput.value) params.set('serviceId', serviceInput.value);
+        try {
+          const res = await fetch(`/api/disponibilidad?${params.toString()}`);
+          const data = await res.json();
+          if (!data.times || data.times.length === 0) {
+            clearSlots('No hay horarios disponibles ese día. Prueba con otra fecha.');
+            return;
+          }
+          slotsEl.innerHTML = '';
+          for (const t of data.times) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'slot-btn';
+            b.textContent = t;
+            b.addEventListener('click', () => {
+              document.querySelectorAll('.slot-btn').forEach((x) => x.classList.remove('selected'));
+              b.classList.add('selected');
+              timeInput.value = t;
+              submitBtn.disabled = false;
+            });
+            slotsEl.appendChild(b);
+          }
+        } catch {
+          clearSlots('No se pudieron cargar los horarios. Intenta de nuevo.');
+        }
+      }
+
+      dateInput.addEventListener('change', loadSlots);
+      serviceInput.addEventListener('change', loadSlots);
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        msg.textContent = '';
+        if (!timeInput.value) { msg.textContent = 'Elige un horario disponible.'; return; }
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando…';
+        const payload = Object.fromEntries(new FormData(form));
+        try {
+          const res = await fetch('/api/agendar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const data = await res.json();
+          if (res.ok && data.ok) {
+            success.hidden = false;
+          } else {
+            msg.textContent = data.error || 'No se pudo agendar. Intenta de nuevo.';
+            if (res.status === 409) await loadSlots(); // refrescar horarios
+          }
+        } catch {
+          msg.textContent = 'Error de conexión. Intenta de nuevo.';
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Solicitar cita';
+        }
+      });
+    </script>
+  </body>
+</html>

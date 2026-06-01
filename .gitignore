@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# user uploads (persisted via Railway Volume in prod)
+uploads/
+
 # dependencies
 node_modules/
 

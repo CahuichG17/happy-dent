@@ -1,0 +1,113 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { schedules, doctors } from '../../../db/schema';
+import { asc, eq } from 'drizzle-orm';
+
+const docs = await db.select().from(doctors).orderBy(asc(doctors.name));
+const blocks = await db
+  .select({
+    id: schedules.id,
+    doctorId: schedules.doctorId,
+    weekday: schedules.weekday,
+    startTime: schedules.startTime,
+    endTime: schedules.endTime,
+    slotMin: schedules.slotMin,
+  })
+  .from(schedules)
+  .orderBy(asc(schedules.doctorId), asc(schedules.weekday), asc(schedules.startTime));
+
+const WEEKDAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+const blocksByDoctor = (id: number) => blocks.filter((b) => b.doctorId === id);
+---
+
+<AdminLayout title="Horarios" active="horarios">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Horarios</h1>
+      <p class="admin-sub">Define los bloques de atención semanal de cada doctora.</p>
+    </div>
+  </div>
+
+  {docs.length === 0 ? (
+    <div class="admin-card">Primero crea al menos una doctora para asignarle horarios.</div>
+  ) : (
+    docs.map((d) => (
+      <div class="admin-card">
+        <h2 class="hor-h2">{d.name}</h2>
+
+        {blocksByDoctor(d.id).length === 0 ? (
+          <p class="admin-sub" style="margin: 0 0 1rem;">Sin horarios definidos.</p>
+        ) : (
+          <table class="admin-table" style="margin-bottom: 1rem;">
+            <thead>
+              <tr>
+                <th>Día</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Duración cita</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {blocksByDoctor(d.id).map((b) => (
+                <tr>
+                  <td><strong>{WEEKDAYS[b.weekday]}</strong></td>
+                  <td>{b.startTime?.slice(0, 5)}</td>
+                  <td>{b.endTime?.slice(0, 5)}</td>
+                  <td>{b.slotMin} min</td>
+                  <td>
+                    <form method="POST" action="/api/admin/horarios" onsubmit="return confirm('¿Eliminar este bloque?')">
+                      <input type="hidden" name="_action" value="delete" />
+                      <input type="hidden" name="id" value={b.id} />
+                      <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
+                    </form>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        <form method="POST" action="/api/admin/horarios" class="hor-add">
+          <input type="hidden" name="doctorId" value={d.id} />
+          <div class="admin-field">
+            <label>Día</label>
+            <select name="weekday">
+              {WEEKDAYS.map((w, i) => (
+                <option value={i} selected={i === 1}>{w}</option>
+              ))}
+            </select>
+          </div>
+          <div class="admin-field">
+            <label>Inicio</label>
+            <input name="startTime" type="time" value="09:00" required />
+          </div>
+          <div class="admin-field">
+            <label>Fin</label>
+            <input name="endTime" type="time" value="14:00" required />
+          </div>
+          <div class="admin-field">
+            <label>Duración cita</label>
+            <select name="slotMin">
+              <option value="15">15 min</option>
+              <option value="30" selected>30 min</option>
+              <option value="45">45 min</option>
+              <option value="60">60 min</option>
+            </select>
+          </div>
+          <button type="submit" class="admin-btn">Agregar bloque</button>
+        </form>
+      </div>
+    ))
+  )}
+
+  <style>
+    .hor-h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem; }
+    .hor-add { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr auto; gap: 0.75rem; align-items: end; }
+    .hor-add .admin-field { margin-bottom: 0; }
+    .hor-add .admin-btn { height: fit-content; }
+    @media (max-width: 820px) { .hor-add { grid-template-columns: 1fr 1fr; } }
+  </style>
+</AdminLayout>

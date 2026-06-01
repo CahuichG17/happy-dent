@@ -1,0 +1,117 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { appointments, doctors, services } from '../../../db/schema';
+import { desc, asc, eq } from 'drizzle-orm';
+
+const rows = await db
+  .select({
+    id: appointments.id,
+    patientName: appointments.patientName,
+    phone: appointments.phone,
+    email: appointments.email,
+    date: appointments.date,
+    time: appointments.time,
+    status: appointments.status,
+    notes: appointments.notes,
+    doctorName: doctors.name,
+    serviceTitle: services.titleEs,
+  })
+  .from(appointments)
+  .leftJoin(doctors, eq(appointments.doctorId, doctors.id))
+  .leftJoin(services, eq(appointments.serviceId, services.id))
+  .orderBy(desc(appointments.date), asc(appointments.time));
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'Pendiente',
+  confirmed: 'Confirmada',
+  cancelled: 'Cancelada',
+  done: 'Atendida',
+};
+const STATUS_CLASS: Record<string, string> = {
+  pending: 'off',
+  confirmed: 'ok',
+  cancelled: 'danger',
+  done: 'done',
+};
+---
+
+<AdminLayout title="Citas" active="citas">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Citas</h1>
+      <p class="admin-sub">Solicitudes de cita. Confírmalas, cancélalas o márcalas como atendidas.</p>
+    </div>
+  </div>
+
+  {rows.length === 0 ? (
+    <div class="admin-card">No hay citas registradas todavía.</div>
+  ) : (
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Contacto</th>
+          <th>Fecha y hora</th>
+          <th>Doctora / Servicio</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((a) => (
+          <tr>
+            <td><strong>{a.patientName}</strong></td>
+            <td>
+              <div class="cita-contact">
+                <span>{a.phone}</span>
+                {a.email && <small>{a.email}</small>}
+              </div>
+            </td>
+            <td>{a.date} · {a.time?.slice(0, 5)}</td>
+            <td>
+              <div class="cita-contact">
+                <span>{a.doctorName ?? '—'}</span>
+                {a.serviceTitle && <small>{a.serviceTitle}</small>}
+              </div>
+            </td>
+            <td><span class={`admin-badge ${STATUS_CLASS[a.status] ?? 'off'}`}>{STATUS_LABEL[a.status] ?? a.status}</span></td>
+            <td>
+              <div class="admin-actions">
+                {a.status !== 'confirmed' && (
+                  <form method="POST" action="/api/admin/citas">
+                    <input type="hidden" name="id" value={a.id} />
+                    <input type="hidden" name="status" value="confirmed" />
+                    <button type="submit" class="admin-btn">Confirmar</button>
+                  </form>
+                )}
+                {a.status !== 'done' && (
+                  <form method="POST" action="/api/admin/citas">
+                    <input type="hidden" name="id" value={a.id} />
+                    <input type="hidden" name="status" value="done" />
+                    <button type="submit" class="admin-btn admin-btn-ghost">Atendida</button>
+                  </form>
+                )}
+                {a.status !== 'cancelled' && (
+                  <form method="POST" action="/api/admin/citas" onsubmit="return confirm('¿Cancelar esta cita?')">
+                    <input type="hidden" name="id" value={a.id} />
+                    <input type="hidden" name="status" value="cancelled" />
+                    <button type="submit" class="admin-btn admin-btn-danger">Cancelar</button>
+                  </form>
+                )}
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+
+  <style>
+    .cita-contact { display: flex; flex-direction: column; line-height: 1.3; }
+    .cita-contact small { color: var(--a-muted); font-size: 0.78rem; }
+    .admin-badge.danger { background: #fee2e2; color: #b91c1c; }
+    .admin-badge.done { background: #e0e7ff; color: #3730a3; }
+  </style>
+</AdminLayout>

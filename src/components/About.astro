@@ -1,25 +1,7 @@
 ---
+import { getDoctors } from '../lib/content';
 const base = import.meta.env.BASE_URL;
-const doctors = [
-  {
-    name: "Dra. Dafne Mondragón",
-    spec_es: "Odontología Estética · Ortodoncia",
-    spec_en: "Cosmetic Dentistry · Orthodontics",
-    bio_es: "Cirujana Dentista enfocada en diseño de sonrisa, carillas y ortodoncia invisible. Atención meticulosa, cálida y orientada a resultados naturales.",
-    bio_en: "DDS focused on smile design, veneers and clear aligners. Meticulous, warm and results-driven care.",
-    initials: "DM",
-    photo: "dra-dafne-ruby.jpeg",
-  },
-  {
-    name: "Dra. Cyntia Dzul",
-    spec_es: "Endodoncia · Odontopediatría",
-    spec_en: "Endodontics · Pediatric Dentistry",
-    bio_es: "Especialista en tratamientos de conducto con microscopía y atención dental infantil libre de miedo. Precisión clínica con trato humano.",
-    bio_en: "Specialist in microscope-assisted root canals and fear-free pediatric care. Clinical precision with a human touch.",
-    initials: "CD",
-    photo: "Dra-Cynthia-Dzul.jpeg",
-  },
-];
+const doctors = await getDoctors();
 ---
 
 <section class="about" id="nosotros">
@@ -128,7 +110,7 @@ const doctors = [
     </div>
 
     <div class="about-cta-row">
-      <a href="#agenda" class="btn btn-primary" data-hover>
+      <a href="/agendar" class="btn btn-primary" data-hover>
         <span data-es>Agenda una valoración</span><span data-en>Book a consultation</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>

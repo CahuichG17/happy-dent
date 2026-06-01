@@ -1,0 +1,72 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { db } from '../../../db';
+import { videos } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
+
+const { id } = Astro.params;
+const isNew = id === 'nuevo';
+
+let row: typeof videos.$inferSelect | null = null;
+if (!isNew) {
+  const numId = Number(id);
+  if (Number.isNaN(numId)) return Astro.redirect('/admin/videos');
+  const found = await db.select().from(videos).where(eq(videos.id, numId)).limit(1);
+  row = found[0] ?? null;
+  if (!row) return Astro.redirect('/admin/videos');
+}
+const platforms = ['youtube', 'facebook', 'instagram', 'vimeo'];
+---
+
+<AdminLayout title={isNew ? 'Nuevo video' : 'Editar video'} active="videos">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">{isNew ? 'Nuevo video' : 'Editar video'}</h1>
+      <p class="admin-sub">Pega la URL pública del video.</p>
+    </div>
+    <a href="/admin/videos" class="admin-btn admin-btn-ghost">← Volver</a>
+  </div>
+
+  <form method="POST" action="/api/admin/videos" class="admin-card">
+    {!isNew && <input type="hidden" name="id" value={row!.id} />}
+
+    <div class="admin-field">
+      <label for="title">Título</label>
+      <input id="title" name="title" type="text" value={row?.title ?? ''} placeholder="Caso de sonrisa, antes y después…" />
+    </div>
+
+    <div class="admin-field">
+      <label for="url">URL del video</label>
+      <input id="url" name="url" type="text" required value={row?.url ?? ''} placeholder="https://www.youtube.com/watch?v=…" />
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field">
+        <label for="platform">Plataforma</label>
+        <select id="platform" name="platform">
+          {platforms.map((p) => <option value={p} selected={row?.platform === p}>{p}</option>)}
+        </select>
+      </div>
+      <div class="admin-field">
+        <label for="order">Orden</label>
+        <input id="order" name="order" type="number" value={row?.order ?? 0} />
+      </div>
+    </div>
+
+    <div class="admin-field">
+      <label for="thumb">Miniatura (opcional)</label>
+      <input id="thumb" name="thumb" type="text" value={row?.thumb ?? ''} placeholder="/miniatura.jpg" />
+    </div>
+
+    <label class="admin-check">
+      <input type="checkbox" name="active" checked={row ? row.active : true} />
+      <span>Visible en el sitio</span>
+    </label>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">{isNew ? 'Crear video' : 'Guardar cambios'}</button>
+      <a href="/admin/videos" class="admin-btn admin-btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</AdminLayout>

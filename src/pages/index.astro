@@ -16,24 +16,29 @@ import Contact from '../components/Contact.astro';
 import MapSection from '../components/MapSection.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
+import { getSections } from '../lib/content';
+
+// SSR: el contenido y la visibilidad de secciones se leen de la DB.
+export const prerender = false;
+const s = await getSections();
 ---
 
 <Layout>
   <Navbar />
   <main>
     <Hero />
-    <Stats />
-    <Services />
-    <BeforeAfter />
-    <About />
-    <Testimonials />
-    <VideoSection />
-    <Insurance />
-    <FAQ />
-    <DentalTourism />
-    <AppointmentForm />
-    <Contact />
-    <MapSection />
+    {s.stats && <Stats />}
+    {s.servicios && <Services />}
+    {s.beforeafter && <BeforeAfter />}
+    {s.nosotros && <About />}
+    {s.testimonios && <Testimonials />}
+    {s.video && <VideoSection />}
+    {s.insurance && <Insurance />}
+    {s.faq && <FAQ />}
+    {s.tourism && <DentalTourism />}
+    {s.agenda && <AppointmentForm />}
+    {s.contacto && <Contact />}
+    {s.mapa && <MapSection />}
   </main>
   <Footer />
   <WhatsAppFloat />

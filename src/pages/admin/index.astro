@@ -1,0 +1,52 @@
+---
+export const prerender = false;
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { db } from '../../db';
+import { doctors, services, appointments, testimonials, videos } from '../../db/schema';
+import { sql, eq } from 'drizzle-orm';
+
+const [docCount] = await db.select({ n: sql<number>`count(*)` }).from(doctors);
+const [svcCount] = await db.select({ n: sql<number>`count(*)` }).from(services);
+const [tstCount] = await db.select({ n: sql<number>`count(*)` }).from(testimonials);
+const [vidCount] = await db.select({ n: sql<number>`count(*)` }).from(videos);
+const [pendingCount] = await db
+  .select({ n: sql<number>`count(*)` })
+  .from(appointments)
+  .where(eq(appointments.status, 'pending'));
+
+const user = Astro.locals.user;
+
+const cards = [
+  { label: 'Doctoras', value: docCount.n, href: '/admin/doctoras' },
+  { label: 'Servicios', value: svcCount.n, href: '/admin/servicios' },
+  { label: 'Testimonios', value: tstCount.n, href: '/admin/testimonios' },
+  { label: 'Videos', value: vidCount.n, href: '/admin/videos' },
+  { label: 'Citas pendientes', value: pendingCount.n, href: '/admin/citas' },
+];
+---
+
+<AdminLayout title="Inicio" active="home">
+  <h1 class="admin-h1">Hola, {user?.name}</h1>
+  <p class="admin-sub">Este es el panel de Happy Dent. Desde aquí administras el contenido del sitio.</p>
+
+  <div class="dash-grid">
+    {cards.map((c) => (
+      <a href={c.href} class="dash-card">
+        <span class="dash-value">{c.value}</span>
+        <span class="dash-label">{c.label}</span>
+      </a>
+    ))}
+  </div>
+
+  <style>
+    .dash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 1rem; }
+    .dash-card {
+      background: #fff; border: 1px solid #e7e9ee; border-radius: 12px; padding: 1.4rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.25rem; text-decoration: none; color: inherit;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .dash-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(31,36,48,0.08); }
+    .dash-value { font-size: 2rem; font-weight: 800; color: #e87fb4; }
+    .dash-label { color: #6b7280; font-weight: 600; font-size: 0.9rem; }
+  </style>
+</AdminLayout>

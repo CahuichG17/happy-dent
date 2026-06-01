@@ -1,30 +1,6 @@
 ---
-const testimonials = [
-  { name: "María García López", role_es: "Paciente desde 2020", role_en: "Patient since 2020",
-    text_es: "Increíble experiencia. El equipo de Happy Dent me hizo sentir como en casa. Mi sonrisa nunca se había visto tan bien. ¡100% recomendado!",
-    text_en: "Incredible experience. The Happy Dent team made me feel at home. My smile has never looked better. 100% recommended!",
-    rating: 5, avatar: "MG" },
-  { name: "Carlos Rodríguez", role_es: "Paciente desde 2019", role_en: "Patient since 2019",
-    text_es: "Después de años con miedo al dentista, en Happy Dent encontré un lugar donde me siento seguro. La ortodoncia cambió mi vida.",
-    text_en: "After years of fearing the dentist, at Happy Dent I found a place where I feel safe. Orthodontics changed my life.",
-    rating: 5, avatar: "CR" },
-  { name: "Ana Martínez Ruiz", role_es: "Mamá de 2 pacientes", role_en: "Mother of 2 patients",
-    text_es: "Llevé a mis hijos y fue maravilloso. El área de odontopediatría es fantástica, ahora ¡piden ir al dentista!",
-    text_en: "I brought my kids and it was wonderful. The pediatric area is fantastic — now they ask to visit the dentist!",
-    rating: 5, avatar: "AM" },
-  { name: "Roberto Sánchez", role_es: "Paciente desde 2018", role_en: "Patient since 2018",
-    text_es: "Los implantes que me colocaron se ven y se sienten naturales. Tecnología de primer nivel. No podría estar más satisfecho.",
-    text_en: "My implants look and feel completely natural. Top-tier technology. I couldn't be more satisfied.",
-    rating: 5, avatar: "RS" },
-  { name: "Laura Fernández", role_es: "Diseño de sonrisa", role_en: "Smile design",
-    text_es: "El blanqueamiento superó todas mis expectativas. Resultado espectacular y proceso muy cómodo. ¡Mi nueva sonrisa me encanta!",
-    text_en: "Whitening exceeded all my expectations. Spectacular result and very comfortable process. I love my new smile!",
-    rating: 5, avatar: "LF" },
-  { name: "Diego Hernández", role_es: "Paciente desde 2021", role_en: "Patient since 2021",
-    text_es: "Profesionalismo, calidez humana y resultados excepcionales. Happy Dent es mi clínica de confianza. Siempre los recomiendo.",
-    text_en: "Professionalism, warmth and exceptional results. Happy Dent is my trusted clinic. I always recommend them.",
-    rating: 5, avatar: "DH" },
-];
+import { getTestimonials } from '../lib/content';
+const testimonials = await getTestimonials();
 ---
 
 <section class="testimonials" id="testimonios">

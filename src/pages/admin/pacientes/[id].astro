@@ -196,19 +196,19 @@ const doctorName = (dId: number | null) => docList.find((d) => d.id === dId)?.na
                             <input type="hidden" name="patientId" value={patient!.id} />
                             <input type="hidden" name="patientName" value={patient!.name} />
                             {s.doctorId && <input type="hidden" name="doctorId" value={s.doctorId} />}
-                            <button type="submit" class="admin-btn op-btn">Solicitar opinion</button>
+                            <button type="submit" class="admin-btn op-btn">Solicitar opinión</button>
                           </form>
                         )}
                         {s.status === 'done' && tokenBySession[s.id] && (
                           <a href={`/admin/opiniones/${tokenBySession[s.id].token}`} class="admin-btn admin-btn-ghost op-btn-sent">
-                            {tokenBySession[s.id].usedAt ? 'Ver resena' : 'Ver QR'}
+                            {tokenBySession[s.id].usedAt ? 'Ver reseña' : 'Ver QR'}
                           </a>
                         )}
                         <form method="POST" action="/api/admin/sesiones" data-confirm="¿Eliminar esta sesión?">
                           <input type="hidden" name="_action" value="delete" />
                           <input type="hidden" name="id" value={s.id} />
                           <input type="hidden" name="patientId" value={patient!.id} />
-                          <button type="submit" class="admin-btn admin-btn-danger">\u00d7</button>
+                          <button type="submit" class="admin-btn admin-btn-danger">Eliminar</button>
                         </form>
                       </div>
                     </td>

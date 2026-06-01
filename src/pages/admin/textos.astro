@@ -19,7 +19,7 @@ const saved = Astro.url.searchParams.get('ok') === '1';
 
   <form method="POST" action="/api/admin/textos" class="txt-form">
     <div class="txt-nav-wrap">
-      <button type="button" id="txtNavToggle" class="admin-btn admin-btn-ghost txt-nav-toggle">Ir a sección ▾</button>
+      <button type="button" id="txtNavToggle" class="admin-btn admin-btn-ghost txt-nav-toggle">Menu rapido ▾</button>
       <nav class="txt-nav" id="txtNav" hidden>
         {COPY_SCHEMA.map((g) => (
           <a href={`#g-${g.id}`} class="txt-nav-link">{g.title}</a>
@@ -70,6 +70,7 @@ const saved = Astro.url.searchParams.get('ok') === '1';
     .txt-nav-wrap { position: sticky; top: 0; z-index: 5; }
     .txt-nav-toggle { font-size: 0.82rem; padding: 0.4rem 0.85rem; }
     .txt-nav { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0.9rem 1rem; background: #fff; border: 1px solid var(--a-line); border-radius: 0 0 12px 12px; border-top: none; }
+    .txt-nav[hidden] { display: none; }
     .txt-nav-link { font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--a-bg); color: var(--a-text); text-decoration: none; border: 1px solid var(--a-line); }
     .txt-nav-link:hover { border-color: var(--a-pink); color: var(--a-pink); }
     /* Details / summary */
@@ -109,10 +110,10 @@ const saved = Astro.url.searchParams.get('ok') === '1';
       const isHidden = nav.hasAttribute('hidden');
       if (isHidden) {
         nav.removeAttribute('hidden');
-        toggleBtn.textContent = 'Ir a sección ▴';
+        toggleBtn.textContent = 'Menu rapido ▴';
       } else {
         nav.setAttribute('hidden', '');
-        toggleBtn.textContent = 'Ir a sección ▾';
+        toggleBtn.textContent = 'Menu rapido ▾';
       }
     });
 
@@ -124,7 +125,7 @@ const saved = Astro.url.searchParams.get('ok') === '1';
         const target = document.querySelector(href);
         if (target && target.tagName === 'DETAILS') target.open = true;
         nav.setAttribute('hidden', '');
-        toggleBtn.textContent = 'Ir a sección ▾';
+        toggleBtn.textContent = 'Menu rapido ▾';
       });
     });
   </script>

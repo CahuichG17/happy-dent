@@ -51,7 +51,7 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
               <div class="admin-actions">
                 <a href={`/admin/usuarios/${u.id}`} class="admin-btn admin-btn-ghost">Editar</a>
                 {me?.id === u.id ? (
-                  <span class="admin-badge off">Tu cuenta</span>
+                  <span class="admin-badge off u-own-badge">Tu cuenta</span>
                 ) : (
                   <form method="POST" action="/api/admin/users" data-confirm="¿Eliminar este usuario?">
                     <input type="hidden" name="_action" value="delete" />
@@ -67,3 +67,17 @@ const roleLabel = (r: string) => (r === 'super_admin' ? 'Super admin' : 'Doctora
     </table></div>
   )}
 </AdminLayout>
+
+<style>
+  /* En mobile la celda de acciones no tiene data-label, el badge queda suelto.
+     Forzamos que ocupe el ancho completo y se centre. */
+  @media (max-width: 580px) {
+    .u-own-badge {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 0.5rem 0;
+      font-size: 0.82rem;
+    }
+  }
+</style>

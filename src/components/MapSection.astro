@@ -76,7 +76,7 @@ const c = await getCopy();
 <style>
   .map-section {
     padding: var(--section-padding) 0;
-    background: var(--white);
+    background: var(--cream);
   }
   .map-header { text-align: center; margin-bottom: 3rem; }
 
@@ -106,7 +106,7 @@ const c = await getCopy();
   }
   .map-info-item strong {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.74rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -138,7 +138,7 @@ const c = await getCopy();
     border-radius: var(--radius-xl);
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(255, 177, 215, 0.15);
+    border: 1px solid var(--line);
     min-height: 460px;
   }
   .map-frame iframe {

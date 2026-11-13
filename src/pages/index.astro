@@ -16,11 +16,13 @@ import Contact from '../components/Contact.astro';
 import MapSection from '../components/MapSection.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppFloat from '../components/WhatsAppFloat.astro';
-import { getSections } from '../lib/content';
+import { getSections, getVideos } from '../lib/content';
 
 // SSR: el contenido y la visibilidad de secciones se leen de la DB.
 export const prerender = false;
 const s = await getSections();
+// Sin video cargado no se muestra la sección (antes mostraba un video de prueba).
+const hasVideo = (await getVideos()).length > 0;
 ---
 
 <Layout>
@@ -32,7 +34,7 @@ const s = await getSections();
     {s.beforeafter && <BeforeAfter />}
     {s.nosotros && <About />}
     {s.testimonios && <Testimonials />}
-    {s.video && <VideoSection />}
+    {s.video && hasVideo && <VideoSection />}
     {s.insurance && <Insurance />}
     {s.faq && <FAQ />}
     {s.tourism && <DentalTourism />}
@@ -66,9 +68,9 @@ const s = await getSections();
         .from('.hero-description', { y: 24, opacity: 0, duration: 0.9 }, '-=0.7')
         .from('.hero-ctas > *', { y: 24, opacity: 0, stagger: 0.1, duration: 0.7 }, '-=0.5')
         .from('.hero-stats .hero-stat', { y: 24, opacity: 0, stagger: 0.1, duration: 0.7 }, '-=0.5')
-        .from('.hero-visual', { x: 60, opacity: 0, duration: 1.1 }, '-=1.1')
-        .from('.floating-card', { scale: 0.7, opacity: 0, stagger: 0.12, duration: 0.6, ease: 'back.out(1.6)' }, '-=0.6')
-        .from('.scroll-indicator', { y: 14, opacity: 0, duration: 0.5 }, '-=0.2');
+        .from('.arch-main', { y: 50, opacity: 0, duration: 1.1 }, '-=1.1')
+        .from('.arch-second', { y: 50, opacity: 0, duration: 1 }, '-=0.85')
+        .from('.seal', { scale: 0.4, opacity: 0, duration: 0.8, ease: 'back.out(1.6)' }, '-=0.6');
 
       // Hero stat counters
       gsap.utils.toArray<HTMLElement>('.hero-stat [data-count]').forEach(el => {
@@ -94,16 +96,6 @@ const s = await getSections();
     } else {
       startHeroTimeline();
     }
-
-    // Parallax shapes (subtle, smooth)
-    gsap.utils.toArray<HTMLElement>('.shape').forEach((shape, i) => {
-      gsap.to(shape, {
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1.5 },
-        y: -120 - i * 30,
-        rotation: i * 10,
-        ease: 'none',
-      });
-    });
 
     // ===== Universal section headers fade-up =====
     const fadeUp = (selector: string, opts: any = {}) => {

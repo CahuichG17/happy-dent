@@ -142,12 +142,12 @@ const c = await getCopy();
     border-radius: var(--radius-xl);
     text-align: center;
     transition: all var(--transition-slow);
-    border: 1px solid rgba(255, 177, 215, 0.18);
+    border: 1px solid var(--line);
   }
   .doctor-card:hover {
     transform: translateY(-6px);
     box-shadow: var(--shadow-lg);
-    border-color: rgba(255, 177, 215, 0.4);
+    border-color: var(--line);
   }
   .doctor-portrait {
     width: 150px;
@@ -155,8 +155,8 @@ const c = await getCopy();
     margin: 0 auto 1.25rem;
     border-radius: 50%;
     overflow: hidden;
-    box-shadow: 0 6px 28px rgba(255, 177, 215, 0.35);
-    border: 3px solid rgba(255, 177, 215, 0.35);
+    box-shadow: none;
+    border: 3px solid var(--line);
     flex-shrink: 0;
   }
   .doctor-portrait img {
@@ -172,7 +172,7 @@ const c = await getCopy();
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: 2.25rem;
     font-weight: 700;
     color: var(--white);
@@ -180,7 +180,7 @@ const c = await getCopy();
     text-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
   .doctor-name {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(1.4rem, 2.6vw, 1.75rem);
     font-weight: 600;
     margin-bottom: 0.35rem;
@@ -188,7 +188,7 @@ const c = await getCopy();
   }
   .doctor-spec {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -207,10 +207,10 @@ const c = await getCopy();
     align-items: center;
     gap: 0.45rem;
     padding: 0.45rem 0.85rem;
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(216, 185, 235, 0.35);
+    background: var(--white);
+    border: 1px solid var(--line);
     border-radius: var(--radius-full);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.74rem;
     font-weight: 600;
     color: var(--text-medium);
@@ -239,14 +239,14 @@ const c = await getCopy();
   .about-feature-icon {
     width: 40px; height: 40px;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, rgba(255, 177, 215, 0.15), rgba(216, 185, 235, 0.15));
+    background: var(--pink-light);
     border-radius: var(--radius-sm);
     color: var(--pink-dark);
     flex-shrink: 0;
   }
   .about-feature strong {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.92rem;
     font-weight: 600;
     color: var(--text-dark);
@@ -261,12 +261,12 @@ const c = await getCopy();
   /* === Certifications === */
   .certifications {
     padding-top: 1.5rem;
-    border-top: 1px dashed rgba(255, 177, 215, 0.3);
+    border-top: 1px dashed var(--line);
     text-align: center;
   }
   .cert-label {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -286,9 +286,8 @@ const c = await getCopy();
     gap: 0.6rem;
     padding: 0.55rem 0.95rem;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(216, 185, 235, 0.3);
-    backdrop-filter: blur(10px);
+    background: var(--white);
+    border: 1px solid var(--line);
     transition: all var(--transition-fast);
     text-align: left;
   }
@@ -299,7 +298,7 @@ const c = await getCopy();
   }
   .cert-chip strong {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 700;
     color: var(--pink-dark);

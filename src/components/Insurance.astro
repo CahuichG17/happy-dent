@@ -88,7 +88,7 @@ const c = await getCopy();
       <article class="card-tile" data-hover>
         <svg viewBox="0 0 60 24" width="58" height="24" aria-hidden="true">
           <text x="30" y="18" text-anchor="middle"
-                font-family="'Plus Jakarta Sans', sans-serif"
+                font-family="var(--font-body)"
                 font-size="14" font-weight="800" letter-spacing="2"
                 fill="#1A1F71">VISA</text>
         </svg>
@@ -110,7 +110,7 @@ const c = await getCopy();
         <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
           <rect x="2" y="2" width="56" height="24" rx="3" fill="#016FD0"/>
           <text x="30" y="18" text-anchor="middle"
-                font-family="'Plus Jakarta Sans', sans-serif"
+                font-family="var(--font-body)"
                 font-size="9" font-weight="800" letter-spacing="1.4"
                 fill="#FFFFFF">AMERICAN EXPRESS</text>
         </svg>
@@ -131,7 +131,7 @@ const c = await getCopy();
         <svg viewBox="0 0 60 28" width="58" height="28" aria-hidden="true">
           <rect x="2" y="6" width="56" height="16" rx="2" fill="#A8D5BA"/>
           <circle cx="30" cy="14" r="5" fill="none" stroke="#1D4D2F" stroke-width="1.5"/>
-          <text x="30" y="17" text-anchor="middle" font-family="'Cormorant Garamond', serif"
+          <text x="30" y="17" text-anchor="middle" font-family="var(--font-display)"
                 font-size="9" font-weight="700" fill="#1D4D2F">$</text>
         </svg>
         <span class="card-label">Efectivo MXN · USD</span>
@@ -162,16 +162,15 @@ const c = await getCopy();
     justify-content: center;
     gap: 0.6rem;
     padding: 1.5rem 1rem;
-    background: rgba(255, 255, 255, 0.88);
-    border: 1px solid rgba(255, 177, 215, 0.18);
+    background: var(--white);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
-    backdrop-filter: blur(10px);
   }
   .ins-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
-    border-color: rgba(255, 177, 215, 0.45);
+    border-color: var(--line);
   }
   .ins-mark {
     display: flex;
@@ -181,7 +180,7 @@ const c = await getCopy();
     height: 56px;
   }
   .ins-name {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.92rem;
     font-weight: 700;
     color: var(--text-dark);
@@ -198,9 +197,8 @@ const c = await getCopy();
     padding: 1.75rem 2rem;
     border-radius: var(--radius-xl);
     margin-bottom: 2.5rem;
-    background: linear-gradient(135deg, rgba(255, 177, 215, 0.18), rgba(216, 185, 235, 0.18));
-    border: 1px solid rgba(255, 177, 215, 0.25);
-    backdrop-filter: blur(14px);
+    background: var(--pink-light);
+    border: 1px solid var(--line);
   }
   .pay-banner-left {
     display: flex;
@@ -220,7 +218,7 @@ const c = await getCopy();
     flex-shrink: 0;
   }
   .pay-banner h3 {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(1.2rem, 2.2vw, 1.6rem);
     line-height: 1.1;
     margin-bottom: 0.35rem;
@@ -246,12 +244,12 @@ const c = await getCopy();
     min-width: 64px;
     padding: 0.55rem 0.75rem;
     background: var(--white);
-    border: 1px solid rgba(216, 185, 235, 0.35);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
   }
   .msi-chip strong {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: 1.45rem;
     font-weight: 700;
     color: var(--pink-dark);
@@ -259,7 +257,7 @@ const c = await getCopy();
   }
   .msi-chip em {
     font-style: normal;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.62rem;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -278,19 +276,19 @@ const c = await getCopy();
     align-items: center;
     gap: 0.85rem;
     padding: 0.9rem 1.1rem;
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(255, 177, 215, 0.18);
+    background: var(--white);
+    border: 1px solid var(--line);
     border-radius: var(--radius-md);
     transition: all var(--transition-base);
   }
   .card-tile:hover {
     transform: translateY(-3px);
     box-shadow: var(--shadow-sm);
-    border-color: rgba(255, 177, 215, 0.35);
+    border-color: var(--line);
   }
   .card-tile svg { flex-shrink: 0; }
   .card-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-medium);

@@ -47,7 +47,7 @@ const c = await getCopy();
           </g>
           <circle cx="600" cy="160" r="6" fill="#FFB1D7"/>
           <circle cx="190" cy="380" r="4" fill="#D8B9EB"/>
-          <text x="50" y="60" font-family="Plus Jakarta Sans" font-size="22" font-weight="700" fill="#D96DA5">DESPUÉS · AFTER</text>
+          <text x="50" y="60" font-family="DM Sans" font-size="22" font-weight="700" fill="#D96DA5">DESPUÉS · AFTER</text>
         </svg>
       </div>
 
@@ -71,7 +71,7 @@ const c = await getCopy();
             <rect x="422" y="256" width="28" height="42" rx="3" fill="#E0D2B0" transform="rotate(-2 436 277)"/>
             <rect x="456" y="252" width="30" height="40" rx="3" fill="#E8DCC4"/>
           </g>
-          <text x="50" y="60" font-family="Plus Jakarta Sans" font-size="22" font-weight="700" fill="#8B7A9E">ANTES · BEFORE</text>
+          <text x="50" y="60" font-family="DM Sans" font-size="22" font-weight="700" fill="#8B7A9E">ANTES · BEFORE</text>
         </svg>
       </div>
 
@@ -95,7 +95,7 @@ const c = await getCopy();
 <style>
   .ba-section {
     padding: var(--section-padding) 0;
-    background: var(--white);
+    background: var(--pink-light);
   }
   .ba-header { text-align: center; margin-bottom: 3.5rem; }
   .ba-header .section-subtitle { margin-inline: auto; }
@@ -153,7 +153,7 @@ const c = await getCopy();
     background: var(--white);
     color: var(--pink-dark);
     border-radius: 50%;
-    box-shadow: 0 8px 24px rgba(255, 177, 215, 0.4);
+    box-shadow: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -169,14 +169,14 @@ const c = await getCopy();
     margin-top: 2rem;
   }
   .ba-btn {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 600;
     padding: 0.7rem 1.4rem;
     border-radius: var(--radius-full);
     background: var(--white);
     color: var(--pink-dark);
-    border: 1.5px solid rgba(255, 177, 215, 0.25);
+    border: 1.5px solid var(--line);
     transition: all var(--transition-fast);
   }
   .ba-btn:hover {

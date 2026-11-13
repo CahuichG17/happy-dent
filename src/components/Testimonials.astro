@@ -57,7 +57,7 @@ const c = await getCopy();
 <style>
   .testimonials {
     padding: var(--section-padding) 0;
-    background: var(--white);
+    background: var(--cream);
     position: relative;
     overflow: hidden;
   }
@@ -66,7 +66,7 @@ const c = await getCopy();
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--pink-light), var(--lavender-light), transparent);
+    background: var(--line);
   }
   .testimonials-header { text-align: center; margin-bottom: 4rem; }
   .testimonials-header .section-subtitle { margin-inline: auto; }
@@ -78,10 +78,10 @@ const c = await getCopy();
     margin-top: 1.5rem;
     padding: 0.6rem 1.25rem;
     background: var(--white);
-    border: 1px solid rgba(255, 177, 215, 0.2);
+    border: 1px solid var(--line);
     border-radius: var(--radius-full);
     box-shadow: var(--shadow-sm);
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.88rem;
     color: var(--text-medium);
   }
@@ -98,7 +98,7 @@ const c = await getCopy();
     padding: 2.25rem;
     background: var(--gradient-card);
     border-radius: var(--radius-xl);
-    border: 1px solid rgba(255, 177, 215, 0.1);
+    border: 1px solid var(--line);
     transition: all var(--transition-slow);
     display: flex;
     flex-direction: column;
@@ -110,15 +110,15 @@ const c = await getCopy();
     content: '"';
     position: absolute;
     top: -10px; right: 20px;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: 8rem;
     line-height: 1;
-    color: rgba(255, 177, 215, 0.08);
+    color: var(--line);
   }
   .testimonial-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-lg);
-    border-color: rgba(255, 177, 215, 0.3);
+    border-color: var(--line);
   }
   .testimonial-rating { display: flex; gap: 0.25rem; margin-bottom: 1.25rem; }
   .testimonial-text {
@@ -128,19 +128,19 @@ const c = await getCopy();
   .testimonial-author {
     display: flex; align-items: center; gap: 1rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgba(255, 177, 215, 0.12);
+    border-top: 1px solid var(--line);
   }
   .testimonial-avatar {
     width: 48px; height: 48px; border-radius: 50%;
     background: var(--gradient-primary);
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-weight: 700; color: var(--white); font-size: 0.85rem;
     flex-shrink: 0;
   }
   .testimonial-name {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.95rem; font-weight: 600; color: var(--text-dark);
   }
   .testimonial-role { font-size: 0.82rem; color: var(--text-light); }

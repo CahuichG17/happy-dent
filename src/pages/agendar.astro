@@ -24,7 +24,7 @@ const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
     <link rel="icon" type="image/svg+xml" href="/happy-dent-icon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <main class="wrap">
@@ -99,16 +99,18 @@ const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       :root {
-        --pink: #FFB1D7;
-        --pink-dark: #e87fb4;
-        --ink: #2b2230;
-        --muted: #7a6f80;
-        --line: #f0d9e6;
-        --bg: #fff5fa;
+        --pink: #B23A67;
+        --pink-dark: #B23A67;
+        --ink: #2B1E2A;
+        --muted: #75626F;
+        --line: rgba(43, 30, 42, 0.14);
+        --bg: #F3EADF;
+        --font-body: 'DM Sans';
+        --font-display: 'Fraunces', Georgia, serif;
       }
       body {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: linear-gradient(160deg, #fff5fa 0%, #fdeaf3 100%);
+        font-family: var(--font-body), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #FBF6F0;
         color: var(--ink);
         min-height: 100vh;
         -webkit-font-smoothing: antialiased;
@@ -119,9 +121,9 @@ const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
       .back:hover { text-decoration: underline; }
       .head { text-align: center; margin-bottom: 2rem; }
       .head img { margin-bottom: 0.75rem; }
-      .head h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); font-weight: 800; margin-bottom: 0.6rem; }
+      .head h1 { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 2.7rem); font-weight: 500; margin-bottom: 0.6rem; }
       .head p { color: var(--muted); max-width: 30rem; margin: 0 auto; line-height: 1.6; }
-      .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: clamp(1.5rem, 4vw, 2.25rem); box-shadow: 0 20px 50px rgba(232, 127, 180, 0.12); }
+      .card { background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: clamp(1.5rem, 4vw, 2.25rem); box-shadow: none; }
       .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
       .field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.1rem; }
       label { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; }
@@ -129,7 +131,7 @@ const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
         font: inherit; font-size: 0.95rem; padding: 0.75rem 0.9rem; border-radius: 11px;
         border: 1.5px solid var(--line); background: #fff; color: var(--ink); width: 100%; resize: vertical;
       }
-      input:focus, select:focus, textarea:focus { outline: none; border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255, 177, 215, 0.18); }
+      input:focus, select:focus, textarea:focus { outline: none; border-color: var(--pink); box-shadow: none; }
       .slots { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 2.5rem; align-items: center; }
       .slots-hint { color: var(--muted); font-size: 0.88rem; }
       .slot-btn {
@@ -144,7 +146,7 @@ const minDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(
         padding: 0.85rem 1.6rem; border-radius: 11px; font: inherit; font-weight: 700; font-size: 0.98rem;
         cursor: pointer; text-decoration: none; text-align: center; width: 100%; transition: background 0.15s, opacity 0.15s;
       }
-      .btn:hover { background: #d96da5; }
+      .btn:hover { background: #962D55; }
       .btn:disabled { opacity: 0.5; cursor: not-allowed; }
       .form-msg { margin-top: 0.85rem; font-size: 0.88rem; font-weight: 600; color: #b91c1c; min-height: 1.1rem; }
       .success { position: fixed; inset: 0; background: rgba(43, 34, 48, 0.45); display: flex; align-items: center; justify-content: center; padding: 1.5rem; z-index: 50; }

@@ -162,7 +162,7 @@ const c = await getCopy();
   .field { display: flex; flex-direction: column; gap: 0.45rem; }
   .field-full { grid-column: 1 / -1; }
   .field > span {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -174,8 +174,8 @@ const c = await getCopy();
     font-size: 1rem;
     padding: 0.85rem 1.1rem;
     border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.7);
-    border: 1.5px solid rgba(255, 177, 215, 0.2);
+    background: var(--white);
+    border: 1.5px solid var(--line);
     color: var(--text-dark);
     transition: all var(--transition-fast);
     width: 100%;
@@ -185,12 +185,12 @@ const c = await getCopy();
     outline: none;
     border-color: var(--pink);
     background: var(--white);
-    box-shadow: 0 0 0 4px rgba(255, 177, 215, 0.15);
+    box-shadow: none;
   }
 
   /* ===== Service chips ===== */
   .field-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -210,8 +210,8 @@ const c = await getCopy();
     align-items: center;
     gap: 0.5rem;
     padding: 0.9rem 0.75rem 0.75rem;
-    background: rgba(255, 255, 255, 0.75);
-    border: 1.5px solid rgba(255, 177, 215, 0.2);
+    background: var(--white);
+    border: 1.5px solid var(--line);
     border-radius: var(--radius-md);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -219,14 +219,14 @@ const c = await getCopy();
   }
   .svc-chip:hover {
     border-color: var(--pink);
-    background: rgba(255, 177, 215, 0.08);
+    background: var(--pink-light);
     transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(255, 177, 215, 0.2);
+    box-shadow: none;
   }
   .svc-chip.selected {
     border-color: var(--pink-dark);
-    background: linear-gradient(135deg, rgba(255, 177, 215, 0.18), rgba(216, 185, 235, 0.18));
-    box-shadow: 0 0 0 3px rgba(255, 177, 215, 0.25);
+    background: var(--pink-light);
+    box-shadow: none;
   }
   .svc-chip.selected .svc-chip-icon svg {
     stroke: var(--pink-dark);
@@ -239,7 +239,7 @@ const c = await getCopy();
   }
   .svc-chip-icon svg { width: 24px; height: 24px; }
   .svc-chip-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.78rem;
     font-weight: 600;
     color: var(--text-dark);
@@ -280,7 +280,6 @@ const c = await getCopy();
     inset: 0;
     z-index: 1500;
     background: rgba(45, 34, 53, 0.6);
-    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;

@@ -60,7 +60,7 @@ const c = await getCopy();
 <style>
   .services {
     padding: var(--section-padding) 0;
-    background: var(--white);
+    background: var(--cream);
     position: relative;
     overflow: hidden;
   }
@@ -70,7 +70,7 @@ const c = await getCopy();
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--pink-light), var(--lavender-light), transparent);
+    background: var(--line);
   }
 
   .services-header {
@@ -98,17 +98,16 @@ const c = await getCopy();
     z-index: 2;
     padding: 2.5rem;
     background: var(--gradient-card);
-    border: 1px solid rgba(255, 177, 215, 0.12);
+    border: 1px solid var(--line);
     border-radius: var(--radius-xl);
     height: 100%;
     display: flex;
     flex-direction: column;
     transition: all var(--transition-slow);
-    backdrop-filter: blur(10px);
   }
 
   .service-card:hover .service-card-inner {
-    border-color: rgba(255, 177, 215, 0.35);
+    border-color: var(--line);
     box-shadow: var(--shadow-lg);
     transform: translateY(-8px);
   }
@@ -127,7 +126,7 @@ const c = await getCopy();
   .service-icon {
     width: 60px; height: 60px;
     display: flex; align-items: center; justify-content: center;
-    background: linear-gradient(135deg, rgba(255, 177, 215, 0.12), rgba(216, 185, 235, 0.12));
+    background: var(--pink-light);
     border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
     color: var(--pink-dark);
@@ -139,7 +138,7 @@ const c = await getCopy();
     background: var(--gradient-primary);
     color: var(--white);
     transform: scale(1.08) rotate(-4deg);
-    box-shadow: 0 4px 15px rgba(255, 177, 215, 0.35);
+    box-shadow: none;
   }
 
   .service-title {
@@ -169,11 +168,11 @@ const c = await getCopy();
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.8rem;
     font-weight: 500;
     color: var(--text-medium);
-    background: rgba(255, 177, 215, 0.08);
+    background: var(--pink-light);
     padding: 0.35rem 0.8rem;
     border-radius: var(--radius-full);
   }
@@ -184,13 +183,13 @@ const c = await getCopy();
     justify-content: space-between;
     align-items: center;
     padding-top: 1rem;
-    border-top: 1px solid rgba(255, 177, 215, 0.12);
+    border-top: 1px solid var(--line);
     gap: 1rem;
   }
 
   .service-price { display: flex; flex-direction: column; }
   .price-label {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.65rem;
     font-weight: 600;
     letter-spacing: 0.15em;
@@ -198,7 +197,7 @@ const c = await getCopy();
     color: var(--text-muted);
   }
   .price-value {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--pink-dark);
@@ -208,13 +207,13 @@ const c = await getCopy();
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--pink-dark);
     padding: 0.5rem 1rem;
     border-radius: var(--radius-full);
-    background: rgba(255, 177, 215, 0.1);
+    background: var(--pink-light);
     transition: all var(--transition-fast);
   }
   .service-cta:hover {

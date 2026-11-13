@@ -33,19 +33,10 @@ const c = await getCopy();
 <style>
   .stats-section {
     padding: clamp(3rem, 6vw, 6rem) 0;
-    background: var(--text-dark);
+    background: #3A2540;
     color: var(--white);
     position: relative;
     overflow: hidden;
-  }
-  .stats-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at top left, rgba(255, 177, 215, 0.15), transparent 60%),
-      radial-gradient(ellipse at bottom right, rgba(216, 185, 235, 0.12), transparent 60%);
-    pointer-events: none;
   }
   .stats-grid {
     position: relative;
@@ -62,25 +53,22 @@ const c = await getCopy();
   }
   .stat-item:hover { transform: translateY(-6px); }
   .stat-num {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(3rem, 6vw, 5rem);
     font-weight: 700;
     line-height: 1;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    letter-spacing: -0.04em;
+    color: var(--pink);
+    letter-spacing: -0.02em;
   }
   .stat-suffix {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: var(--font-display);
     font-size: clamp(2rem, 4vw, 3rem);
     color: var(--pink);
     font-weight: 700;
   }
   .stat-name {
     display: block;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: var(--font-body);
     font-size: 0.88rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.6);

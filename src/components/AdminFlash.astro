@@ -1,0 +1,12 @@
+---
+// Mensaje de resultado (?ok=... / ?err=...) para las pantallas del panel.
+const ok = Astro.url.searchParams.get('ok');
+const err = Astro.url.searchParams.get('err');
+---
+{ok && <div class="flash flash-ok" role="status">{ok}</div>}
+{err && <div class="flash flash-err" role="alert">{err}</div>}
+<style>
+  .flash { padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-weight: 600; font-size: 0.92rem; }
+  .flash-ok { background: #dcfce7; color: #166534; }
+  .flash-err { background: #fee2e2; color: #b91c1c; }
+</style>

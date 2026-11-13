@@ -1,0 +1,138 @@
+---
+export const prerender = false;
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminFlash from '../../../components/AdminFlash.astro';
+import { getMailAccount, SMTP_PRESETS } from '../../../lib/comms/mailer';
+
+const me = Astro.locals.user!;
+const acc = await getMailAccount(me.id);
+const presets = SMTP_PRESETS;
+const globalSmtp = Boolean(process.env.SMTP_HOST);
+---
+
+<AdminLayout title="Mi correo" active="correo">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Mi correo (SMTP)</h1>
+      <p class="admin-sub">Conecta tu cuenta de correo: los recordatorios y avisos saldrán con tu nombre y tu dirección.</p>
+    </div>
+  </div>
+
+  <AdminFlash />
+
+  {acc ? (
+    <div class="admin-card status-card">
+      <div>
+        <strong>{acc.fromName || acc.fromEmail}</strong>
+        <small>&lt;{acc.fromEmail}&gt; · {acc.host}:{acc.port}</small>
+      </div>
+      <div>
+        {acc.lastTestOk === true && <span class="admin-badge ok">Conexión verificada</span>}
+        {acc.lastTestOk === false && <span class="admin-badge bad">Falló la última prueba</span>}
+        {acc.lastTestOk == null && <span class="admin-badge off">Sin probar</span>}
+        {!acc.enabled && <span class="admin-badge off">Pausada</span>}
+      </div>
+      {acc.lastError && <p class="err-detail">{acc.lastError}</p>}
+    </div>
+  ) : globalSmtp ? (
+    <div class="admin-card">Aún no configuras tu cuenta; mientras tanto se usa el correo general de la clínica.</div>
+  ) : (
+    <div class="admin-card">Todavía no tienes una cuenta de correo conectada. Llena el formulario para empezar.</div>
+  )}
+
+  <form method="POST" action="/api/admin/comms" class="admin-card" id="mailForm">
+    <input type="hidden" name="_action" value="mail_save" />
+    <input type="hidden" name="redirect" value="/admin/correo" />
+
+    <div class="admin-field">
+      <label for="preset">Proveedor</label>
+      <select id="preset">
+        {Object.entries(presets).map(([k, p]) => <option value={k}>{p.label}</option>)}
+      </select>
+      <small id="presetHint" class="hint"></small>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field"><label for="host">Servidor SMTP</label><input id="host" name="host" required value={acc?.host ?? ''} placeholder="smtp.gmail.com" /></div>
+      <div class="admin-field"><label for="port">Puerto</label><input id="port" name="port" type="number" required value={acc?.port ?? 465} /></div>
+    </div>
+    <label class="admin-check"><input type="checkbox" name="secure" id="secure" checked={acc ? acc.secure : true} /> Conexión segura SSL/TLS directa (puerto 465). Desmárcalo para STARTTLS (587).</label>
+
+    <div class="admin-row">
+      <div class="admin-field"><label for="username">Usuario</label><input id="username" name="username" required autocomplete="off" value={acc?.username ?? ''} placeholder="doctora@tuclinica.com" /></div>
+      <div class="admin-field">
+        <label for="password">Contraseña {acc ? '(déjala vacía para conservar la actual)' : ''}</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" required={!acc} placeholder={acc ? '••••••••' : 'Contraseña de aplicación'} />
+      </div>
+    </div>
+
+    <div class="admin-row">
+      <div class="admin-field"><label for="fromName">Nombre que verá el paciente</label><input id="fromName" name="fromName" value={acc?.fromName ?? `Dra. ${me.name}`} /></div>
+      <div class="admin-field"><label for="fromEmail">Correo remitente</label><input id="fromEmail" name="fromEmail" type="email" required value={acc?.fromEmail ?? me.email} /></div>
+    </div>
+    <div class="admin-field"><label for="replyTo">Responder a (opcional)</label><input id="replyTo" name="replyTo" type="email" value={acc?.replyTo ?? ''} /></div>
+    <div class="admin-field">
+      <label for="signature">Firma (se agrega al final de cada correo)</label>
+      <textarea id="signature" name="signature" placeholder={'Dra. Dafne Mondragón\nHappy Dent · Cancún\n(998) 322-9592'}>{acc?.signature ?? ''}</textarea>
+    </div>
+    <label class="admin-check"><input type="checkbox" name="enabled" checked={acc ? acc.enabled : true} /> Cuenta activa</label>
+
+    <div class="admin-form-actions">
+      <button type="submit" class="admin-btn">Guardar</button>
+    </div>
+  </form>
+
+  {acc && (
+    <div class="admin-card actions-card">
+      <form method="POST" action="/api/admin/comms">
+        <input type="hidden" name="_action" value="mail_test" /><input type="hidden" name="redirect" value="/admin/correo" />
+        <button class="admin-btn" type="submit">Enviarme un correo de prueba</button>
+        <small class="hint">Se envía a {me.email}</small>
+      </form>
+      <form method="POST" action="/api/admin/comms" data-confirm="¿Eliminar tu cuenta de correo? Las automatizaciones por correo dejarán de enviar.">
+        <input type="hidden" name="_action" value="mail_delete" /><input type="hidden" name="redirect" value="/admin/correo" />
+        <button class="admin-btn admin-btn-danger" type="submit">Eliminar cuenta</button>
+      </form>
+    </div>
+  )}
+
+  <div class="admin-card">
+    <h2 class="h2">Cómo obtener tu contraseña</h2>
+    <p class="hint-p"><strong>Gmail / Google Workspace:</strong> activa la verificación en 2 pasos y crea una <em>contraseña de aplicación</em> en myaccount.google.com/apppasswords. Usa esa clave de 16 letras aquí.</p>
+    <p class="hint-p"><strong>Outlook / Microsoft 365:</strong> servidor smtp.office365.com, puerto 587 (desmarca SSL directo). Tu administrador debe permitir SMTP autenticado.</p>
+    <p class="hint-p">La contraseña se guarda cifrada y nunca se muestra de nuevo.</p>
+  </div>
+
+  <script define:vars={{ presets }}>
+    const sel = document.getElementById('preset');
+    const hint = document.getElementById('presetHint');
+    const apply = () => {
+      const p = presets[sel.value];
+      hint.textContent = p.hint;
+      if (sel.value !== 'custom' && !window.__userTouched) {
+        document.getElementById('host').value = p.host;
+        document.getElementById('port').value = p.port;
+        document.getElementById('secure').checked = p.secure;
+      }
+    };
+    // Detectar el proveedor actual por el servidor guardado.
+    const current = document.getElementById('host').value;
+    const found = Object.entries(presets).find(([, p]) => p.host && p.host === current);
+    sel.value = found ? found[0] : (current ? 'custom' : 'gmail');
+    window.__userTouched = Boolean(current);
+    sel.addEventListener('change', () => { window.__userTouched = false; apply(); });
+    apply();
+  </script>
+
+  <style>
+    .status-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .status-card small { display: block; color: var(--a-muted); }
+    .err-detail { flex-basis: 100%; color: #b91c1c; font-size: 0.85rem; word-break: break-word; }
+    .admin-badge.bad { background: #fee2e2; color: #b91c1c; }
+    .hint { color: var(--a-muted); font-size: 0.8rem; margin-left: 0.5rem; }
+    .hint-p { color: var(--a-muted); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .h2 { font-size: 1rem; font-weight: 800; margin-bottom: 0.6rem; }
+    .actions-card { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .actions-card form { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+  </style>
+</AdminLayout>

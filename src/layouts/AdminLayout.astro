@@ -11,11 +11,16 @@ const isSuper = user?.role === 'super_admin';
 
 const nav = [
   { href: '/admin', label: 'Inicio', key: 'home', super: false, group: 'Clínica' },
-  { href: '/admin/agenda', label: 'Agenda', key: 'agenda', super: false, group: 'Clínica' },
+  { href: '/admin/calendario', label: 'Calendario', key: 'calendario', super: false, group: 'Clínica' },
+  { href: '/admin/agenda', label: 'Agenda del día', key: 'agenda', super: false, group: 'Clínica' },
   { href: '/admin/pacientes', label: 'Pacientes', key: 'pacientes', super: false, group: 'Clínica' },
   { href: '/admin/citas', label: 'Citas', key: 'citas', super: false, group: 'Clínica' },
   { href: '/admin/horarios', label: 'Horarios', key: 'horarios', super: false, group: 'Clínica' },
   { href: '/admin/opiniones', label: 'Opiniones', key: 'opiniones', super: false, group: 'Clínica' },
+  { href: '/admin/mensajes', label: 'Mensajes enviados', key: 'mensajes', super: false, group: 'Comunicación' },
+  { href: '/admin/automatizaciones', label: 'Automatizaciones', key: 'automatizaciones', super: false, group: 'Comunicación' },
+  { href: '/admin/plantillas', label: 'Plantillas', key: 'plantillas', super: false, group: 'Comunicación' },
+  { href: '/admin/correo', label: 'Mi correo (SMTP)', key: 'correo', super: false, group: 'Comunicación' },
   { href: '/admin/doctoras', label: 'Doctoras', key: 'doctoras', super: false, group: 'Sitio web' },
   { href: '/admin/servicios', label: 'Servicios', key: 'servicios', super: false, group: 'Sitio web' },
   { href: '/admin/testimonios', label: 'Testimonios', key: 'testimonios', super: false, group: 'Sitio web' },

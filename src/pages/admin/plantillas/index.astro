@@ -1,0 +1,102 @@
+---
+export const prerender = false;
+import { desc, eq } from 'drizzle-orm';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminFlash from '../../../components/AdminFlash.astro';
+import { db } from '../../../db';
+import { messageTemplates } from '../../../db/schema';
+import { ensureCommsTables } from '../../../lib/comms/ddl';
+import { ensureDefaults } from '../../../lib/comms/engine';
+import { VARIABLES } from '../../../lib/comms/templates';
+
+const me = Astro.locals.user!;
+await ensureCommsTables();
+await ensureDefaults(me.id);
+const list = await db.select().from(messageTemplates).where(eq(messageTemplates.userId, me.id)).orderBy(desc(messageTemplates.updatedAt));
+
+const editId = Number(Astro.url.searchParams.get('edit') || 0);
+const isNew = Astro.url.searchParams.has('nueva');
+const editing = list.find((t) => t.id === editId) ?? null;
+const showForm = Boolean(editing) || isNew;
+---
+
+<AdminLayout title="Plantillas" active="plantillas">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Plantillas de mensajes</h1>
+      <p class="admin-sub">Escribe una vez el mensaje y úsalo en tus automatizaciones. Las variables entre llaves se llenan solas.</p>
+    </div>
+    <a href="/admin/plantillas?nueva=1" class="admin-btn">Nueva plantilla</a>
+  </div>
+
+  <AdminFlash />
+
+  {showForm && (
+    <form method="POST" action="/api/admin/comms" class="admin-card">
+      <input type="hidden" name="_action" value="tpl_save" />
+      <input type="hidden" name="redirect" value="/admin/plantillas" />
+      {editing && <input type="hidden" name="id" value={editing.id} />}
+      <div class="admin-row">
+        <div class="admin-field"><label for="name">Nombre (solo para ti)</label><input id="name" name="name" required value={editing?.name ?? ''} /></div>
+        <div class="admin-field">
+          <label for="channel">Canal</label>
+          <select id="channel" name="channel">
+            <option value="email" selected={editing?.channel !== 'whatsapp'}>Correo</option>
+            <option value="whatsapp" selected={editing?.channel === 'whatsapp'}>WhatsApp</option>
+          </select>
+        </div>
+      </div>
+      <div class="admin-field"><label for="subject">Asunto (solo correo)</label><input id="subject" name="subject" value={editing?.subject ?? ''} /></div>
+      <div class="admin-field"><label for="body">Mensaje</label><textarea id="body" name="body" rows="8" required>{editing?.body ?? ''}</textarea></div>
+      <div class="vars">
+        <strong>Variables:</strong>
+        {VARIABLES.map((v) => <button type="button" class="var" data-var={v.key} title={v.desc}>{`{{${v.key}}}`}</button>)}
+      </div>
+      <div class="admin-form-actions">
+        <button class="admin-btn" type="submit">Guardar plantilla</button>
+        <a class="admin-btn admin-btn-ghost" href="/admin/plantillas">Cancelar</a>
+      </div>
+    </form>
+  )}
+
+  <div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Nombre</th><th>Canal</th><th>Vista previa</th><th></th></tr></thead>
+    <tbody>
+      {list.map((t) => (
+        <tr>
+          <td><strong>{t.name}</strong></td>
+          <td><span class={`admin-badge ${t.channel === 'email' ? 'off' : 'ok'}`}>{t.channel === 'email' ? 'Correo' : 'WhatsApp'}</span></td>
+          <td class="prev">{t.body.slice(0, 90)}{t.body.length > 90 ? '…' : ''}</td>
+          <td>
+            <div class="admin-actions">
+              <a class="admin-btn admin-btn-ghost" href={`/admin/plantillas?edit=${t.id}`}>Editar</a>
+              <form method="POST" action="/api/admin/comms" data-confirm="¿Eliminar esta plantilla? Las automatizaciones que la usan quedarán sin mensaje.">
+                <input type="hidden" name="_action" value="tpl_delete" /><input type="hidden" name="id" value={t.id} /><input type="hidden" name="redirect" value="/admin/plantillas" />
+                <button class="admin-btn admin-btn-danger" type="submit">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table></div>
+
+  <script>
+    // Insertar variable en la posición del cursor
+    document.querySelectorAll<HTMLButtonElement>('.var').forEach((b) =>
+      b.addEventListener('click', () => {
+        const ta = document.getElementById('body') as HTMLTextAreaElement | null;
+        if (!ta) return;
+        const t = `{{${b.dataset.var}}}`;
+        const s = ta.selectionStart ?? ta.value.length;
+        ta.value = ta.value.slice(0, s) + t + ta.value.slice(ta.selectionEnd ?? s);
+        ta.focus(); ta.selectionStart = ta.selectionEnd = s + t.length;
+      }),
+    );
+  </script>
+  <style>
+    .vars { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .var { background: #fff0f7; color: #be4d8f; border: 1px solid #f9c8e0; border-radius: 999px; padding: 0.15rem 0.65rem; font-size: 0.8rem; cursor: pointer; font-family: inherit; }
+    .prev { color: var(--a-muted); max-width: 360px; font-size: 0.85rem; }
+  </style>
+</AdminLayout>

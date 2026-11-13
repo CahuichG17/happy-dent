@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { auth } from './lib/auth';
+import { startScheduler } from './lib/comms/scheduler';
 
 // Rutas protegidas que requieren sesión.
 const PROTECTED_PREFIXES = ['/admin', '/api/admin'];
@@ -8,6 +9,7 @@ const PUBLIC_ADMIN_PATHS = ['/admin/login'];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url;
+  startScheduler(); // recordatorios y automatizaciones (solo producción)
 
   const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
   if (!isProtected) return next();

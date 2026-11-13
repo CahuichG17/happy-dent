@@ -1,0 +1,294 @@
+---
+export const prerender = false;
+import { and, asc, eq, gte, lte } from 'drizzle-orm';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminFlash from '../../../components/AdminFlash.astro';
+import { db } from '../../../db';
+import { appointments, calendarTokens, doctors, services } from '../../../db/schema';
+import { ensureCommsTables } from '../../../lib/comms/ddl';
+import { addDays, nowCancun } from '../../../lib/comms/time';
+import { doctorScope, isSuper } from '../../../lib/scope';
+
+const me = Astro.locals.user!;
+await ensureCommsTables();
+
+const view = Astro.url.searchParams.get('view') === 'month' ? 'month' : 'week';
+const today = nowCancun().date;
+const anchor = /^\d{4}-\d{2}-\d{2}$/.test(Astro.url.searchParams.get('date') || '') ? Astro.url.searchParams.get('date')! : today;
+const reqDoctor = Number(Astro.url.searchParams.get('doctor') || 0) || null;
+const scope = doctorScope(me, reqDoctor);
+const doctorList = isSuper(me) ? await db.select({ id: doctors.id, name: doctors.name }).from(doctors).orderBy(asc(doctors.name)) : [];
+
+// Lunes de la semana de una fecha
+const dow = (d: string) => (new Date(`${d}T12:00:00Z`).getUTCDay() + 6) % 7; // 0 = lunes
+const mondayOf = (d: string) => addDays(d, -dow(d));
+
+let rangeStart: string, rangeEnd: string, title: string, prev: string, next: string;
+const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+if (view === 'week') {
+  rangeStart = mondayOf(anchor); rangeEnd = addDays(rangeStart, 6);
+  const [a, b] = [rangeStart, rangeEnd].map((x) => new Date(`${x}T12:00:00Z`));
+  title = `${a.getUTCDate()} ${monthNames[a.getUTCMonth()]} – ${b.getUTCDate()} ${monthNames[b.getUTCMonth()]} ${b.getUTCFullYear()}`;
+  prev = addDays(anchor, -7); next = addDays(anchor, 7);
+} else {
+  const first = `${anchor.slice(0, 8)}01`;
+  rangeStart = mondayOf(first);
+  const d = new Date(`${first}T12:00:00Z`);
+  const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0, 12)).toISOString().slice(0, 10);
+  rangeEnd = addDays(last, 6 - dow(last));
+  title = `${monthNames[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  prev = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - 1, 1, 12)).toISOString().slice(0, 10);
+  next = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1, 12)).toISOString().slice(0, 10);
+}
+
+const conds = [gte(appointments.date, rangeStart), lte(appointments.date, rangeEnd)];
+if (scope !== null) conds.push(eq(appointments.doctorId, scope));
+const rows = await db.select({
+  id: appointments.id, patientName: appointments.patientName, phone: appointments.phone, email: appointments.email,
+  date: appointments.date, time: appointments.time, status: appointments.status, notes: appointments.notes,
+  doctorName: doctors.name, serviceTitle: services.titleEs, duration: services.durationMin,
+}).from(appointments)
+  .leftJoin(doctors, eq(appointments.doctorId, doctors.id))
+  .leftJoin(services, eq(appointments.serviceId, services.id))
+  .where(and(...conds)).orderBy(asc(appointments.date), asc(appointments.time));
+
+const ev = rows.map((r) => {
+  const [h, m] = r.time.slice(0, 5).split(':').map(Number);
+  return { ...r, time: r.time.slice(0, 5), start: h * 60 + m, dur: r.duration || 30 };
+});
+const days = Array.from({ length: view === 'week' ? 7 : Math.round((new Date(`${rangeEnd}T12:00:00Z`).getTime() - new Date(`${rangeStart}T12:00:00Z`).getTime()) / 864e5) + 1 }, (_, i) => addDays(rangeStart, i));
+const DAY = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+// Rango de horas visible (semana)
+const hStart = Math.min(8, ...ev.map((e) => Math.floor(e.start / 60)));
+const hEnd = Math.max(19, ...ev.map((e) => Math.ceil((e.start + e.dur) / 60)));
+const PX = 1; // 1 px por minuto
+const hours = Array.from({ length: hEnd - hStart }, (_, i) => hStart + i);
+
+// Carriles para eventos que se traslapan
+type E = typeof ev[number] & { lane: number; lanes: number };
+function lay(list: typeof ev): E[] {
+  const out: E[] = []; let group: E[] = []; let groupEnd = -1;
+  const flush = () => { const n = Math.max(1, ...group.map((g) => g.lane + 1)); group.forEach((g) => (g.lanes = n)); out.push(...group); group = []; };
+  for (const e of list) {
+    if (group.length && e.start >= groupEnd) flush();
+    const used = new Set(group.filter((g) => g.start + g.dur > e.start).map((g) => g.lane));
+    let lane = 0; while (used.has(lane)) lane++;
+    group.push({ ...e, lane, lanes: 1 }); groupEnd = Math.max(groupEnd, e.start + e.dur);
+  }
+  flush(); return out;
+}
+const byDay = (d: string) => ev.filter((e) => e.date === d);
+
+const hasToday = view === 'week' ? days.includes(today) : true;
+const STATUS: Record<string, string> = { pending: 'Pendiente', confirmed: 'Confirmada', cancelled: 'Cancelada', done: 'Atendida' };
+const q = (o: Record<string, string>) => {
+  const p = new URLSearchParams({ view, ...(reqDoctor ? { doctor: String(reqDoctor) } : {}), ...o });
+  return `/admin/calendario?${p.toString()}`;
+};
+const back = Astro.url.pathname + Astro.url.search;
+
+// Enlace de suscripción (.ics)
+const [tk] = await db.select().from(calendarTokens).where(eq(calendarTokens.userId, me.id)).limit(1);
+const site = (process.env.PUBLIC_SITE_URL || (process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : Astro.url.origin)).replace(/\/$/, '');
+const icsUrl = tk ? `${site}/api/calendar/${tk.token}` : '';
+---
+
+<AdminLayout title="Calendario" active="calendario">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Calendario</h1>
+      <p class="admin-sub">{isSuper(me) && !reqDoctor ? 'Citas de todas las doctoras.' : 'Tus citas.'}</p>
+    </div>
+  </div>
+
+  <AdminFlash />
+
+  <div class="cal-bar">
+    <div class="cal-nav">
+      <a class="admin-btn admin-btn-ghost" href={q({ date: prev })} aria-label="Anterior">←</a>
+      <a class="admin-btn admin-btn-ghost" href={q({ date: today })}>Hoy</a>
+      <a class="admin-btn admin-btn-ghost" href={q({ date: next })} aria-label="Siguiente">→</a>
+      <strong class="cal-title">{title}</strong>
+    </div>
+    <div class="cal-tools">
+      {doctorList.length > 0 && (
+        <form method="GET" class="cal-doc">
+          <input type="hidden" name="view" value={view} /><input type="hidden" name="date" value={anchor} />
+          <select name="doctor" onchange="this.form.submit()">
+            <option value="">Todas las doctoras</option>
+            {doctorList.map((d) => <option value={d.id} selected={d.id === reqDoctor}>{d.name}</option>)}
+          </select>
+        </form>
+      )}
+      <div class="seg">
+        <a class={view === 'week' ? 'on' : ''} href={q({ view: 'week', date: anchor }).replace('view=month', 'view=week')}>Semana</a>
+        <a class={view === 'month' ? 'on' : ''} href={q({ view: 'month', date: anchor }).replace('view=week', 'view=month')}>Mes</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend"><span class="lg pending">Pendiente</span><span class="lg confirmed">Confirmada</span><span class="lg done">Atendida</span><span class="lg cancelled">Cancelada</span></div>
+
+  {view === 'week' ? (
+    <div class="wk-wrap">
+      <div class="wk" style={`--h:${(hEnd - hStart) * 60 * PX}px`}>
+        <div class="wk-head">
+          <div></div>
+          {days.map((d) => <a href={`/admin/agenda?date=${d}`} class={`wk-dh ${d === today ? 'today' : ''}`}>{DAY[dow(d)]} <b>{Number(d.slice(8))}</b></a>)}
+        </div>
+        <div class="wk-body">
+          <div class="wk-hours">{hours.map((h) => <div style={`height:${60 * PX}px`}>{String(h).padStart(2, '0')}:00</div>)}</div>
+          {days.map((d) => (
+            <div class={`wk-col ${d === today ? 'today' : ''}`}>
+              {hours.map(() => <div class="wk-line" style={`height:${60 * PX}px`}></div>)}
+              {lay(byDay(d)).map((e) => (
+                <button type="button" class={`evt ${e.status}`} data-id={e.id}
+                  style={`top:${(e.start - hStart * 60) * PX}px;height:${Math.max(22, e.dur * PX - 2)}px;left:${(e.lane / e.lanes) * 100}%;width:calc(${100 / e.lanes}% - 3px)`}>
+                  <b>{e.time}</b> {e.patientName}
+                  {e.dur >= 45 && e.serviceTitle && <small>{e.serviceTitle}</small>}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div class="mo">
+      {DAY.map((d) => <div class="mo-h">{d}</div>)}
+      {days.map((d) => {
+        const list = byDay(d); const inMonth = d.slice(0, 7) === anchor.slice(0, 7);
+        return (
+          <div class={`mo-c ${inMonth ? '' : 'out'} ${d === today ? 'today' : ''}`}>
+            <a class="mo-n" href={q({ view: 'week', date: d }).replace('view=month', 'view=week')}>{Number(d.slice(8))}</a>
+            {list.slice(0, 3).map((e) => <button type="button" class={`chip ${e.status}`} data-id={e.id}><b>{e.time}</b> {e.patientName}</button>)}
+            {list.length > 3 && <a class="more" href={q({ view: 'week', date: d }).replace('view=month', 'view=week')}>+{list.length - 3} más</a>}
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+  <dialog id="evDialog" class="ev-dialog">
+    <form method="dialog" class="ev-x"><button aria-label="Cerrar">✕</button></form>
+    <h2 id="dName"></h2>
+    <p class="d-sub" id="dWhen"></p>
+    <dl class="d-grid">
+      <dt>Estado</dt><dd id="dStatus"></dd>
+      <dt>Servicio</dt><dd id="dService"></dd>
+      <dt>Doctora</dt><dd id="dDoctor"></dd>
+      <dt>Teléfono</dt><dd id="dPhone"></dd>
+      <dt>Correo</dt><dd id="dEmail"></dd>
+      <dt>Notas</dt><dd id="dNotes"></dd>
+    </dl>
+    <div class="admin-actions" id="dActions">
+      <a class="admin-btn wa-btn" id="dWa" target="_blank" rel="noopener">WhatsApp</a>
+      <form method="POST" action="/api/admin/citas"><input type="hidden" name="id" class="did" /><input type="hidden" name="status" value="confirmed" /><input type="hidden" name="redirect" value={back} /><button class="admin-btn" type="submit">Confirmar</button></form>
+      <form method="POST" action="/api/admin/citas"><input type="hidden" name="id" class="did" /><input type="hidden" name="status" value="done" /><input type="hidden" name="redirect" value={back} /><button class="admin-btn admin-btn-ghost" type="submit">Atendida</button></form>
+      <form method="POST" action="/api/admin/citas" data-confirm="¿Cancelar esta cita?"><input type="hidden" name="id" class="did" /><input type="hidden" name="status" value="cancelled" /><input type="hidden" name="redirect" value={back} /><button class="admin-btn admin-btn-danger" type="submit">Cancelar</button></form>
+    </div>
+  </dialog>
+
+  <div class="admin-card sub-card">
+    <h2 class="h2">Ver mis citas en el celular</h2>
+    <p class="hint-p">Suscribe tu calendario de Google, Apple u Outlook a este enlace privado y tus citas aparecerán solas (se actualiza cada rato). No lo compartas: quien lo tenga puede ver tu agenda.</p>
+    {tk ? (
+      <div class="ics-row">
+        <input id="icsUrl" readonly value={icsUrl} />
+        <button type="button" class="admin-btn" id="copyIcs">Copiar enlace</button>
+      </div>
+    ) : null}
+    <form method="POST" action="/api/admin/comms" data-confirm={tk ? 'Se creará un enlace nuevo y el anterior dejará de funcionar. ¿Continuar?' : undefined}>
+      <input type="hidden" name="_action" value="cal_token" /><input type="hidden" name="redirect" value="/admin/calendario" />
+      <button class="admin-btn admin-btn-ghost" type="submit">{tk ? 'Generar enlace nuevo' : 'Crear mi enlace de calendario'}</button>
+    </form>
+    <p class="hint-p" style="margin-top:.75rem">Google Calendar: <em>Otros calendarios → Desde URL</em>. iPhone: <em>Ajustes → Calendario → Cuentas → Añadir calendario suscrito</em>.</p>
+  </div>
+
+  <script define:vars={{ ev, STATUS }}>
+    const map = new Map(ev.map((e) => [String(e.id), e]));
+    const dlg = document.getElementById('evDialog');
+    const set = (id, v) => { document.getElementById(id).textContent = v || '—'; };
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-id]');
+      if (!b) return;
+      const a = map.get(b.dataset.id); if (!a) return;
+      set('dName', a.patientName);
+      set('dWhen', `${new Date(a.date + 'T12:00:00Z').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' })} · ${a.time}`);
+      set('dStatus', STATUS[a.status] || a.status); set('dService', a.serviceTitle); set('dDoctor', a.doctorName);
+      set('dPhone', a.phone); set('dEmail', a.email); set('dNotes', a.notes);
+      document.querySelectorAll('.did').forEach((i) => (i.value = a.id));
+      let d = (a.phone || '').replace(/\D/g, ''); if (d.length === 10) d = '52' + d;
+      const wa = document.getElementById('dWa');
+      wa.style.display = d.length >= 11 ? '' : 'none';
+      wa.href = `https://wa.me/${d}?text=${encodeURIComponent('Hola ' + a.patientName + ', te escribimos de Happy Dent sobre tu cita del ' + a.date + ' a las ' + a.time + '.')}`;
+      dlg.showModal();
+    });
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    document.getElementById('copyIcs')?.addEventListener('click', async () => {
+      const i = document.getElementById('icsUrl'); i.select();
+      try { await navigator.clipboard.writeText(i.value); } catch { document.execCommand('copy'); }
+      document.getElementById('copyIcs').textContent = '¡Copiado!';
+    });
+    // Llevar la semana a la hora actual
+    document.querySelector('.wk-wrap')?.scrollTo?.(0, 0);
+  </script>
+
+  <style>
+    .cal-bar { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.75rem; }
+    .cal-nav, .cal-tools { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .cal-title { margin-left: 0.5rem; text-transform: capitalize; font-size: 1.05rem; }
+    .cal-doc select { border: 1px solid var(--a-line); border-radius: 9px; padding: 0.5rem 0.7rem; font: inherit; font-size: 0.9rem; background: #fff; }
+    .seg { display: inline-flex; border: 1px solid var(--a-line); border-radius: 9px; overflow: hidden; background: #fff; }
+    .seg a { padding: 0.5rem 0.9rem; font-weight: 700; font-size: 0.85rem; color: var(--a-ink); text-decoration: none; }
+    .seg a.on { background: var(--a-pink); color: #fff; }
+    .legend { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+    .lg { font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.6rem; border-radius: 999px; }
+    .pending { background: #fff7ed; color: #9a3412; border-left: 3px solid #fb923c; }
+    .confirmed { background: #dcfce7; color: #166534; border-left: 3px solid #22c55e; }
+    .done { background: #e0e7ff; color: #3730a3; border-left: 3px solid #6366f1; }
+    .cancelled { background: #f1f5f9; color: #94a3b8; border-left: 3px solid #cbd5e1; text-decoration: line-through; }
+
+    .wk-wrap { overflow-x: auto; border: 1px solid var(--a-line); border-radius: 12px; background: #fff; }
+    .wk { min-width: 760px; }
+    .wk-head, .wk-body { display: grid; grid-template-columns: 52px repeat(7, 1fr); }
+    .wk-head { border-bottom: 1px solid var(--a-line); background: var(--a-bg); position: sticky; top: 0; z-index: 2; }
+    .wk-dh { text-align: center; padding: 0.6rem 0.25rem; font-size: 0.8rem; font-weight: 700; color: var(--a-muted); text-decoration: none; }
+    .wk-dh b { display: block; font-size: 1.2rem; color: var(--a-ink); }
+    .wk-dh.today b { color: #fff; background: var(--a-pink); width: 32px; height: 32px; line-height: 32px; border-radius: 50%; margin: 0 auto; }
+    .wk-hours div { font-size: 0.7rem; color: var(--a-muted); text-align: right; padding-right: 6px; transform: translateY(-7px); }
+    .wk-col { position: relative; border-left: 1px solid var(--a-line); height: var(--h); }
+    .wk-col.today { background: #fffafc; }
+    .wk-line { border-top: 1px solid var(--a-line); }
+    .evt { position: absolute; border: none; border-radius: 6px; padding: 2px 6px; font-size: 0.72rem; text-align: left; overflow: hidden; cursor: pointer; font-family: inherit; line-height: 1.25; }
+    .evt small { display: block; opacity: 0.8; }
+
+    .mo { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--a-line); border-radius: 12px; overflow: hidden; background: #fff; }
+    .mo-h { background: var(--a-bg); text-align: center; padding: 0.5rem; font-size: 0.75rem; font-weight: 700; color: var(--a-muted); }
+    .mo-c { min-height: 108px; border-top: 1px solid var(--a-line); border-left: 1px solid var(--a-line); padding: 0.3rem; display: flex; flex-direction: column; gap: 2px; }
+    .mo-c:nth-child(7n + 1) { border-left: none; }
+    .mo-c.out { background: #fafafa; opacity: 0.55; }
+    .mo-c.today .mo-n { background: var(--a-pink); color: #fff; }
+    .mo-n { align-self: flex-start; font-size: 0.78rem; font-weight: 700; width: 24px; height: 24px; line-height: 24px; text-align: center; border-radius: 50%; text-decoration: none; color: var(--a-ink); }
+    .chip { border: none; border-radius: 5px; padding: 1px 5px; font-size: 0.7rem; text-align: left; cursor: pointer; font-family: inherit; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .more { font-size: 0.7rem; color: var(--a-muted); text-decoration: none; padding-left: 4px; }
+    @media (max-width: 700px) { .mo-c { min-height: 78px; } .chip b { display: none; } }
+
+    .ev-dialog { border: none; border-radius: 14px; padding: 1.4rem; width: min(440px, 92vw); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+    .ev-dialog::backdrop { background: rgba(43, 34, 48, 0.45); }
+    .ev-x { position: absolute; top: 0.6rem; right: 0.7rem; }
+    .ev-x button { background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--a-muted); }
+    .ev-dialog h2 { font-size: 1.2rem; margin-bottom: 0.15rem; padding-right: 1.5rem; }
+    .d-sub { color: var(--a-muted); text-transform: capitalize; margin-bottom: 0.9rem; }
+    .d-grid { display: grid; grid-template-columns: 90px 1fr; gap: 0.35rem 0.75rem; font-size: 0.9rem; margin-bottom: 1rem; }
+    .d-grid dt { color: var(--a-muted); font-weight: 600; }
+    .d-grid dd { word-break: break-word; }
+    .wa-btn { background: #1FA855; }
+    .sub-card { margin-top: 1.5rem; }
+    .h2 { font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; }
+    .hint-p { color: var(--a-muted); font-size: 0.88rem; margin-bottom: 0.75rem; }
+    .ics-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+    .ics-row input { flex: 1; min-width: 220px; border: 1px solid var(--a-line); border-radius: 9px; padding: 0.55rem 0.7rem; font: inherit; font-size: 0.82rem; background: var(--a-bg); }
+  </style>
+</AdminLayout>

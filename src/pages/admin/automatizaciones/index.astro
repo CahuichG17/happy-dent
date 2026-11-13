@@ -1,0 +1,166 @@
+---
+export const prerender = false;
+import { asc, eq } from 'drizzle-orm';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminFlash from '../../../components/AdminFlash.astro';
+import { db } from '../../../db';
+import { automations, messageTemplates } from '../../../db/schema';
+import { ensureCommsTables } from '../../../lib/comms/ddl';
+import { ensureDefaults } from '../../../lib/comms/engine';
+import { getMailAccount } from '../../../lib/comms/mailer';
+import { TRIGGERS } from '../../../lib/comms/templates';
+
+const me = Astro.locals.user!;
+await ensureCommsTables();
+await ensureDefaults(me.id);
+const autos = await db.select().from(automations).where(eq(automations.userId, me.id)).orderBy(asc(automations.id));
+const tpls = await db.select().from(messageTemplates).where(eq(messageTemplates.userId, me.id)).orderBy(asc(messageTemplates.name));
+const acc = await getMailAccount(me.id);
+const hasMail = Boolean(acc?.enabled) || Boolean(process.env.SMTP_HOST);
+const tplName = (id: number | null) => tpls.find((t) => t.id === id)?.name ?? '— sin plantilla —';
+
+function when(a: typeof autos[number]): string {
+  const t = TRIGGERS[a.trigger];
+  if (!t) return a.trigger;
+  if (!t.timed) return t.label;
+  const m = a.offsetMin;
+  const txt = m % 1440 === 0 ? `${m / 1440} día(s)` : m % 60 === 0 ? `${m / 60} hora(s)` : `${m} min`;
+  return `${txt} ${t.after ? 'después de' : 'antes de'} la cita`;
+}
+
+const editId = Number(Astro.url.searchParams.get('edit') || 0);
+const isNew = Astro.url.searchParams.has('nueva');
+const editing = autos.find((a) => a.id === editId) ?? null;
+const showForm = Boolean(editing) || isNew;
+const editUnit = editing ? (editing.offsetMin % 1440 === 0 && editing.offsetMin > 0 ? 1440 : editing.offsetMin % 60 === 0 && editing.offsetMin > 0 ? 60 : 1) : 60;
+const editVal = editing ? editing.offsetMin / editUnit : 24;
+---
+
+<AdminLayout title="Automatizaciones" active="automatizaciones">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Automatizaciones</h1>
+      <p class="admin-sub">Mensajes que se envían solos: avisos, confirmaciones, recordatorios, seguimiento y cumpleaños.</p>
+    </div>
+    <a href="/admin/automatizaciones?nueva=1" class="admin-btn">Nueva automatización</a>
+  </div>
+
+  <AdminFlash />
+
+  {!hasMail && (
+    <div class="admin-card warn">
+      Para enviar correos primero conecta tu cuenta en <a href="/admin/correo"><strong>Mi correo</strong></a>.
+      Los mensajes de WhatsApp no la necesitan.
+    </div>
+  )}
+
+  {showForm && (
+    <form method="POST" action="/api/admin/comms" class="admin-card" id="autoForm">
+      <input type="hidden" name="_action" value="auto_save" />
+      <input type="hidden" name="redirect" value="/admin/automatizaciones" />
+      {editing && <input type="hidden" name="id" value={editing.id} />}
+      <div class="admin-field"><label for="name">Nombre</label><input id="name" name="name" required value={editing?.name ?? ''} /></div>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label for="trigger">¿Cuándo se envía?</label>
+          <select id="trigger" name="trigger">
+            {Object.entries(TRIGGERS).map(([k, t]) => <option value={k} selected={editing?.trigger === k}>{t.label}</option>)}
+          </select>
+        </div>
+        <div class="admin-field" id="offsetBox">
+          <label>¿Cuánto tiempo?</label>
+          <div class="off-row">
+            <input name="offsetValue" type="number" min="0" step="1" value={editVal} />
+            <select name="offsetUnit">
+              <option value="1" selected={editUnit === 1}>minutos</option>
+              <option value="60" selected={editUnit === 60}>horas</option>
+              <option value="1440" selected={editUnit === 1440}>días</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <p class="admin-sub" id="trigHint" style="margin: -0.25rem 0 1rem;"></p>
+      <div class="admin-row">
+        <div class="admin-field">
+          <label for="recipient">¿A quién?</label>
+          <select id="recipient" name="recipient">
+            <option value="patient" selected={editing?.recipient !== 'doctor'}>Al paciente</option>
+            <option value="doctor" selected={editing?.recipient === 'doctor'}>A mí (aviso interno)</option>
+          </select>
+        </div>
+        <div class="admin-field">
+          <label for="channel">Canal</label>
+          <select id="channel" name="channel">
+            <option value="email" selected={editing?.channel !== 'whatsapp'}>Correo</option>
+            <option value="whatsapp" selected={editing?.channel === 'whatsapp'}>WhatsApp (te lo prepara para enviar con un clic)</option>
+          </select>
+        </div>
+      </div>
+      <div class="admin-field">
+        <label for="templateId">Mensaje (plantilla)</label>
+        <select id="templateId" name="templateId" required>
+          {tpls.map((t) => <option value={t.id} selected={editing?.templateId === t.id}>{t.name} ({t.channel === 'email' ? 'correo' : 'WhatsApp'})</option>)}
+        </select>
+        <small class="hint">¿Falta una? Créala en <a href="/admin/plantillas?nueva=1">Plantillas</a>.</small>
+      </div>
+      <div class="admin-form-actions">
+        <button class="admin-btn" type="submit">Guardar</button>
+        <a class="admin-btn admin-btn-ghost" href="/admin/automatizaciones">Cancelar</a>
+      </div>
+    </form>
+  )}
+
+  <div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Automatización</th><th>Cuándo</th><th>Canal / destino</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+      {autos.map((a) => (
+        <tr>
+          <td><strong>{a.name}</strong><br /><small class="muted">{tplName(a.templateId)}</small></td>
+          <td>{when(a)}</td>
+          <td>{a.channel === 'email' ? 'Correo' : 'WhatsApp'} · {a.recipient === 'doctor' ? 'a mí' : 'al paciente'}</td>
+          <td>
+            <form method="POST" action="/api/admin/comms">
+              <input type="hidden" name="_action" value="auto_toggle" /><input type="hidden" name="id" value={a.id} /><input type="hidden" name="redirect" value="/admin/automatizaciones" />
+              <button type="submit" class={`switch ${a.enabled ? 'on' : ''}`} aria-pressed={a.enabled} title={a.enabled ? 'Pausar' : 'Activar'}>
+                <span></span>{a.enabled ? 'Activa' : 'Pausada'}
+              </button>
+            </form>
+          </td>
+          <td>
+            <div class="admin-actions">
+              <a class="admin-btn admin-btn-ghost" href={`/admin/automatizaciones?edit=${a.id}`}>Editar</a>
+              <form method="POST" action="/api/admin/comms" data-confirm="¿Eliminar esta automatización?">
+                <input type="hidden" name="_action" value="auto_delete" /><input type="hidden" name="id" value={a.id} /><input type="hidden" name="redirect" value="/admin/automatizaciones" />
+                <button class="admin-btn admin-btn-danger" type="submit">Eliminar</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table></div>
+  <p class="admin-sub" style="margin-top: 1rem;">Los recordatorios y seguimientos solo se envían para citas <strong>confirmadas</strong> y usan la hora de Cancún. Revisa lo enviado en <a href="/admin/mensajes">Mensajes</a>.</p>
+
+  <script define:vars={{ TRIGGERS }}>
+    const sel = document.getElementById('trigger');
+    if (sel) {
+      const upd = () => {
+        const t = TRIGGERS[sel.value];
+        document.getElementById('offsetBox').style.display = t.timed ? '' : 'none';
+        document.getElementById('trigHint').textContent = t.hint;
+      };
+      sel.addEventListener('change', upd); upd();
+    }
+  </script>
+  <style>
+    .warn { background: #fff7ed; border-color: #fed7aa; }
+    .muted { color: var(--a-muted); }
+    .hint { color: var(--a-muted); font-size: 0.8rem; }
+    .off-row { display: flex; gap: 0.5rem; }
+    .off-row input { width: 90px; }
+    .switch { display: inline-flex; align-items: center; gap: 0.5rem; background: #f1f5f9; color: #64748b; border: none; border-radius: 999px; padding: 0.3rem 0.8rem 0.3rem 0.35rem; font-weight: 700; font-size: 0.8rem; cursor: pointer; font-family: inherit; }
+    .switch span { width: 18px; height: 18px; border-radius: 50%; background: #94a3b8; transition: transform 0.2s; }
+    .switch.on { background: #dcfce7; color: #166534; }
+    .switch.on span { background: #16a34a; transform: translateX(2px); }
+  </style>
+</AdminLayout>

@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { db } from '../../db';
 import { appointments } from '../../db/schema';
 import { pickDoctorForSlot } from '../../lib/booking';
+import { fireAppointmentEvent } from '../../lib/comms/engine';
 
 export const prerender = false;
 
@@ -48,7 +49,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (!doctorId) return fail('Ese horario acaba de ocuparse. Elige otro, por favor.', 409);
 
   try {
-    await db.insert(appointments).values({
+    const [created] = await db.insert(appointments).values({
       patientName,
       phone,
       email,
@@ -59,7 +60,9 @@ export const POST: APIRoute = async ({ request }) => {
       status: 'pending',
       notes,
       updatedAt: new Date(),
-    });
+    }).returning({ id: appointments.id });
+    // Avisos automáticos (a la doctora y al paciente), sin bloquear la respuesta.
+    void fireAppointmentEvent('appointment_created', created.id);
   } catch {
     // El índice único (doctora+fecha+hora) evita la doble reserva en carreras.
     return fail('Ese horario acaba de ocuparse. Elige otro, por favor.', 409);

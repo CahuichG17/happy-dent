@@ -4,6 +4,10 @@ import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { db } from '../../../db';
 import { appointments, doctors, services } from '../../../db/schema';
 import { desc, asc, eq } from 'drizzle-orm';
+import { doctorScope } from '../../../lib/scope';
+
+// Cada doctora ve solo sus citas; el super admin ve todas.
+const scope = doctorScope(Astro.locals.user);
 
 const rows = await db
   .select({
@@ -22,6 +26,7 @@ const rows = await db
   .from(appointments)
   .leftJoin(doctors, eq(appointments.doctorId, doctors.id))
   .leftJoin(services, eq(appointments.serviceId, services.id))
+  .where(scope === null ? undefined : eq(appointments.doctorId, scope))
   .orderBy(desc(appointments.date), asc(appointments.time));
 
 const STATUS_LABEL: Record<string, string> = {

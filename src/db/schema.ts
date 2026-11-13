@@ -294,3 +294,84 @@ export const attachments = pgTable('attachments', {
   label: text('label'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
+
+// ─────────────────────────────────────────────────────────────
+// COMUNICACIÓN: correo SMTP por usuario, plantillas, automatizaciones
+// (las tablas se crean solas con ensureCommsTables en src/lib/comms/ddl.ts)
+// ─────────────────────────────────────────────────────────────
+
+// Cuenta SMTP de cada usuario (la contraseña se guarda cifrada)
+export const mailAccounts = pgTable('mail_accounts', {
+  userId: text('user_id').primaryKey(),
+  host: text('host').notNull(),
+  port: integer('port').notNull().default(465),
+  secure: boolean('secure').notNull().default(true),
+  username: text('username').notNull(),
+  passwordEnc: text('password_enc').notNull(),
+  fromName: text('from_name').notNull().default(''),
+  fromEmail: text('from_email').notNull(),
+  replyTo: text('reply_to'),
+  signature: text('signature').notNull().default(''),
+  enabled: boolean('enabled').notNull().default(true),
+  lastTestAt: timestamp('last_test_at', { withTimezone: true }),
+  lastTestOk: boolean('last_test_ok'),
+  lastError: text('last_error'),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Plantillas de mensaje. channel: email | whatsapp
+export const messageTemplates = pgTable('message_templates', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  name: text('name').notNull(),
+  channel: text('channel').notNull().default('email'),
+  subject: text('subject').notNull().default(''),
+  body: text('body').notNull().default(''),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Automatizaciones.
+// trigger: appointment_created | appointment_confirmed | appointment_cancelled
+//          | reminder_before | followup_after | birthday
+// recipient: patient | doctor
+export const automations = pgTable('automations', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  name: text('name').notNull(),
+  trigger: text('trigger').notNull(),
+  channel: text('channel').notNull().default('email'),
+  recipient: text('recipient').notNull().default('patient'),
+  templateId: integer('template_id').references(() => messageTemplates.id, { onDelete: 'set null' }),
+  // minutos (antes/después de la cita) para los disparadores con tiempo
+  offsetMin: integer('offset_min').notNull().default(0),
+  enabled: boolean('enabled').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Bitácora / cola de mensajes.
+// status: sent | failed | manual (WhatsApp por enviar) | manual_done | skipped
+export const messageLog = pgTable('message_log', {
+  id: serial('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  automationId: integer('automation_id').references(() => automations.id, { onDelete: 'set null' }),
+  dedupeKey: text('dedupe_key').unique(),
+  channel: text('channel').notNull(),
+  toAddr: text('to_addr').notNull().default(''),
+  subject: text('subject').notNull().default(''),
+  body: text('body').notNull().default(''),
+  link: text('link'),
+  status: text('status').notNull(),
+  error: text('error'),
+  appointmentId: integer('appointment_id'),
+  patientName: text('patient_name'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  sentAt: timestamp('sent_at', { withTimezone: true }),
+});
+
+// Token secreto para suscribirse al calendario (.ics) de cada usuario
+export const calendarTokens = pgTable('calendar_tokens', {
+  userId: text('user_id').primaryKey(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+});

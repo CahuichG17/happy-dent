@@ -1,0 +1,97 @@
+---
+export const prerender = false;
+import { desc, eq } from 'drizzle-orm';
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminFlash from '../../../components/AdminFlash.astro';
+import { db } from '../../../db';
+import { messageLog } from '../../../db/schema';
+import { ensureCommsTables } from '../../../lib/comms/ddl';
+
+const me = Astro.locals.user!;
+await ensureCommsTables();
+const rows = await db.select().from(messageLog).where(eq(messageLog.userId, me.id)).orderBy(desc(messageLog.createdAt)).limit(150);
+const pending = rows.filter((r) => r.status === 'manual');
+const history = rows.filter((r) => r.status !== 'manual');
+
+const LABEL: Record<string, [string, string]> = {
+  sent: ['Enviado', 'ok'], failed: ['Falló', 'bad'], skipped: ['Omitido', 'off'], manual_done: ['Enviado (WhatsApp)', 'ok'], queued: ['En proceso', 'off'],
+};
+const fmt = (d: Date | null) => d ? d.toLocaleString('es-MX', { timeZone: 'America/Cancun', dateStyle: 'short', timeStyle: 'short' }) : '';
+---
+
+<AdminLayout title="Mensajes" active="mensajes">
+  <div class="admin-toolbar">
+    <div>
+      <h1 class="admin-h1">Mensajes</h1>
+      <p class="admin-sub">Lo que se envió automáticamente y los WhatsApp que tienes por enviar.</p>
+    </div>
+  </div>
+
+  <AdminFlash />
+
+  <h2 class="h2">WhatsApp por enviar ({pending.length})</h2>
+  {pending.length === 0 ? (
+    <div class="admin-card muted">No tienes mensajes de WhatsApp pendientes.</div>
+  ) : (
+    <div class="wa-list">
+      {pending.map((m) => (
+        <div class="admin-card wa">
+          <div>
+            <strong>{m.patientName}</strong> <small class="muted">· {m.toAddr} · {fmt(m.createdAt)}</small>
+            <p class="wa-body">{m.body}</p>
+          </div>
+          <div class="admin-actions">
+            <a class="admin-btn wa-btn" href={m.link ?? '#'} target="_blank" rel="noopener">Abrir WhatsApp</a>
+            <form method="POST" action="/api/admin/comms">
+              <input type="hidden" name="_action" value="msg_done" /><input type="hidden" name="id" value={m.id} /><input type="hidden" name="redirect" value="/admin/mensajes" />
+              <button class="admin-btn admin-btn-ghost" type="submit">Ya lo envié</button>
+            </form>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+
+  <h2 class="h2" style="margin-top: 1.75rem;">Historial</h2>
+  {history.length === 0 ? (
+    <div class="admin-card muted">Todavía no se ha enviado ningún mensaje automático.</div>
+  ) : (
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr><th>Fecha</th><th>Paciente / destino</th><th>Mensaje</th><th>Estado</th></tr></thead>
+      <tbody>
+        {history.map((m) => {
+          const [txt, cls] = LABEL[m.status] ?? [m.status, 'off'];
+          return (
+            <tr>
+              <td>{fmt(m.createdAt)}</td>
+              <td><strong>{m.patientName}</strong><br /><small class="muted">{m.channel === 'email' ? 'Correo' : 'WhatsApp'} · {m.toAddr || '—'}</small></td>
+              <td class="subj">{m.subject || m.body.slice(0, 70)}</td>
+              <td>
+                <span class={`admin-badge ${cls}`}>{txt}</span>
+                {m.error && <small class="err">{m.error}</small>}
+                {m.status === 'failed' && m.channel === 'email' && (
+                  <form method="POST" action="/api/admin/comms" style="margin-top:.35rem">
+                    <input type="hidden" name="_action" value="msg_retry" /><input type="hidden" name="id" value={m.id} /><input type="hidden" name="redirect" value="/admin/mensajes" />
+                    <button class="admin-btn admin-btn-ghost" type="submit">Reintentar</button>
+                  </form>
+                )}
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table></div>
+  )}
+
+  <style>
+    .h2 { font-size: 1.05rem; font-weight: 800; margin-bottom: 0.75rem; }
+    .muted { color: var(--a-muted); }
+    .admin-badge.bad { background: #fee2e2; color: #b91c1c; }
+    .err { display: block; color: #b91c1c; font-size: 0.75rem; max-width: 280px; word-break: break-word; margin-top: 0.25rem; }
+    .subj { max-width: 280px; font-size: 0.85rem; }
+    .wa { display: flex; justify-content: space-between; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .wa-body { color: var(--a-muted); font-size: 0.88rem; margin-top: 0.25rem; max-width: 620px; }
+    .wa-btn { background: #1FA855; }
+    .wa-btn:hover { background: #178a45; }
+  </style>
+</AdminLayout>

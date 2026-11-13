@@ -2,9 +2,11 @@
 export const prerender = false;
 import AdminLayout from '../../../layouts/AdminLayout.astro';
 import { getDayAgenda, todayStr } from '../../../lib/clinical';
+import { doctorScope } from '../../../lib/scope';
 
 const dateStr = (Astro.url.searchParams.get('date') || todayStr()).trim();
-const agenda = await getDayAgenda(dateStr);
+const scope = doctorScope(Astro.locals.user);
+const agenda = scope === null ? await getDayAgenda(dateStr) : await getDayAgenda(dateStr, scope);
 
 const totalBusy = agenda.reduce((a, d) => a + d.busy, 0);
 const totalFree = agenda.reduce((a, d) => a + d.free, 0);

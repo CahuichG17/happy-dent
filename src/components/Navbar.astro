@@ -2,9 +2,12 @@
 import { getCopy } from '../lib/copy';
 const base = import.meta.env.BASE_URL;
 const c = await getCopy();
+// Evita enlaces muertos cuando el admin oculta una sección.
+const { sections = {} } = Astro.props as { sections?: Record<string, boolean> };
+const show = (k: string) => sections[k] !== false;
 ---
 
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" aria-label="Principal">
   <div class="container nav-container">
     <a href="#inicio" class="nav-logo" data-hover>
       <img src={`${base}happy-dent-icon.svg`} alt="Happy Dent — Dentista en Cancún" class="logo-icon" />
@@ -18,17 +21,17 @@ const c = await getCopy();
     <div class="nav-drawer" id="navDrawer">
       <ul class="nav-links">
         <li><a href="#inicio" class="nav-link active"><span data-es>{c['nav.home'].es}</span><span data-en>{c['nav.home'].en}</span></a></li>
-        <li><a href="#servicios" class="nav-link"><span data-es>{c['nav.services'].es}</span><span data-en>{c['nav.services'].en}</span></a></li>
-        <li><a href="#nosotros" class="nav-link"><span data-es>{c['nav.about'].es}</span><span data-en>{c['nav.about'].en}</span></a></li>
-        <li><a href="#tourism" class="nav-link"><span data-es>{c['nav.international'].es}</span><span data-en>{c['nav.international'].en}</span></a></li>
-        <li><a href="#faq" class="nav-link">FAQ</a></li>
-        <li><a href="#contacto" class="nav-link"><span data-es>{c['nav.contact'].es}</span><span data-en>{c['nav.contact'].en}</span></a></li>
+        {show('servicios') && <li><a href="#servicios" class="nav-link"><span data-es>{c['nav.services'].es}</span><span data-en>{c['nav.services'].en}</span></a></li>}
+        {show('nosotros') && <li><a href="#nosotros" class="nav-link"><span data-es>{c['nav.about'].es}</span><span data-en>{c['nav.about'].en}</span></a></li>}
+        {show('tourism') && <li><a href="#tourism" class="nav-link"><span data-es>{c['nav.international'].es}</span><span data-en>{c['nav.international'].en}</span></a></li>}
+        {show('faq') && <li><a href="#faq" class="nav-link">FAQ</a></li>}
+        {show('contacto') && <li><a href="#contacto" class="nav-link"><span data-es>{c['nav.contact'].es}</span><span data-en>{c['nav.contact'].en}</span></a></li>}
       </ul>
 
       <div class="nav-actions">
         <span class="nav-status" aria-live="polite">
           <span class="status-dot" id="statusDot"></span>
-          <span id="statusText" data-es>Cargando…</span>
+          <span id="statusText"></span>
         </span>
         <button class="lang-toggle" data-lang-toggle aria-label="Cambiar idioma">EN</button>
         <a href="/agendar" class="btn-cta">
@@ -41,7 +44,7 @@ const c = await getCopy();
     <!-- Lang toggle always visible on mobile (outside drawer) -->
     <button class="lang-toggle lang-toggle-mobile" data-lang-toggle aria-label="Cambiar idioma">EN</button>
 
-    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navDrawer">
       <span></span><span></span><span></span>
     </button>
   </div>

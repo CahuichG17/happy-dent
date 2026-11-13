@@ -500,15 +500,29 @@ const c = await getCopy();
   import { gsap } from 'gsap';
 
   // ===== Intro: tooth opens fullscreen, then unlocks scroll =====
-  document.body.classList.add('intro-locked');
-  // Force scroll to top in case of refresh mid-page
-  window.scrollTo(0, 0);
+  // Solo se muestra una vez por sesión, se omite con "reducir movimiento"
+  // y el visitante puede saltarla con clic o tecla.
+  let skipIntro = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  try {
+    if (sessionStorage.getItem('hd-intro')) skipIntro = true;
+    sessionStorage.setItem('hd-intro', '1');
+  } catch {}
+  if (!skipIntro) {
+    document.body.classList.add('intro-locked');
+    // Force scroll to top in case of refresh mid-page
+    window.scrollTo(0, 0);
+  }
 
   const mask = document.getElementById('revealMask');
   const tooth = document.querySelector('.reveal-svg') as HTMLElement | null;
   const caption = document.getElementById('revealCaption');
 
+  let tlRef: gsap.core.Timeline | null = null;
+  let unlocked = false;
   function unlock() {
+    if (unlocked) return;
+    unlocked = true;
+    tlRef?.kill();
     document.body.classList.remove('intro-locked');
     mask?.classList.add('done');
     if (mask) mask.style.display = 'none';
@@ -516,13 +530,16 @@ const c = await getCopy();
     document.dispatchEvent(new CustomEvent('intro:done'));
   }
 
-  if (!mask || !tooth) {
+  if (skipIntro || !mask || !tooth) {
     unlock();
   } else {
     const tl = gsap.timeline({
       defaults: { ease: 'power3.out' },
       onComplete: unlock,
     });
+    tlRef = tl;
+    mask.addEventListener('click', unlock);
+    window.addEventListener('keydown', unlock, { once: true });
     // Phase 1: tooth eases in & breathes
     tl.from(tooth, { scale: 0.55, opacity: 0, duration: 0.9, ease: 'expo.out' })
       .to(tooth,   { scale: 1.08, duration: 0.5, ease: 'sine.inOut' })
@@ -540,7 +557,5 @@ const c = await getCopy();
   }
 
   // Safety net: never leave the page stuck locked
-  setTimeout(() => {
-    if (document.body.classList.contains('intro-locked')) unlock();
-  }, 5000);
+  setTimeout(unlock, 5000);
 </script>

@@ -10,13 +10,14 @@ const {
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
-const siteUrl = "https://happy-dent.example.com";
-const ogImage = `${siteUrl}${base}happy-dent.svg`;
+const siteUrl = (Astro.site?.origin ?? "https://happy-dent-production.up.railway.app").replace(/\/$/, "");
+// Los crawlers sociales (WhatsApp, Facebook, X) no soportan SVG: usar PNG.
+const ogImage = `${siteUrl}${base}icon-512.png`;
 
-// Analytics placeholders — reemplazar con IDs reales en producción
-const GA4_ID = "G-XXXXXXXXXX";
-const META_PIXEL_ID = "XXXXXXXXXXXXXXX";
-const CLARITY_ID = "XXXXXXXXXX";
+// Analytics: solo se cargan si hay un ID real configurado (variables PUBLIC_*).
+const GA4_ID = import.meta.env.PUBLIC_GA4_ID || "";
+const META_PIXEL_ID = import.meta.env.PUBLIC_META_PIXEL_ID || "";
+const CLARITY_ID = import.meta.env.PUBLIC_CLARITY_ID || "";
 ---
 
 <!doctype html>
@@ -47,23 +48,24 @@ const CLARITY_ID = "XXXXXXXXXX";
     <meta property="og:description" content={description} />
     <meta property="og:url" content={`${siteUrl}${base}`} />
     <meta property="og:image" content={ogImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <meta property="og:image:alt" content="Happy Dent — Dentista en Cancún" />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
     <link rel="icon" type="image/svg+xml" href={`${base}happy-dent.svg`} />
-    <link rel="apple-touch-icon" href={`${base}happy-dent.svg`} />
+    <link rel="icon" type="image/png" sizes="192x192" href={`${base}icon-192.png`} />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Schema.org JSON-LD: Dentist + LocalBusiness -->
     <script type="application/ld+json" set:html={JSON.stringify({
@@ -134,29 +136,33 @@ const CLARITY_ID = "XXXXXXXXXX";
       ]
     })} />
 
-    <!-- Google Analytics 4 (placeholder ID) -->
-    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>
-    <script is:inline define:vars={{ GA4_ID }}>
+    <!-- Google Analytics 4 (solo si PUBLIC_GA4_ID está definido) -->
+    {GA4_ID && <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA4_ID}`}></script>}
+    {GA4_ID && <script is:inline define:vars={{ GA4_ID }}>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', GA4_ID, { anonymize_ip: true });
       window.gtag = gtag;
-    </script>
+    </script>}
 
-    <!-- Meta Pixel (placeholder ID) -->
-    <script is:inline define:vars={{ META_PIXEL_ID }}>
+    <!-- Meta Pixel (solo si PUBLIC_META_PIXEL_ID está definido) -->
+    {META_PIXEL_ID && <script is:inline define:vars={{ META_PIXEL_ID }}>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', META_PIXEL_ID);
       fbq('track', 'PageView');
-    </script>
+    </script>}
 
-    <!-- Microsoft Clarity (placeholder ID) -->
-    <script is:inline define:vars={{ CLARITY_ID }}>
+    <!-- Microsoft Clarity (solo si PUBLIC_CLARITY_ID está definido) -->
+    {CLARITY_ID && <script is:inline define:vars={{ CLARITY_ID }}>
       (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,"clarity","script", CLARITY_ID);
-    </script>
+    </script>}
   </head>
   <body>
+    <a href="#contenido" class="skip-link">
+      <span data-es>Saltar al contenido</span><span data-en>Skip to content</span>
+    </a>
+
     <!-- Custom cursor -->
     <div class="cursor" id="cursor" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
@@ -218,6 +224,7 @@ const CLARITY_ID = "XXXXXXXXXX";
 
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: 80px;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
@@ -357,6 +364,29 @@ const CLARITY_ID = "XXXXXXXXXX";
         box-shadow: var(--shadow-md);
       }
 
+      /* === Accesibilidad === */
+      .skip-link {
+        position: fixed;
+        top: 0.75rem; left: 0.75rem;
+        z-index: 10000;
+        padding: 0.7rem 1.2rem;
+        border-radius: var(--radius-full);
+        background: var(--text-dark);
+        color: var(--white);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transform: translateY(-200%);
+        transition: transform var(--transition-fast);
+      }
+      .skip-link:focus { transform: translateY(0); }
+
+      :focus-visible {
+        outline: 3px solid var(--pink-dark);
+        outline-offset: 3px;
+      }
+      main:focus { outline: none; }
+
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: var(--cream); }
       ::-webkit-scrollbar-thumb {
@@ -400,7 +430,7 @@ const CLARITY_ID = "XXXXXXXXXX";
       @media (hover: none), (max-width: 900px) {
         .cursor, .cursor-dot { display: none; }
       }
-      @media (hover: hover) and (min-width: 901px) {
+      @media (hover: hover) and (min-width: 901px) and (prefers-reduced-motion: no-preference) {
         body, a, button { cursor: none; }
       }
 
@@ -420,6 +450,8 @@ const CLARITY_ID = "XXXXXXXXXX";
       html[data-lang="es"] [data-en] { display: none !important; }
 
       @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .cursor, .cursor-dot { display: none; }
         *, *::before, *::after {
           animation-duration: 0.01ms !important;
           transition-duration: 0.01ms !important;
@@ -431,7 +463,7 @@ const CLARITY_ID = "XXXXXXXXXX";
       // === Custom cursor (lerp) ===
       const cursor = document.getElementById('cursor');
       const dot = document.getElementById('cursorDot');
-      if (cursor && dot && matchMedia('(hover: hover)').matches) {
+      if (cursor && dot && matchMedia('(hover: hover)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         let mx = 0, my = 0, cx = 0, cy = 0;
         window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
         const tick = () => {

@@ -24,8 +24,8 @@ const s = await getSections();
 ---
 
 <Layout>
-  <Navbar />
-  <main>
+  <Navbar sections={s} />
+  <main id="contenido" tabindex="-1">
     <Hero />
     {s.stats && <Stats />}
     {s.servicios && <Services />}
@@ -48,6 +48,11 @@ const s = await getSections();
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
     gsap.registerPlugin(ScrollTrigger);
+
+    // Respeta "reducir movimiento": las animaciones terminan al instante.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.globalTimeline.timeScale(1000);
+    }
     gsap.defaults({ ease: 'power4.out', duration: 1 });
 
     // Wait until intro animation in Hero finishes before starting hero TL.
